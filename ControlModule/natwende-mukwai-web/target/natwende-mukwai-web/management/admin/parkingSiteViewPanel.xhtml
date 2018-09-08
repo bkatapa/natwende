@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"  
+				xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:pe="http://primefaces.org/ui/extensions" 
+                xmlns:o="http://omnifaces.org/ui">
+    <o:importConstants type="com.adaptris.skidata.parking.types.PagePath"/>
+    
+        <p:messages id="messages" severity="error" />
+        <h:form styleClass="formBackground">
+            <p:breadCrumb>
+                <p:menuitem value="Home" action="Home" />
+                <p:menuitem value="Parking Site List" action="ParkingSiteList" rendered="#{request.isUserInRole('SYSTEM_ADMINISTRATOR')}" />
+                <p:menuitem value="Site View (#{ParkingSiteAction.selectedEntity.siteName})"/>
+            </p:breadCrumb>
+        </h:form>
+        <p:panel header="Site Details" id="site-details" widgetVar="var_SiteDetails">
+		<h:form id="parkingSiteForm" styleClass="formBackground">
+			<pe:fluidGrid hGutter="20" vGutter="20">
+				<pe:fluidGridItem type="input">
+					<p:fieldset legend="Site Details" style="height: 220px;">
+						<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal" style="border: 0px;">
+							<h:outputLabel for="input-site-name" value="Name:" />
+							<p:inputText id="input-site-name" value="#{ParkingSiteAction.selectedEntity.siteName}" 
+								     required="true" requiredMessage="Site name is missing" readonly="true"/>					
+
+							<h:outputLabel for="input-site-location" value="GPS Coordinates:" />
+							<p:inputText id="input-site-location" required="true" requiredMessage="GPS Coordinates are missing"
+								     value="#{ParkingSiteAction.selectedEntity.gpsCoordinates}" />					
+
+							<h:outputLabel for="input-no-of-bays" value="No. of parking bays:" />
+							<p:spinner id="input-no-of-bays" value="#{ParkingSiteAction.selectedEntity.numberOfBays}" 
+								   size="10" required="true" requiredMessage="Number of parking bays is required"
+								   min="0"/>					
+						</p:panelGrid>							
+					</p:fieldset>
+				</pe:fluidGridItem>
+
+				<pe:fluidGridItem type="input">
+					<p:fieldset legend="Manager" widgetVar="var_ManagerFieldSet" style="height: 220px;">
+						<p:panelGrid columns="3" columnClasses="columnHeader, columnNormal">
+							<h:outputLabel for="parkingSite-manager" value="Manager:" />
+							<p:inputText id="parkingSite-manager"
+								     value="#{ParkingSiteAction.selectedEntity.manager}"
+								     disabled="#{ParkingSiteAction.editMode == false}" />
+							<p:message for="parkingSite-manager" style="color:red" />
+
+							<h:outputLabel for="parkingSite-telephone" value="Phone No:" />
+							<p:inputText id="parkingSite-telephone"
+								     value="#{ParkingSiteAction.selectedEntity.managerContactNumber}"
+								     disabled="#{ParkingSiteAction.editMode == false}" />
+							<p:message for="parkingSite-telephone" style="color:red" />
+
+							<h:outputLabel for="parkingSite-managerEmail" value="Email:" />
+							<p:inputText id="parkingSite-managerEmail"
+								     value="#{ParkingSiteAction.selectedEntity.managerEmail}"
+								     disabled="#{ParkingSiteAction.editMode == false}" />
+							<p:message for="parkingSite-managerEmail" style="color:red" />
+
+							<h:outputLabel for="parkingSite-managerOfficeEmail"
+								       value="Email Office:" />
+							<p:inputText id="parkingSite-managerOfficeEmail"
+								     value="#{ParkingSiteAction.selectedEntity.parkingOfficeEmail}"
+								     disabled="#{ParkingSiteAction.editMode == false}" />
+							<p:message for="parkingSite-managerOfficeEmail" style="color:red" />
+						</p:panelGrid>
+					</p:fieldset>
+				</pe:fluidGridItem>
+			</pe:fluidGrid>
+			<p:toolbar rendered="#{not empty userSessionAction.userVO.parkingSiteVO}">
+				<f:facet name="left">
+
+					<p:panelGrid columns="3" columnClasses="alignBottom">
+						<p:commandButton id="back-btn" ajax="true" value="Back"
+								 process="@this"
+								 styleClass="button" icon="ui-icon-arrowthick-1-w"
+								 action="#{ParkingSiteEditAction.back}" 
+								 rendered="#{request.isUserInRole('SYSTEM_ADMINISTRATOR')}"/>
+						<p:commandButton id="updateSite" ajax="true" value="Update"
+								 styleClass="button" icon="ui-icon-check"
+								 action="#{ParkingSiteAction.update()}"
+								 update="@form @widgetVar(var_SiteDetails)"
+								 rendered="#{ParkingSiteAction.showUpdateButton()}" />
+						<p:commandButton id="deactivateSite" style="margin-left: 10px;"
+								 ajax="true" value="De-activate" styleClass="button"
+								 icon="fa fa-minus-circle"
+								 actionListener="#{ParkingSiteEditAction.changeStatus('INACTIVE')}"
+								 update="parkingSiteForm, @widgetVar(var_SiteDetails)"
+								 rendered="#{ParkingSiteAction.showDeactivateButton()}" />
+						<p:commandButton id="activateSite" style="margin-left: 10px;"
+								 ajax="true" value="Activate" styleClass="button"
+								 icon="fa fa-plus-circle"
+								 actionListener="#{ParkingSiteEditAction.changeStatus('ACTIVE')}"
+								 update="parkingSiteForm, @widgetVar(var_SiteDetails)"
+								 rendered="#{ParkingSiteAction.showActivateButton()}" />
+
+					</p:panelGrid>
+
+				</f:facet>
+			</p:toolbar>
+		</h:form>
+        </p:panel>
+        <p:accordionPanel widgetVar="var_parkingSiteAccordion" id="parkingSite-accordion" activeIndex="#{ParkingSiteAction.selectedAccordionIndex}">
+         	
+         	<p:ajax event="tabChange" listener="#{ParkingSiteAction.onTabChange}" />
+         	
+         	<p:tab title="Site Address and Identifiers" titleStyle="ui-panel-title, titleText">
+				<h:form id="parkingDetailsForm" styleClass="formBackground">
+					<ui:include src="admin-includes/parkingSiteView-siteDetails.xhtml" />
+				</h:form>
+			</p:tab>
+			<p:tab title="Users" titleStyle="ui-panel-title">
+				<ui:include src="admin-includes/userListPanel.xhtml">
+					<ui:param name="userType" value="PARKING_SITE"/>
+				</ui:include>
+			</p:tab>
+			<p:tab title="Tenants" titleStyle="ui-panel-title" rendered="#{request.isUserInRole('SKIDATA_ADMINISTRATOR') or request.isUserInRole('SYSTEM_ADMINISTRATOR')}">
+				<ui:include src="tenantManagementPanel.xhtml" >
+					<ui:param name="tenantMgtContext" value="FROM_PARKING_SITE"/>
+					<ui:param name="selectedParkingSite" value="#{ParkingSiteAction.selectedEntity}"/>
+				</ui:include>				
+			</p:tab>
+			<p:tab title="Site Articles" titleStyle="ui-panel-title" rendered="#{request.isUserInRole('SKIDATA_ADMINISTRATOR') or request.isUserInRole('SYSTEM_ADMINISTRATOR')}">
+				<h:form id="articlesForm" styleClass="formBackground">
+					<ui:include src="admin-includes/parkingSiteView-siteArticles.xhtml" />
+				</h:form>
+			</p:tab>
+		
+			<p:tab title="Site Validation Providers" titleStyle="ui-panel-title" rendered="#{request.isUserInRole('SKIDATA_ADMINISTRATOR') or request.isUserInRole('SYSTEM_ADMINISTRATOR')}">
+				<h:form id="validationProviderForm" styleClass="formBackground">
+					<ui:include src="admin-includes/parkingSiteView-siteValidationProviders.xhtml" />
+				</h:form>
+			</p:tab>			
+      	</p:accordionPanel>        
+       
+        <style type="text/css">        	
+			.ui-panelgrid>*>tr,
+			.ui-panelgrid .ui-panelgrid-cell {
+    			border: none;
+			}
+			.titleText {
+				font-weight: bold;
+			}
+        </style>
+        <!-- 
+        <p:dialog widgetVar="var_LinkUsersToParkingsite" 
+        		  modal="true" 
+        		  width="600pt"        		   
+        		  showEffect="fade"
+        		  hideEffect="fade"
+        		  header="Linking users to {ParkingSiteAction.selectedEntity.siteName} parking site"
+        		  fitViewport="true">
+        	<h:form>
+        		<ui:include src="parkingSite/parkingSiteLinkUser.xhtml" />
+        	</h:form>
+        </p:dialog> -->
+        
+</ui:composition>

@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+
+	<o:importConstants type="com.mweka.natwende.types.PagePath" />
+
+	<ui:define name="content">
+
+		<h:form id="adminMainForm" styleClass="formBackground">
+			<p:panel header="Administration">
+			
+			<p:tabView activeIndex="#{AdminAction.selectedTabIndex}">				
+				<p:ajax event="tabChange" listener="#{AdminAction.onTabChange}" />
+				<p:ajax event="tabClose" listener="#{AdminAction.onTabClose}" />
+				
+				<p:tab title="Users">
+				
+					<p:toolbar style="border: none;">
+						<f:facet name="right">
+							<p:commandButton value="Add user" 
+											 icon="ui-icon-plusthick" 
+											 action="#{UserAction.createEntity}"
+											 title="Click to create new user."/>
+						</f:facet>
+					</p:toolbar>
+					
+					<p:dataTable value="#{UserAction.entityList}"
+								 id="userList-datable"
+								 var="entity"
+								 paginator="true"
+								 paginatorPosition="bottom"
+								 row="10"
+								 styleClass="paginated">
+								 
+						 <p:column headerText="User pic" style="text-align: center;" width="120">
+						 	<p:graphicImage name="images/default-user.png" width="40" height="40"/>
+						 </p:column>
+						 
+						 <p:column headerText="User Id">
+						 	<h:outputText value="#{entity.id}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Name">
+						 	<h:outputText value="#{entity.fullname}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Email">
+						 	<h:outputText value="#{entity.email}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Phone">
+						 	<h:outputText value="#{entity.contactNumber}"/>
+						 </p:column>
+						 
+						 <p:column style="width: 32px; text-align: center;">
+						 	<p:commandButton action="/user/userView" ajax="true" process="@this" icon="ui-icon-zoomin" title="View user details">
+						 		<f:setPropertyActionListener value="#{entity}" target="#{UserAction.selectedEntity}" />
+						 	</p:commandButton>
+						 </p:column>
+					
+					</p:dataTable>
+				</p:tab>
+				
+				<p:tab title="Operators">
+				
+					<p:toolbar style="border: none;">
+						<f:facet name="right">
+							<p:commandButton value="Add Operator" 
+											 icon="ui-icon-plusthick" 
+											 action="#{OperatorAction.createEntity}"
+											 title="Click to add new operator."/>
+						</f:facet>
+					</p:toolbar>
+					
+					<p:dataTable value="#{OperatorAction.entityList}"
+								 id="operatorList-datable"
+								 var="entity"
+								 paginator="true"
+								 paginatorPosition="bottom"
+								 row="10"
+								 emptyMessage="No operators enrolled."
+								 styleClass="paginated">
+								 
+						 <p:column headerText="Logo" style="text-align: center;">
+						 	<p:graphicImage name="images/default-bus.png" width="70" height="40"/>
+						 </p:column>
+						 
+						 <p:column headerText="Operator Id">
+						 	<h:outputText value="#{entity.id}"/>
+						 </p:column>
+						 
+						 <p:column headerText="From">
+						 	<h:outputText value="#{entity.name.display}"/>
+						 </p:column>
+						 
+						 <p:column style="width: 100px; text-align: center;">
+						 	<p:toolbar style="border: none;">
+						 		<p:toolbarGroup align="left">
+								 	<p:commandButton action="#{OperatorAction.viewEntity}"
+								 					 ajax="true"
+								 					 process="@this"
+								 					 icon="ui-icon-zoomin"
+								 					 title="View operator details.">
+								 		<f:setPropertyActionListener value="#{entity}" target="#{OperatorAction.selectedEntity}" />
+								 	</p:commandButton>
+							 	</p:toolbarGroup>
+						 		<p:toolbarGroup align="right">
+								 	<p:commandButton actionListener="#{OperatorAction.deleteEntity}"
+								 					 ajax="true"
+								 					 process="@this"
+								 					 icon="ui-icon-trash"
+								 					 title="Remove operator">
+								 		<f:setPropertyActionListener value="#{entity}" target="#{OperatorAction.selectedEntity}" />
+								 	</p:commandButton>
+							 	</p:toolbarGroup>
+						 	</p:toolbar>
+						 </p:column>
+						 
+					 </p:dataTable>
+				</p:tab>				
+				
+				<p:tab title="Routes">
+					<ui:include src="/admin/route/routeList.xhtml" />
+				</p:tab>
+				
+				<p:tab title="Trips">				
+				</p:tab>
+				
+				<p:tab title="Bookings">
+					<p:dataTable value="#{BookingAction.entityList}"
+								 id="bookingList-datable"
+								 var="entity"
+								 paginator="true"
+								 paginatorPosition="bottom"
+								 row="10"
+								 styleClass="paginated">
+								 
+						 <p:column headerText="Bus pic" style="text-align: center;">
+						 	<p:graphicImage name="images/default-bus.png" width="70" height="40"/>
+						 </p:column>
+						 
+						 <p:column headerText="Booking Id">
+						 	<h:outputText value="#{entity.id}"/>
+						 </p:column>
+						 
+						 <p:column headerText="From">
+						 	<h:outputText value="#{entity.from}"/>
+						 </p:column>
+						 
+						 <p:column headerText="To">
+						 	<h:outputText value="#{entity.to}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Customer">
+						 	<h:outputText value="#{entity.customer.name}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Seat No.">
+						 	<h:outputText value="#{entity.seat.seatNo}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Cabin Class">
+						 	<h:outputText value="#{entity.seat.seatClass.description}"/>
+						 </p:column>
+						 
+						 <p:column headerText="Payment">
+						 	<h:outputText value="#{entity.payment.paymentStatus.description}"/>
+						 </p:column>
+						 
+					 </p:dataTable>
+				</p:tab>			
+				
+				<p:tab title="Payments">				
+				</p:tab>
+			
+			</p:tabView>
+							
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+	
+</ui:composition>

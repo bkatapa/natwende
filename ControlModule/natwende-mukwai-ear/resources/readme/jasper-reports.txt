@@ -1,0 +1,5 @@
+To develop/preview/run jasper reports you will require the following version tools/jars
+
+1. iReport v5.6.0 (Compatible version of Jaspersoft plugin maybe used in Eclipse)
+2. Zxing v3.0 (core-3.0.0.jar and javase-3.0.0.jar)
+3. For generating reports in the server set property values of the form "skidata-parking-database-xxxxx". Refer to the system-properties.txt readme file

@@ -1,0 +1,342 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<ui:define name="content">
+			
+		<h:form styleClass="formBackground" id="breadcrumb-menuForm">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="Bookings" action="BookingManagementList"/>
+				<p:menuitem value="Booking"/>
+			</p:breadCrumb>					
+		</h:form>
+		<h:form id="newBookingForm">
+			<ui:include src="bookingHeader.xhtml" />			
+			<p:panel header="#{not empty BookingEditAction.actionMode and BookingEditAction.actionMode eq 'EDIT' ? 'Editing Booking ['.concat(BookingEditAction.bookingVO.visitorFirstName).concat(' ').concat(BookingEditAction.bookingVO.visitorSurname).concat(']') : 'Creating New Booking'}">
+				<pe:fluidGrid hGutter="20" vGutter="20" style="margin-left: 20px;">
+					<pe:fluidGridItem type="input">
+						<p:panelGrid columns="2">
+							<p:fieldset legend="Visitor Details" style="height: 350px;">
+								<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal">
+									<p:outputLabel for="booking-status" 
+												   value="Status:"
+												   rendered="#{BookingEditAction.actionMode eq 'EDIT'}"/>
+									<h:outputText id="booking-status" style="background: #eff0f2;"
+												 value="#{BookingEditAction.bookingVO.status}"
+												 rendered="#{BookingEditAction.actionMode eq 'EDIT'}"/>
+								
+									<p:outputLabel for="visitor-first-name" value="Visitor First Name:" />
+									<p:inputText id="visitor-first-name" 
+												 value="#{BookingEditAction.bookingVO.visitorFirstName}"
+												 required="true"
+												 requiredMessage="Visitor first name is missing"/>
+
+									<p:outputLabel for="visitor-last-name" value="Visitor Surname:" />
+									<p:inputText id="visitor-last-name" 
+												 value="#{BookingEditAction.bookingVO.visitorSurname}"
+												 required="true"
+												 requiredMessage="Visitor last name is missing"/>									
+
+									<p:outputLabel for="visitor-email-address" value="Visitor Email:" />
+									<p:inputText id="visitor-email-address" 
+											     value="#{BookingEditAction.bookingVO.visitorEmail}"
+											     validatorMessage="Invalid email format"
+											     required="true"
+												 requiredMessage="Email address is missing">
+										<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+									</p:inputText>
+					
+									<p:outputLabel for="visitor-company" value="Visitor Company Name:" />
+									<p:inputText id="visitor-company" 
+												 value="#{BookingEditAction.bookingVO.visitingCompany}"
+												 required="true"
+												 requiredMessage="Company name is missing"/>
+												 
+									<p:outputLabel for="visitor-phone-number" value="Visitor Phone Number:" />
+									<p:inputText id="visitor-phone-number" 
+												 value="#{BookingEditAction.bookingVO.visitorContactNumber}"												 
+												 required="false"/>
+												 
+									<p:outputLabel for="vehicle-make" value="Vehicle Make:" />
+									<p:inputText id="vehicle-make" 
+												 value="#{BookingEditAction.bookingVO.vehicleMake}"/>
+					
+									<p:outputLabel for="vehicle-registration" value="Vehicle Reg:" />
+									<p:inputText id="vehicle-registration" 
+												 value="#{BookingEditAction.bookingVO.vehicleRegistration}"/>
+								</p:panelGrid>
+								<hr style="margin-top: 10px; margin-bottom: 10px;"/>
+								<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal">
+												 
+									<p:outputLabel for="person-visiting" value="Person Being Visited:" />
+									<p:inputText id="person-visiting" 
+												 value="#{BookingEditAction.bookingVO.personVisiting}"
+												 required="true" readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+												 requiredMessage="Person Being Visited is missing"/>
+												 
+									<p:outputLabel for="person-being-visited" value="Person Visited Phone:" />
+									<p:inputText id="person-being-visited" readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+												 value="#{BookingEditAction.bookingVO.personBeingVisitedContactNumber}"												 
+												 required="false"/>								
+								</p:panelGrid>
+							</p:fieldset>
+							<p:fieldset legend="Booking Details" style="height: 350px;">
+								<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal">
+								
+									<p:outputLabel for="booking-start-date" value="Booking Start Date:" />
+									<p:calendar id="booking-start-date" widgetVar="var_BookingStartDate" disabled="#{!BookingEditAction.bookingVO.startTimeEditable}"
+												title="Click to show or hide calendar"
+												value="#{BookingEditAction.bookingVO.bookingStartDate}"
+												mindate="#{BookingEditAction.bookingVO.minDate}"
+												pattern="dd/MM/yyyy" showOn="button"
+												mask="99/99/9999"
+												required="true" readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+												requiredMessage="Booking start date is missing"
+												onblur="$('#booking-end-date').val($('#booking-start-date').val());">
+												<p:ajax process="@this, booking-start-date" update="booking-end-date, booking-duration" listener="#{BookingEditAction.defaultEndDateToStartDate}" event="dateSelect"/>												
+									</p:calendar>																	
+									
+									<p:outputLabel for="booking-start-time" value="Booking Start Time:" />
+									<!--
+									<p:calendar id="booking-start-time" maxlength="4" showOn="button" widgetVar="var_BookingStartTime"
+												title="Click to show or hide dialog"													
+												value="#{BookingEditAction.bookingVO.bookingStartDateTime}" 
+												pattern="HH:mm" 
+												timeOnly="true" size="20"
+												showButtonPanel="false"
+												label="Start Time"
+												mask="99:99" 
+												required="true" disabled="#{!BookingEditAction.bookingVO.startTimeEditable}"
+												requiredMessage="Start time is missing">
+										<p:ajax process="@this, booking-start-date, booking-start-time" listener="#{BookingEditAction.defaultEndDateToStartDate}" update="booking-end-time, booking-duration" event="dateSelect"/>
+									</p:calendar> -->
+									
+									<p:inputMask id="booking-start-time" widgetVar="var_BookingStartTime"
+												 value="#{BookingEditAction.bookingVO.bookingStartDateTime}"
+												 readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+												 mask="99:99">
+										<f:convertDateTime pattern="HH:mm" />
+										<p:ajax process="@this, booking-start-date, booking-start-time" listener="#{BookingEditAction.defaultEndDateToStartDate}" update="booking-end-time, booking-duration" event="blur"/>
+									</p:inputMask>
+												
+									<p:outputLabel for="booking-end-date" value="Booking End Date:" />
+									<p:calendar id="booking-end-date" widgetVar="var_BookingEndDate"
+												title="Click to show or hide calendar"
+												value="#{BookingEditAction.bookingVO.bookingEndDate}"
+												mindate="#{BookingEditAction.bookingVO.minDate}"
+												pattern="dd/MM/yyyy" showOn="button"
+												mask="99/99/9999"
+												required="true" readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+												requiredMessage="Booking end date is missing">
+										<p:ajax process="@this, booking-start-date, booking-start-time, booking-end-date" update="booking-duration" event="dateSelect"/>
+									</p:calendar>									
+					
+									<p:outputLabel for="booking-end-time" value="Booking End Time:" />
+									<!-- <p:calendar id="booking-end-time" style="width: 10px;" maxlength="4" showOn="button" widgetVar="var_BookingEndTime"
+												value="#{BookingEditAction.bookingVO.bookingEndDateTime}"
+												title="Click to show or hide dialog"												
+												pattern="HH:mm" 
+												timeOnly="true" size="20"
+												showButtonPanel="false"
+												label="End Time"
+												mask="99:99"
+												required="true"
+												requiredMessage="End time is missing">
+										<p:ajax process="@this, booking-start-date, booking-start-time, booking-end-date, booking-end-time" update="booking-duration" event="dateSelect"/>
+									</p:calendar> -->
+									
+									<p:inputMask id="booking-end-time" widgetVar="var_BookingEndTime"
+												 value="#{BookingEditAction.bookingVO.bookingEndDateTime}"
+												 readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}" 
+												 mask="99:99">
+										<f:convertDateTime pattern="HH:mm" />
+										<p:ajax process="@this, booking-start-date, booking-start-time, booking-end-date, booking-end-time" update="booking-duration" event="blur"/>
+									</p:inputMask>
+												
+									<p:outputLabel for="booking-duration" value="Booking Duration:" />
+									<h:outputText id="booking-duration" widgetVar="var_BookingDuration"
+												value="#{BookingEditAction.formatedBookingDuration}"/>									
+					
+									<p:outputLabel for="bay-number" value="Bay Number:" />
+									<p:inputText id="bay-number" widgetVar="var_BayNumber"
+												 value="#{BookingEditAction.bookingVO.bayNumber}"/>									
+					
+									<p:outputLabel for="bookingType" value="Booking Type:" />
+									<p:selectOneMenu id="bookingType" value="#{BookingEditAction.bookingVO.bookingTypeVO}">
+										<f:selectItems value="#{BookingTypeAction.bookingTypeVOMap}" />      
+									</p:selectOneMenu>
+									
+									<p:outputLabel for="instructions" value="Instructions:" />
+									<p:inputTextarea id="instructions" value="#{BookingEditAction.bookingVO.instructions}"
+													readonly="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+													disabled="#{not empty BookingEditAction.bookingVO.bulkBookingVO}"
+													rows="5"/>
+					
+								</p:panelGrid>
+							</p:fieldset>
+						</p:panelGrid>						
+					</pe:fluidGridItem>					
+				</pe:fluidGrid>
+				<h:panelGrid columns="2" cellspacing="5" rendered="#{BookingEditAction.actionMode eq 'CREATE'}">
+					<h:panelGrid columns="3" columnClasses="columnHeader, columnNormal">										
+						<p:selectBooleanCheckbox id="email-voucher-checkbox" value="#{BookingEditAction.emailVoucherEnabled}" ajax="true" />							
+						<p:outputLabel value="Email Voucher" for="email-voucher-checkbox" />
+						<p:tooltip for="email-voucher-checkbox" value="Tick this to have the system advise the visitor by email once this booking has been successfully reserved"/>
+					</h:panelGrid>															
+				</h:panelGrid>
+				<p:toolbar id="booking-edit-btns">
+					<f:facet name="left">
+						<h:panelGrid columns="14" cellspacing="5">
+							<p:commandButton widgetVar="jsBackBooking"
+											 ajax="true" value="Back"
+											 action="#{BookingEditAction.cancel()}" process="@this"
+											 update="newBookingForm"
+											 icon="ui-icon-arrow-1-w">
+								<p:confirm header="Warning" message="All unsaved information will be lost. Are you sure you want to proceed?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton id="checkAvailability-button" 
+                        				 	 ajax="true"
+                        				 	 process="@this, @widgetVar(var_BayNumber), @widgetVar(var_BookingStartDate), @widgetVar(var_BookingEndDate), @widgetVar(var_BookingStartTime), @widgetVar(var_BookingEndTime)" 
+                        				 	 update="@widgetVar(var_BayNumber), @widgetVar(var_BookingDuration), @widgetVar(var_BookingStartDate), @widgetVar(var_BookingEndDate), @widgetVar(var_BookingEndTime)"
+                        				 	 value="Check Availability" 
+                        				 	 rendered="#{BookingEditAction.actionMode eq 'CREATE'}"
+                        				 	 disabled="#{empty userSessionAction.userVO.parkingSiteVO}"
+                        				 	 styleClass="button" 
+                        				 	 icon="fa fa-question" 
+                        				 	 actionListener="#{BookingEditAction.checkAvailability()}"/>
+							<p:commandButton widgetVar="jsSubmitBooking"
+											 ajax="true" value="Save" 
+											 action="#{BookingEditAction.saveBooking()}"
+											 process="newBookingForm" 
+											 update="newBookingForm, @widgetVar(var_BookingTable), @widgetVar(var_EmptyBayBookingWarnForm), @widgetVar(var_BookingBayNumberClashWarnForm)"
+											 icon="ui-icon-disk" />
+							<p:commandButton widgetVar="jsCancelBooking" id="cancelBooking-btn"
+											 ajax="true" value="Cancel" 
+											 action="#{BookingEditAction.cancelBooking()}"
+											 process="@this" 
+											 update="newBookingForm, @widgetVar(var_BookingTable), @(#bookingEditMsg)"
+											 rendered="#{BookingEditAction.actionMode eq 'EDIT'}"
+											 icon="ui-icon-cancel">
+								<p:confirm header="Warning" message="Are you sure you want to cancel this booking?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        						<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        						<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    						</p:confirmDialog>
+							<p:commandButton widgetVar="jsDownloadVoucher" id="downloadVoucher-btn"
+											 ajax="false" value="Download Voucher" 
+											 process="@this" 
+											 rendered="#{BookingEditAction.actionMode eq 'EDIT'}"
+											 icon="fa fa-download" >
+								<p:fileDownload value="#{BookingEditAction.getDownloadFile()}" />
+							
+							</p:commandButton>
+							<p:commandButton widgetVar="jsEmailVoucher" id="emailVoucher-btn"
+											 ajax="true" value="Email Voucher" 
+											 action="#{BookingEditAction.emailBookingVoucher()}"
+											 process="@this" 
+											 update="newBookingForm"
+											 rendered="#{BookingEditAction.actionMode eq 'EDIT'}"
+											 icon="fa fa-mail-forward" />
+							<p:commandButton widgetVar="jsClearBookingForm" id="clearBookingForm-btn"
+											 ajax="true" value="Clear Booking" 
+											 action="#{BookingEditAction.clearBooking()}"
+											 process="@this" 
+											 update="newBookingForm"
+											 rendered="#{BookingEditAction.actionMode eq 'CREATE'}"
+											 icon="fa fa-eraser">
+								<p:confirm header="Warning" message="Are you sure you want to clear all form entries?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        						<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        						<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    						</p:confirmDialog>
+							<p:tooltip for="checkAvailability-button" value="Click to check for available parking slots" rendered="#{BookingEditAction.actionMode eq 'CREATE'}"/>   
+							<p:tooltip for="cancelBooking-btn" value="Click to cancel this booking" rendered="#{BookingEditAction.actionMode eq 'EDIT'}"/>
+							<p:tooltip for="downloadVoucher-btn" value="Click to download voucher for this booking" rendered="#{BookingEditAction.actionMode eq 'EDIT'}"/>
+							<p:tooltip for="emailVoucher-btn" value="Click to email voucher for this booking" rendered="#{BookingEditAction.actionMode eq 'EDIT'}"/>
+							<p:tooltip for="clearBookingForm-btn" value="Click to clear all form entries" rendered="#{BookingEditAction.actionMode eq 'CREATE'}"/>
+						</h:panelGrid>							
+					</f:facet>						
+				</p:toolbar>
+			</p:panel>
+		</h:form>
+		
+		<!-- Dialog to warn for empty bay booking -->
+		<p:dialog widgetVar="var_EmptyBayBookingWarnForm"
+			  				 modal="true" 
+			  				 showEffect="fade" 
+			  				 hideEffect="fade"			  				
+			  				 fitViewport="true">
+			<f:facet name="header">
+				<p:panelGrid columns="2">
+					<img src="#{SkiDataParkingUtils.baseURL.concat('/resources/images/sign-warning-icon.png')}" height="15"/>
+					<h:outputText value="#{BookingEditAction.bookingWarnTitle}" />
+				</p:panelGrid>				
+			</f:facet>		
+			<h:form id="emptyBayBookingWarnForm">
+				<p:panelGrid columns="1">
+					<h:outputText value="#{BookingEditAction.bookingWarnMessage}"/>
+					<h:outputText value="Choose OK to continue. Otherwise Cancel." style="margin-bottom: 10px;"/>
+				</p:panelGrid>
+				<hr />
+				<p:panelGrid columns="3">
+					<p:commandButton value="OK"								
+								action="#{BookingEditAction.forceSaveOnEmptyBayNumber()}" 
+								update="newBookingForm"
+								oncomplete="PF('var_EmptyBayBookingWarnForm').hide();"/>					
+					<p:commandButton value="Cancel" oncomplete="PF('var_EmptyBayBookingWarnForm').hide();"/>							
+				</p:panelGrid>									
+			</h:form>		
+		</p:dialog> 
+		
+		<!-- Dialog warn for booking bay number clashes -->
+		<p:dialog widgetVar="var_BookingBayNumberClashWarnForm"
+			  				 modal="true" 
+			  				 showEffect="fade" 
+			  				 hideEffect="fade"			  				
+			  				 fitViewport="true">
+			<f:facet name="header">
+				<p:panelGrid columns="2">
+					<img src="#{SkiDataParkingUtils.baseURL.concat('/resources/images/sign-warning-icon.png')}" height="15"/>
+					<h:outputText value="#{BookingEditAction.bookingWarnTitle}" />
+				</p:panelGrid>				
+			</f:facet>		
+			<h:form id="bookingBayNumberClashWarnForm">
+				<p:panelGrid columns="1">
+					<h:outputText value="#{BookingEditAction.bookingWarnMessage}"/>
+					<h:outputText value="Choose OK to continue. Otherwise Cancel." style="margin-bottom: 10px;"/>
+				</p:panelGrid>
+				<hr />
+				<p:panelGrid columns="3">					
+					<p:commandButton value="OK" 
+								ajax="true"
+								process="@this"								
+								action="#{BookingEditAction.forceSaveOnClashingBayNumbers()}" 
+								update="newBookingForm"
+								oncomplete="PF('var_BookingBayNumberClashWarnForm').hide();"/>
+					<p:commandButton value="Cancel" oncomplete="PF('var_BookingBayNumberClashWarnForm').hide();"/>							
+				</p:panelGrid>									
+			</h:form>		
+		</p:dialog>	
+			
+		<script type="javascript">			
+			$(document).ready(function() {    
+    			$('#booking-end-date').on('blur click change', function(e) {
+        			$('#booking-end-date').val($('#booking-start-date').val());
+    			});
+			});
+		</script>
+				
+	</ui:define>
+	
+</ui:composition>
+	

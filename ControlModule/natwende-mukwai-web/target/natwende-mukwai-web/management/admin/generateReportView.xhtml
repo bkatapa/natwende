@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+		
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="content">		
+
+		<h:form id="breadcrumb-menuForm" styleClass="formBackground">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="Report Generation (#{ReportAction.reportType.displayName})"/>
+			</p:breadCrumb>
+		</h:form>
+		<h:form id="editReportForm" styleClass="formBackground">			
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="Generate Report - #{ReportAction.reportType.displayName}"/>			
+		  		</f:facet>
+				<pe:fluidGrid hGutter="20" vGutter="20">
+					<pe:fluidGridItem type="input">
+						<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal">
+							<h:outputLabel for="reportEditPanel-parkingSiteName" value="Parking Site:" />
+							<p:inputText id="reportEditPanel-parkingSiteName" 
+								     value="#{userSessionAction.userVO.parkingSiteVO.siteName}"
+										readonly="true"/>
+						
+							<p:outputLabel for="reportEditPanel-selectedTenant" value="Tenant:" rendered="#{!request.isUserInRole('TENANT_ADMINISTRATOR')}"/>
+							<p:selectOneMenu id="reportEditPanel-selectedTenant" value="#{ReportAction.selectedTenant}" rendered="#{!request.isUserInRole('TENANT_ADMINISTRATOR')}">
+								<f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
+								<f:selectItems value="#{TenantAction.tenantVOMap}" />      
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="reportEditPanel-dateRangeType" value="Booking Dates:" rendered="#{ReportAction.reportType.getName() ne 'PARKING_BOOKING'}"/>
+							<p:selectOneRadio id="reportEditPanel-dateRangeType" value="#{ReportAction.dateRangeType}" layout="grid" columns="1" rendered="#{ReportAction.reportType.getName() ne 'PARKING_BOOKING'}">
+								<f:selectItem itemLabel="Today" itemValue="1" noSelectionOption="true" />
+								<f:selectItem itemLabel="Tomorrow" itemValue="2" noSelectionOption="true"/>
+								<f:selectItem itemLabel="Custom" itemValue="3" noSelectionOption="true" >
+								</f:selectItem>
+								<p:ajax  process="@this" 
+										update="reportEditPanel-startDate, reportEditPanel-startTime, reportEditPanel-endDate, reportEditPanel-endTime"/>
+							</p:selectOneRadio>
+							
+							<p:outputLabel for="reportEditPanel-startDate" value="Start Date:" />
+							<p:calendar id="reportEditPanel-startDate" widgetVar="var_ReportEditPanelStartDate"
+										title="Click to show or hide calendar"
+										value="#{ReportAction.startDate}"
+										pattern="dd/MM/yyyy" showOn="button"
+										required="true"
+										requiredMessage="Start date is missing"
+										mask="99/99/9999" disabled="#{ReportAction.dateRangeType ne '3'}">
+								<p:ajax process="@this, reportEditPanel-startDate" listener="#{ReportAction.defaultEndDateToStartDate}" update="reportEditPanel-endDate" event="dateSelect"/>
+							</p:calendar>
+							
+							<p:outputLabel for="reportEditPanel-startTime" value="Start Time:" />																	
+							<p:inputMask id="reportEditPanel-startTime" widgetVar="var_ReportEditPanelStartTime"
+										value="#{ReportAction.startTime}" 
+										mask="99:99" disabled="#{ReportAction.dateRangeType ne '3'}"
+										required="true" 
+										requiredMessage="Start time is missing">
+								<f:convertDateTime pattern="HH:mm" />
+								<p:ajax process="@this, reportEditPanel-startTime" listener="#{ReportAction.defaultEndDateToStartDate}" update="reportEditPanel-endTime" event="blur"/>
+							</p:inputMask>
+							
+							<p:outputLabel for="reportEditPanel-endDate" value="End Date:" />
+							<p:calendar id="reportEditPanel-endDate" widgetVar="var_ReportEditPanelEndDate"
+										title="Click to show or hide calendar"
+										value="#{ReportAction.endDate}"
+										pattern="dd/MM/yyyy" showOn="button"
+										required="true"
+										requiredMessage="End date is missing"
+										mask="99/99/9999" disabled="#{ReportAction.dateRangeType ne '3'}">
+							</p:calendar>
+							
+							<p:outputLabel for="reportEditPanel-endTime" value="End Time:" />																	
+							<p:inputMask id="reportEditPanel-endTime" widgetVar="var_ReportEditPanelEndTime"
+										value="#{ReportAction.endTime}" 
+										mask="99:99"
+										required="true" disabled="#{ReportAction.dateRangeType ne '3'}"
+										requiredMessage="End time is missing">
+								<f:convertDateTime pattern="HH:mm" />								
+							</p:inputMask>	
+							
+						</p:panelGrid>
+					</pe:fluidGridItem>
+					</pe:fluidGrid>		
+				<p:toolbar>
+					<f:facet name="left">
+						<p:panelGrid columns="2" columnClasses="alignBottom">
+							<p:commandButton widgetVar="jsDownloadVoucher" id="downloadVoucher-btn"
+											 ajax="false" value="Generate And Download Report" 
+											 icon="fa fa-download" >
+								<p:fileDownload value="#{ReportAction.getDownloadFile()}" />
+							
+							</p:commandButton>
+						</p:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

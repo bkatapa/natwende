@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" template="/layout/mainTemplate.xhtml" xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:o="http://omnifaces.org/ui">
+    <o:importConstants type="com.adaptris.skidata.parking.types.PagePath"/>
+    <ui:define name="content">
+        <h:form styleClass="formBackground">
+            <p:breadCrumb>
+                <p:menuitem value="Home" action="Home" />
+                <p:menuitem value="Profile" />
+            </p:breadCrumb>
+        </h:form>
+        <p:panel header="Profile">
+            <h:form id="profileAdminForm" styleClass="formBackground">
+                <pe:fluidGrid hGutter="20" vGutter="20" widgetVar="var_UserFluidGrid">
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-firstname" value="First Name" />
+                        </div>
+                        <p:inputText id="user-firstname" widgetVar="var_UserFirstname"
+                        			value="#{UserAction.userToUpdate.firstname}" disabled="#{UserAction.editMode == false}"/>
+                        <p:message for="user-firstname" style="color:red" />
+                    </pe:fluidGridItem>
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-lastname" value="Last Name" />
+                        </div>
+                        <p:inputText id="user-lastname" widgetVar="var_UserLastname"
+                        			value="#{UserAction.userToUpdate.lastname}" disabled="#{UserAction.editMode == false}"/>
+                        <p:message for="user-lastname" style="color:red" />
+                    </pe:fluidGridItem>
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-username" value="Username" />
+                        </div>
+                        <p:inputText id="user-username" widgetVar="var_Username"
+                        			value="#{UserAction.userToUpdate.username}" disabled="#{UserAction.editMode == false}"/>
+                        <p:message for="user-username" style="color:red" />
+                    </pe:fluidGridItem>
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-email" value="Email" />
+                        </div>
+                        <p:inputText id="user-email" widgetVar="var_Email"
+                        			value="#{UserAction.userToUpdate.email}" disabled="#{UserAction.editMode == false}"/>
+                        <p:message for="user-email" style="color:red" />
+                    </pe:fluidGridItem>
+                    <!-- 
+                    <pe:fluidGridItem type="input" rendered="#{!UserAction.editPassword and UserAction.editMode}">
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-updateUserPassword" value="Password" />
+                        </div>
+                        
+                        <p:commandButton id="user-updateUserPassword" ajax="true" value="Change Password" styleClass="button" icon="ui-icon-key"
+                                         action="#{UserAction.editingPassword()}" update="profileAdminForm"/>
+                        
+                        
+                    </pe:fluidGridItem> -->
+                    <pe:fluidGridItem type="input" rendered="#{UserAction.editPassword and UserAction.editMode}" id="user-passwd-grid-item">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-passwd" value="Password" />
+                        </div>
+                        <p:password id="user-passwd" value="#{UserAction.userToUpdate.passwd}" feedback="true" label="New Password" match="user-confirmPasswd" validatorMessage="Passwords must match" autocomplete="false" required="true" requiredMessage="Password must be entered"/>
+                        <p:message for="user-passwd" style="color:red" />
+                        <div class="fluidLabel">
+                            <h:outputLabel for="user-confirmPasswd" value="Confirm Password" />
+                        </div>
+                        <p:password id="user-confirmPasswd" value="#{UserAction.userToUpdate.passwd}" label="Confirm Password" autocomplete="false"/>
+                        <p:message for="user-confirmPasswd" style="color:red" />
+                    </pe:fluidGridItem>
+                </pe:fluidGrid>
+                <p:panelGrid columns="2" columnClasses="alignBottom" rendered="#{UserAction.editMode == true}">                    
+                    <p:menuButton value="Password" icon="ui-icon-key">
+        				<p:menuitem value="Change" 
+        							actionListener="#{UserAction.editingPassword()}" 
+        							process="@this, @widgetVar(var_UserFirstname), @widgetVar(var_UserLastname), @widgetVar(var_Username), @widgetVar(var_Email)"
+        							update="profileAdminForm" icon="ui-icon-arrowrefresh-1-w" />
+        				<p:menuitem value="Don't Change" 
+        							actionListener="#{UserAction.dontEditPassword()}" 
+        							process="@this, @widgetVar(var_UserFirstname), @widgetVar(var_UserLastname), @widgetVar(var_Username), @widgetVar(var_Email)"
+        							update="profileAdminForm" icon="ui-icon-close" />        
+    				</p:menuButton>
+    				<p:commandButton id="updateUser" 
+                    				 ajax="true" 
+                    				 value="Update" 
+                    				 styleClass="button" 
+                    				 icon="ui-icon-check" 
+                    				 actionListener="#{UserAction.update()}"
+                    				 process="profileAdminForm" 
+                    				 update="profileAdminForm"/>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

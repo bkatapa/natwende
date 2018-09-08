@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"	
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui">
+	
+	<p:messages autoUpdate="true"/>
+	
+	<p:panel header="Search Filters" style="margin-bottom:20px;" id="validation-provider-search-panel" styleClass="validationProviderSearchPanel">		
+		<pe:fluidGrid hGutter="20" vGutter="20" id="validation-provider-grid-search">
+			<pe:fluidGridItem type="input" id="validation-provider-search-panel-article-number">
+				<div class="fluidLabel">
+					<p:outputLabel for="validation-provider-search-number" value="Validation Provider Number" />
+				</div>
+				<p:inputText id="validation-provider-search-number" value="#{ParkingSiteValidationProviderAction.searchVO.validationProviderNumber}" />
+				<p:message for="validation-provider-search-number" style="color:red" />
+			</pe:fluidGridItem>
+			<pe:fluidGridItem type="input" id="validation-provider-search-panel-description">
+				<div class="fluidLabel">
+					<p:outputLabel for="validation-provider-search-description" value="Description" />
+				</div>
+				<p:inputText id="validation-provider-search-description" value="#{ParkingSiteValidationProviderAction.searchVO.validationProviderDescription}" />
+				<p:message for="validation-provider-search-description" style="color:red" />
+			</pe:fluidGridItem>
+			<pe:fluidGridItem type="input" id="validation-provider-search-panel-status">
+				<div class="fluidLabel">
+					<p:outputLabel for="validation-provider-search-status" value="Status" />
+				</div>
+				<p:selectOneMenu id="validation-provider-search-status"
+							 	value="#{ParkingSiteValidationProviderAction.searchVO.status}">
+					<f:selectItem itemLabel="All" itemValue="#{null}" />
+					<f:selectItems value="#{listHelper.validationProviderStatusMap}" />
+					<p:ajax process="@(.validationProviderSearchPanel)" update="@(.parkingSiteValidationProviderTable)"/>
+				</p:selectOneMenu>
+				<p:message for="validation-provider-search-status" style="color:red" />
+			</pe:fluidGridItem>
+		</pe:fluidGrid>
+		<p:panel style="text-align: left; border: 0px;">
+			<p:commandButton id="searchValidationProviderBtn" ajax="true" value="Search"
+							action="#{ParkingSiteValidationProviderAction.refresh()}" update="@(.parkingSiteValidationProviderTable)"
+							styleClass="button" icon="ui-icon-search" />
+			<p:commandButton id="reset" ajax="true" value="Reset"
+							styleClass="button"
+							style="margin-left: 10px;"
+							action="#{ParkingSiteValidationProviderAction.searchVO.resetFilters()}"
+							icon="ui-icon-close"
+							process="@(.validationProviderSearchPanel)"
+							update="@(.validationProviderSearchPanel), @(.parkingSiteValidationProviderTable)" />
+		</p:panel>	
+	</p:panel>
+	
+    <p:toolbar>
+		<f:facet name="left">
+			<p:commandButton value="New ValidationProvider"
+					 ajax="false"
+					 action="#{ParkingSiteValidationProviderAction.createParkingSiteValidationProvider()}"
+					 update="@widgetVar(var_NewValidationProviderParkingsite)"
+					 oncomplete="PF('var_NewValidationProviderParkingsite').show();"
+					 icon="ui-icon-plus" />
+		</f:facet>
+	</p:toolbar>
+
+	<p:dataTable id="parkingSiteValidationProvider" widgetVar="var_parkingSiteValidationProvider" styleClass="parkingSiteValidationProviderTable"
+		     value="#{ParkingSiteValidationProviderAction.entityList}"		
+		     var="entityRow" rowKey="#{entityRow.id}" paginator="true"
+		     paginatorPosition="bottom" rows="10" style="margin-top: 10px;"
+		     lazy="true" resizableColumns="true"
+		     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+		     rowsPerPageTemplate="10,20,50,100,250,500,1000">		
+
+		<p:column headerText="ValidationProvider Number">
+			<h:outputText
+				value="#{entityRow.validationProviderNumber}" />
+		</p:column>
+
+		<p:column headerText="ValidationProvider Description">
+			<h:outputText value="#{entityRow.validationProviderDescription}" />
+		</p:column>
+		
+		<p:column width="150">
+			<h:outputText value="#{entityRow.status.display}" />
+		</p:column>
+
+		<p:column headerText="Actions"
+			  style="text-align: center; width:120pt;">			
+			
+			<p:commandButton value="Edit" style="margin-left: 10px;"
+					 action="#{ParkingSiteValidationProviderAction.showSelectedEntity(entityRow)}" icon="ui-icon-pencil"
+					 rendered="#{entityRow.status ne 'INACTIVE'}"
+					 styleClass="rowButton" />
+			
+			<p:commandButton value="De-activate" 
+					style="margin-left: 10px;"
+					rendered="#{entityRow.status ne 'INACTIVE'}"
+					action="#{ParkingSiteValidationProviderAction.deactivate(entityRow)}"
+					icon="ui-icon-cancel"
+					update="parkingSiteValidationProvider"
+					styleClass="rowButton">
+				<p:confirm header="#{entityRow.validationProviderNumber}" message="Are you sure you want to disable Validation Provider?"/>	
+			</p:commandButton>
+			
+			<p:commandButton value="Activate" style="margin-left: 10px;"
+					 icon="ui-icon-check"
+					 rendered="#{entityRow.status eq 'INACTIVE'}"
+					 actionListener="#{ParkingSiteValidationProviderAction.activate(entityRow)}"
+					 update="parkingSiteValidationProvider"/>			
+		</p:column>
+
+	</p:dataTable>
+
+</ui:composition>
+
+<!--
+			onclick="PF('var_disableValidationProviderConfirm').show()"
+			<p:confirmDialog
+				message="Are you sure you want to disable Validation Provider #{entityRow.validationProviderNumber} - #{entityRow.validationProviderDescription}?"
+				header="Confirm delinking of tenant #{entityRow.validationProviderNumber} - #{entityRow.validationProviderDescription}"
+				showEffect="fade" widgetVar="var_disableValidationProviderConfirm">
+				<p:commandButton title="GDelYesButton" value="Yes"
+						 action="#{ParkingSiteValidationProviderAction.deactivate(entityRow)}"
+						 oncomplete="PF('var_disableValidationProviderConfirm').hide()" update="@form" />
+				<p:commandButton title="GDelNoButton" value="No"
+						 oncomplete="PF('var_disableValidationProviderConfirm').hide()" />
+			</p:confirmDialog>
+			-->

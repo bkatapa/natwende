@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"	
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<f:loadBundle basename="version" var="applicationVersion" />
+	<ui:param name="appVersion" value="#{applicationVersion.version}" />
+	
+	<div id="foot_space" style="height: 125px;"></div>
+
+	<div id="footer" style="color: #{themeSessionAction.parkingOperatorSettingsMap['FOOTER_COLOR_CODE']};">
+		<div class="footerDiv">
+			<table>
+				<tr>
+					<td>
+						<div id="natwende-logo" style="width: 350px; height: 59px; background: url(#{resource['images:natwende/logo_natwende.png']}) no-repeat" />
+					</td>
+					<td>
+						<div>
+							<b>T: +260 11 221201</b> 
+						</div>
+						<div>
+							<b>E: </b><a href="mailto:info@natwende.com">info@natwende.com</a>
+						</div>
+						<div>
+							<b><a href="http://natwende.com" target="_natwende">www.natwende.com</a></b>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div style="float: right;">
+			<table style="width: 300px;">
+				<tr>
+					<td style="vertical-align: bottom;">
+						<div>
+							<small style="padding-right: 10px">Natwende Mukwai Portal (#{ApplicationBean.applicationProperties.get('version')} - #{ApplicationBean.applicationProperties.get('buildTime')})</small>							
+						</div>
+					</td>
+					<td>
+						<div id="natwende-logo" style="width: 50px; height: 59px; background: url(#{resource['images:natwende-2.png']}) no-repeat" />
+					</td>					
+				</tr>
+			</table>
+		</div>
+		<c:set var="logoLocation" value="#{NatwendeUtils.baseURL.concat('/resources/images/natwende/natwende-2.png')}" />
+		<div style="text-align: center; vertical-align: bottom; position: absolute; top: 45px; left: 48%;">
+			<table style="width: 150px;">
+				<tr>
+					<td style="vertical-align: bottom;">&copy; 2018 Natwende Mukwai</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</ui:composition>

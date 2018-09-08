@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <p:dialog id="branchUserBranchDialog" header="Link Users" widgetVar="jsBranchUserBranchDialog" modal="true" fitViewport="true" resizable="false">
+        <h:form id="branchUserBranchForm" enctype="multipart/form-data">        
+            <p:growl id="msgs" showDetail="true" autoUpdate="true"/>
+            <p:panel style="margin-top: 10px;" header="Filter" id="branchUserBranchDialogSearchPanel">
+                <pe:fluidGrid hGutter="20" vGutter="20">
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <p:outputLabel for="unlinkedUserSearch-firstname" value="First Name" />
+                        </div>
+                        <p:inputText id="unlinkedUserSearch-firstname" value="#{UserBranchLinkAction.unlinkedUserBranchLinkSearchVO.userFirstname}" />
+                        <p:message for="unlinkedUserSearch-firstname" style="color:red" />
+                    </pe:fluidGridItem>
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <p:outputLabel for="unlinkedUserSearch-lastname" value="Last Name" />
+                        </div>
+                        <p:inputText id="unlinkedUserSearch-lastname" value="#{UserBranchLinkAction.unlinkedUserBranchLinkSearchVO.userLastname}" />
+                        <p:message for="unlinkedUserSearch-lastname" style="color:red" />
+                    </pe:fluidGridItem>
+                    <pe:fluidGridItem type="input">
+                        <div class="fluidLabel">
+                            <h:outputLabel for="unlinkedUserSearch-username" value="Username" />
+                        </div>
+                        <p:inputText id="unlinkedUserSearch-username" value="#{UserBranchLinkAction.unlinkedUserBranchLinkSearchVO.userUsername}" />
+                        <p:message for="unlinkedUserSearch-username" style="color:red" />
+                    </pe:fluidGridItem>
+                </pe:fluidGrid>
+                <p:panelGrid columns="2" columnClasses="alignBottom">
+                    <p:commandButton id="search" ajax="true" value="Search" update="userTable" styleClass="button" icon="ui-icon-search" action="#{UserBranchLinkAction.searchUnlinked()}"/>
+                    <p:commandButton id="reset" ajax="true" value="Reset" styleClass="normalButton"
+                                     icon="ui-icon-close" update="userTable branchUserBranchDialogSearchPanel" action="#{UserBranchLinkAction.resetUnlinked()}"/>
+                </p:panelGrid>
+            </p:panel>
+            <p:dataTable id="userTable" value="#{UserBranchLinkAction.getUnlinkedListFromFacade()}" var="userBranchLink" 
+                         paginator="true" rows="10" rowKey="#{userBranchLink.id}"
+                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         rowsPerPageTemplate="10,20,50"
+                         resizableColumns="true">
+                <f:facet name="header" >
+                </f:facet>
+                <p:column style="width:20px">
+                    <p:selectBooleanCheckbox value="#{userBranchLink.selected}" />
+                </p:column>
+                <p:column headerText="Full Name">
+                    <h:outputText value="#{userBranchLink.user.fullname}" />
+                </p:column>
+                <p:column headerText="Username">
+                    <h:outputText value="#{userBranchLink.user.username}" />
+                </p:column>
+                <p:column headerText="Email">
+                    <h:outputText value="#{userBranchLink.user.email}" />
+                </p:column>
+            </p:dataTable>
+            <p:panel style="text-align: right; border: 0px; margin-top: 10px;">
+                <p:commandButton id="linkSelectedBranch" ajax="true" value="Link Selected" styleClass="button" icon="ui-icon-link" action="#{UserBranchLinkAction.addSelectedUserBranchLink()}" oncomplete="PF('jsBranchUserBranchDialog').hide();" update=":branchViewAdminAccordian:branchViewUserAdminForm:userTable"/>
+                <p:commandButton id="cancelLinkSelectedBranch" ajax="true" value="Cancel" styleClass="button" icon="ui-icon-close" oncomplete="PF('jsBranchUserBranchDialog').hide();"/>
+            </p:panel>
+        </h:form>
+    </p:dialog>
+</ui:composition>

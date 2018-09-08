@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>natwende-mukwai</artifactId>
+        <groupId>com.mweka.natwende</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>natwende-mukwai-ejb</artifactId>
+    <version>${natwende.mukwai.version}</version>
+    <packaging>ejb</packaging>
+
+    <name>natwende-mukwai-ejb</name>
+
+    <properties>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>natwende-mukwai-datamodel</artifactId>
+            <version>${natwende.mukwai.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>4.2.6.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>natwende-mukwai-client</artifactId>
+            <version>${natwende.mukwai.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.3</version>
+        </dependency> -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-lang3</artifactId>
+    		<version>3.4</version>
+		</dependency>        
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+		<dependency>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-collections4</artifactId>
+    		<version>4.1</version>
+		</dependency>        
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-ejb3</artifactId>
+            <version>7.1.2.Final</version>
+            <scope>provided</scope>
+        </dependency>        
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <version>5.1.2.FINAL</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+		<dependency>
+    		<groupId>joda-time</groupId>
+    		<artifactId>joda-time</artifactId>
+    		<version>2.9.4</version>    		
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
+		<dependency>
+    		<groupId>org.apache.velocity</groupId>
+    		<artifactId>velocity</artifactId>
+    		<version>1.7</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity-tools -->
+		<dependency>
+    		<groupId>org.apache.velocity</groupId>
+    		<artifactId>velocity-tools</artifactId>
+    		<version>2.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/uk.com.robust-it/cloning -->
+		<dependency>
+    		<groupId>uk.com.robust-it</groupId>
+    		<artifactId>cloning</artifactId>
+    		<version>1.9.3</version>
+		</dependency>		
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                    <archive>
+                        <manifestEntries>
+                            <Dependencies>org.infinispan export</Dependencies>
+                            <mode>development</mode>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <version>${project.version}</version>
+                        </manifestEntries> 
+                    </archive>
+                </configuration>
+            </plugin>           
+        </plugins>
+    </build>
+</project>

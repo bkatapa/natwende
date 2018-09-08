@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="content">
+		<h:form styleClass="formBackground">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="Company" />
+			</p:breadCrumb>
+		</h:form>
+		
+		<h:form id="enitySearchForm" styleClass="formBackground">
+			<p:messages severity="error" autoUpdate="true"/>
+			<p:growl showDetail="true" autoUpdate="true"/>
+						
+			<p:panel header="Companies" id="entitySearchPanel" >
+                <p:panel style="margin-top: 10px;" header="Filter">
+                    <pe:fluidGrid hGutter="20" vGutter="20">
+                        <pe:fluidGridItem type="input">
+                            <div class="fluidLabel">
+                                <p:outputLabel for="entitySearchPanel-name" value="Name" />
+                            </div>
+                            <p:inputText id="entitySearchPanel-name" value="#{SupportCompanyAction.searchVO.name}" />
+                            <p:message for="entitySearchPanel-name" style="color:red" />
+                        </pe:fluidGridItem>
+                        
+                        <pe:fluidGridItem type="input">
+                            <div class="fluidLabel">
+                                <p:outputLabel for="entitySearchPanel-code" value="Code" />
+                            </div>
+                            <p:inputText id="entitySearchPanel-code" value="#{SupportCompanyAction.searchVO.code}" />
+                            <p:message for="entitySearchPanel-code" style="color:red" />
+                        </pe:fluidGridItem>
+                        
+                        <pe:fluidGridItem type="input">
+                            <div class="fluidLabel">
+                                <p:outputLabel for="entitySearchPanel-hubCode" value="Hub Code" />
+                            </div>
+                            <p:inputText id="entitySearchPanel-hubCode" value="#{SupportCompanyAction.searchVO.hubCode}" />
+                            <p:message for="entitySearchPanel-hubCode" style="color:red" />
+                        </pe:fluidGridItem>                        
+                        
+                    </pe:fluidGrid>
+                    
+                    <p:panelGrid columns="2" columnClasses="alignBottom">
+                        <p:commandButton id="search" ajax="true" value="Search" action="#{SupportCompanyAction.search}" update="entityTable" styleClass="button" icon="ui-icon-search"/>
+                        <p:commandButton id="reset" ajax="true" value="Reset" styleClass="normalButton" action="#{SupportCompanyAction.reset}"
+                                         icon="ui-icon-close" update="entityTable, entitySearchPanel"/>
+                    </p:panelGrid>
+                </p:panel>
+                
+ 				<p:dataTable id="entityTable" value="#{SupportCompanyAction.entityList}" var="entityRow" 
+                             rowKey="#{entityRow.id}" 
+                             paginator="true" rows="10" lazy="true"
+                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                             rowsPerPageTemplate="10,20,50"
+                             resizableColumns="true" style="margin-top: 10px;">
+                    
+                    <p:column headerText="Code">
+                        <h:outputText value="#{entityRow.code}" />
+                    </p:column>
+                    
+                    <p:column headerText="Name">
+                        <h:outputText value="#{entityRow.name}" />
+                    </p:column>
+                    
+                    <p:column headerText="Hub Code">
+                        <h:outputText value="#{entityRow.hubCode}" />
+                    </p:column>
+                    
+                    <p:column headerText="Date Created">
+                        <h:outputText value="#{entityRow.insertDate}">
+                        	<f:convertDateTime pattern="#{formats.dateFormat}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Date Modified">
+                        <h:outputText value="#{entityRow.updateDate}">
+                        	<f:convertDateTime pattern="#{formats.dateFormat}"/>
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Actions" width ="100" style="text-align: center;">
+                        <p:commandButton value="View" action="#{SupportCompanyAction.showSelectedEntity(entityRow)}" icon="ui-icon-document" styleClass="rowButton" ajax="false" />
+                    </p:column>
+                </p:dataTable>                
+             </p:panel>
+		</h:form>		
+	</ui:define>
+</ui:composition>

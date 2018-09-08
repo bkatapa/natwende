@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+
+	<o:importConstants type="com.mweka.natwende.types.OperatorName" />
+
+	<ui:define name="content">
+
+		<h:form id="operatorView-form" styleClass="formBackground">
+		
+			<p:outputPanel rendered="#{OperatorAction.newOperator}">			
+				<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info,error" />
+				<p:panel header="Enroll Operator">
+				
+					<p:toolbar style="margin-top: 5px; border: none;">
+						<p:toolbarGroup align="left">
+							<p:button value="Back"
+									  outcome="/admin/adminPanel"
+									  icon="ui-icon-circle-arrow-w" />
+						</p:toolbarGroup>
+						<p:toolbarGroup align="right">
+							<p:commandButton value="Save"
+											 ajax="true"
+									  		 actionListener="#{OperatorAction.saveEntity}"
+									  		 process="@this, operatorView-form"
+									  		 update="operatorView-form, busList-form"
+									  		 icon="ui-icon-disk" />
+						</p:toolbarGroup>
+					</p:toolbar>
+				
+					<p:panelGrid columns="1" layout="grid" id="operatorView-grid" style="margin-top: 10px;">						
+						<p:selectOneMenu id="choose-operatorName" 
+										 value="#{OperatorAction.selectedEntity.name}" 
+										 effect="fade" 
+										 var="operatorName"
+										 filter="true"
+										 filterMatchMode="contains">
+							<f:selectItem itemLabel="Select operator name" itemValue="" />
+								<f:selectItems value="#{OperatorAction.allAvailableOperatorNames}" 
+											   var="selectedOperatorName" 
+											   itemLabel="#{selectedOperatorName.display}" itemValue="#{selectedOperatorName}"/>
+									<p:column>
+										<h:outputText value="#{operatorName.display}" />
+									</p:column>
+									<p:ajax event="change" />
+						</p:selectOneMenu>
+					</p:panelGrid>		
+										
+				</p:panel>
+			</p:outputPanel>
+			
+		</h:form>
+		
+		<h:form id="busList-form" styleClass="formBackground">
+			<p:outputPanel rendered="#{not OperatorAction.newOperator}">
+				<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info,error" />
+				<p:panel header="#{OperatorAction.selectedEntity.name.display}">
+				
+					<p:accordionPanel>
+					
+						<p:tab title="Buses">
+							<p:toolbar style="margin-top: 5px; border: none;">
+								<p:toolbarGroup align="left">
+									<p:button value="Back"
+											  outcome="/admin/adminPanel"
+									  		  icon="ui-icon-circle-arrow-w" />
+								</p:toolbarGroup>								
+								<p:toolbarGroup align="right">
+									<p:commandButton value="Add bus"
+											  		 actionListener="#{BusAction.createEntity}"
+											  		 process="@this"
+											  		 update="busList-form"
+											  		 oncomplete="PF('var_NewBus').show()"
+											  		 icon="ui-icon-plusthick" />
+								</p:toolbarGroup>
+							</p:toolbar>
+							
+							<p:panel id="newBus-panel" header="New bus" rendered="#{BusAction.enableNewBusPanel}">
+							
+								<p:panelGrid id="newBus-grid" columns="3" columnClasses="columnHeader, columnNormal, columnNormal" styleClass="v-align-top">
+									<p:outputLabel for="bus-reg" value="Plate reg number:" />
+									<p:inputText id="bus-reg" value="#{BusAction.selectedEntity.reg}" />
+									<p:message for="bus-reg" style="color:red" />
+									
+									<p:outputLabel for="bus-capacity" value="Capacity:" />
+									<p:inputText id="bus-capacity" value="#{BusAction.selectedEntity.capacity}" />
+									<p:message for="bus-capacity" style="color:red" />
+								</p:panelGrid>
+								
+								<p:toolbar style="margin-top: 5px; border: none;">								
+									<p:toolbarGroup align="left">
+										<p:commandButton value="Cancel"
+											  		 	 process="@this"
+											  		 	 update="busList-form"
+											  		 	 oncomplete="PF('var_NewBus').hide()"
+											  		 	 icon="ui-icon-close">
+								  		 	 <f:setPropertyActionListener value="false" target="#{BusAction.enableNewBusPanel}" />
+							  		 	 </p:commandButton>
+									</p:toolbarGroup>
+									
+									<p:toolbarGroup align="right">
+										<p:commandButton value="Save"
+														 process="@this, newBus-panel"
+														 update="@(.busListDataTable-class(busList-dataTable)), newBus-panel"
+											  			 actionListener="#{BusAction.saveEntity}"
+									  		  			 icon="ui-icon-disk" />				  		  			 
+									</p:toolbarGroup>									
+								</p:toolbar>
+							</p:panel>
+							
+							<p:spotlight target="newBus-panel" widgetVar="var_NewBus" />
+							
+							<!-- Buses data table -->
+							<ui:include src="/admin/operator/operatorDataTables/busListDT.xhtml" />
+						</p:tab>
+						
+						<p:tab title="Routes">
+							<p:toolbar style="margin-top: 5px; border: none;">
+								<p:toolbarGroup align="left">
+									<p:commandButton value="Back"
+											  		 icon="ui-icon-circle-arrow-w" />
+								</p:toolbarGroup>
+								<p:toolbarGroup align="right">
+									<p:commandButton value="Add route"
+											  		 action="#{OperatorRouteLinkAction.createEntity}"
+											  		 process="@this"
+											  		 icon="ui-icon-plusthick" />
+								</p:toolbarGroup>
+							</p:toolbar>
+							
+							<!-- Routes data table -->
+							<ui:include src="/admin/operator/operatorDataTables/routeListDT.xhtml" />
+						</p:tab>
+						
+					</p:accordionPanel>
+					
+				</p:panel>
+			</p:outputPanel>
+		</h:form>
+		
+		<style>
+    		.v-align-top td {
+    			vertical-align: top;
+			}
+    	</style>
+		
+	</ui:define>
+	
+</ui:composition>

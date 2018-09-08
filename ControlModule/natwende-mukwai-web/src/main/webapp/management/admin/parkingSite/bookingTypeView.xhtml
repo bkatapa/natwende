@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+               >
+
+	<ui:define name="content">		
+
+		<h:form id="breadcrumb-menuForm" styleClass="formBackground">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="BookingTypes" action="BookingTypeManagementList"/>
+				<p:menuitem value="BookingType"/>
+			</p:breadCrumb>
+		</h:form>
+		<h:form id="editBookingTypeForm" styleClass="formBackground">			
+			<p:panel>
+				<f:facet name="header">
+					<h:outputText value="View Booking Type"/>			
+		  		</f:facet>
+				<pe:fluidGrid hGutter="20" vGutter="20">
+					<pe:fluidGridItem type="input">
+						<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal">
+							<h:outputLabel for="bookingTypeEditPanel-tenantName" value="Tenant Name:" />
+							<p:inputText id="bookingTypeEditPanel-tenantName" 
+										value="#{empty BookingTypeAction.selectedEntity.tenantVO ? TenantAction.selectedEntity.name : BookingTypeAction.selectedEntity.tenantVO.name}"
+										readonly="true"/>
+						
+							<p:outputLabel for="bookingTypeEditPanel-name" value="Booking Type Name" />
+							<p:inputText id="bookingTypeEditPanel-name" 
+							 			value="#{BookingTypeAction.selectedEntity.name}"
+							 			required="true" requiredMessage="Booking type name is missing"/>
+					
+							
+							<p:outputLabel for="bookingTypeEditPanel-serialNumber" value="Current Serial Number" />
+							<p:inputText id="bookingTypeEditPanel-serialNumber" 
+							 			value="#{BookingTypeAction.selectedEntity.serialNumber}"
+							 			required="true" requiredMessage="Serial number is missing"/>
+					
+							<p:outputLabel for="bookingTypeEditPanel-parkingSiteArticleVO" value="Article" />
+							<p:selectOneMenu id="bookingTypeEditPanel-parkingSiteArticleVO" value="#{BookingTypeAction.selectedEntity.parkingSiteArticleVO}">
+								<f:selectItems value="#{BookingTypeAction.parkingSiteArticleVOMap}" />      
+							</p:selectOneMenu>	
+							<p:outputLabel for="bookingTypeEditPanel-parkingSiteValidationProviderVO" value="Validation Provider" />
+							<p:selectOneMenu id="bookingTypeEditPanel-parkingSiteValidationProviderVO" value="#{BookingTypeAction.selectedEntity.parkingSiteValidationProviderVO}">
+								<f:selectItems value="#{BookingTypeAction.parkingSiteValidationProviderVOMap}" />      
+							</p:selectOneMenu>	
+							
+							
+						</p:panelGrid>
+					</pe:fluidGridItem>
+					</pe:fluidGrid>		
+				<p:toolbar>
+					<f:facet name="left">
+						<p:panelGrid columns="2" columnClasses="alignBottom">
+							<p:commandButton id="cancelBookingType-button" 
+						 					ajax="true" 
+						 					value="Back"
+											action="#{BookingTypeAction.getListPage()}"						 			
+						 					process="@this"
+						 					styleClass="button" 
+						 					icon="ui-icon-arrowthick-1-w" />
+							<p:commandButton id="saveBookingType-button"
+						 					ajax="true"
+						 					value="Save"
+											actionListener="#{BookingTypeAction.update()}"
+						 					update="editBookingTypeForm"
+						 					styleClass="button" 
+						 					icon="ui-icon-disk" />
+						</p:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+	<p:dialog id="uploadSeat-dlg"
+			  widgetVar="var_UploadSeatDlg"
+			  showEffect="fade"
+			  closable="true"
+			  header="Upload seats for bus #{BusAction.selectedEntity.reg}"
+			  modal="true"
+			  rendered="#{not empty request.userPrincipal}">
+			  
+		<h:form id="uploadSeat-form" styleClass="uploadSeat-formClass" enctype="multipart/form-data">
+			<p:messages showSummary="true" autoUpdate="true" severity="info,error" />
+			<p:toolbar style="margin-bottom: 5px; border: none;">
+				<p:toolbarGroup align="left">
+					<p:fileUpload value="#{SeatAction.file}"
+								  fileUploadListener="#{seatAction.fileListener}"
+								  update="uploadSeat-form"
+								  mode="simple"
+								  skinSimple="true"/>
+				</p:toolbarGroup>
+				
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Import"
+									 ajax="false"
+									 type="submit"
+									 process="@this"
+									 update="@(.busView-formClass(busView-form))"
+									 actionListener="#{SeatAction.importSeats}"
+									 icon="ui-icon-arrowthicktop-1-n"
+									 title="Import seats from file."/>
+				</p:toolbarGroup>
+			</p:toolbar>
+		</h:form>
+		
+	</p:dialog>
+
+</ui:composition>

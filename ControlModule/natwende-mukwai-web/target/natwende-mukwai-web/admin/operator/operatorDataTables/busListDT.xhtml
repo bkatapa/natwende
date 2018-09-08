@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"				
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+				
+	<p:dataTable value="#{BusAction.entityList}"
+					   id="busList-dataTable"
+					   var="entity"
+					   paginator="true"
+					   paginatorPosition="bottom"
+					   rows="10"
+					   emptyMessage="No buses have been created."
+					   styleClass="paginated, busListDataTable-class">
+		
+		<p:column headerText="Bus pic" style="text-align: center;">
+			<p:graphicImage name="#{empty entity.imgUrl ? 'images/default-bus.png' : 'images'.concat(entity.imgUrl)}" width="50" height="40" styleClass="ui-corner-all"/>
+		</p:column>
+		
+		<p:column headerText="Bus Id">
+			<h:outputText value="#{entity.id}" />
+		</p:column>
+		
+		<p:column headerText="Bus reg">
+			<h:outputText value="#{entity.reg}" />
+		</p:column>
+		
+		<p:column headerText="Capacity">
+			<h:outputText value="#{entity.capacity}" />
+		</p:column>
+		
+		<p:column headerText="Actions" style="text-align: center;" width="100">
+			<p:toolbar style="margin-top: 5px; border: none;">
+				<p:toolbarGroup align="left">
+					<p:commandButton action="#{BusAction.viewEntity}"
+									 ajax="true"
+									 process="@this"									 
+									 icon="ui-icon-zoomin"
+									 title="View bus seats.">
+						 <f:setPropertyActionListener value="#{entity}" target="#{BusAction.selectedEntity}" />
+					 </p:commandButton>
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton actionListener="#{BusAction.deleteEntity}"
+									 ajax="true"
+									 process="@this"
+									 update="busList-dataTable"
+									 icon="ui-icon-trash"
+									 title="Delete this bus.">
+					 	<f:setPropertyActionListener value="#{entity}" target="#{BusAction.selectedEntity}" />
+				 	</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+		</p:column>
+		
+	</p:dataTable>
+	
+</ui:composition>	

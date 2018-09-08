@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Built-By: Bell
+Build-Jdk: 1.8.0_171
+Created-By: Maven Integration for Eclipse
+artifactId: natwende-mukwai-datamodel
+groupId: com.mweka.natwende
+mode: development
+version: 1.0-SNAPSHOT
+

@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+				
+	<ui:define name="content">
+	
+		<h:form id="busView-form" styleClass="busView-formClass">
+			<p:outputPanel rendered="#{BusAction.selectedEntity.id gt 0}">				
+				<p:panel header="#{OperatorAction.selectedEntity.name.display} bus: #{BusAction.selectedEntity.reg}">
+					<p:toolbar style="border: none;">
+						<p:toolbarGroup align="left">
+							<p:button value="Back" 
+									  outcome="/admin/operator/operatorView"
+									  icon="ui-icon-arrowthick-1-w"
+									  title="Back to operator page." />
+						</p:toolbarGroup>
+						<p:toolbarGroup align="right">
+							<p:commandButton value="Add seat"
+									  ajax="true"
+									  process="@this" 
+									  actionListener="#{SeatAction.createEntity}"
+									  oncomplete="PF('var_NewSeatDlg').show();"
+									  icon="ui-icon-plusthick"
+									  title="Click to add seat." />
+							  <p:commandButton value="Import from file"
+									  ajax="true"
+									  process="@this"
+									  oncomplete="PF('var_UploadSeatDlg').show();"
+									  icon="ui-icon-arrowthickstop-1-n"
+									  title="Import seats from file." />
+						</p:toolbarGroup>
+					</p:toolbar>
+					<p:tabView orientation="right" effect="fold">
+						<p:tab title="Seats">
+							<p:dataTable value="#{SeatAction.entityList}"
+								   	 	 id="seat-dataTable"
+								   	 	 var="entity"
+								   	 	 paginator="true"
+								   	 	 paginatorPosition="bottom"
+								   	 	 rows="10"
+								   	 	 emptyMessage="No seats have been added."
+								   	 	 styleClass="paginated">
+								<p:column headerText="Seat Id">
+									<h:outputText value="#{entity.id}" />
+								</p:column>
+								
+								<p:column headerText="Seat no">
+									<h:outputText value="#{entity.seatNo}" />
+								</p:column>
+								
+								<p:column headerText="Cabin class">
+									<h:outputText value="#{entity.seatClass.display}" />
+								</p:column>
+								
+								<p:column headerText="Co-ordinates">
+									<h:outputText value="#{entity.coordinates}" />
+								</p:column>
+								
+								<p:column headerText="Actions" style="width: 100px; text-align: center;">
+									<p:commandButton action="{SeatAction.deleteEntity}"
+													 ajax="true"
+													 process="@this"
+													 update="seat-dataTable"
+													 icon="ui-icon-trash"
+													 title="Delete this seat.">
+										<f:setPropertyActionListener value="#{entity}" target="#{SeatAction.selectedEntity}" />				 
+									 </p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+						<p:tab title="Visual rep">
+							<div class="container">
+								<div id="seat-map">
+									<div class="front-indicator">Front</div>
+								</div>
+							</div>
+						</p:tab>
+					</p:tabView>
+				</p:panel>
+			</p:outputPanel>
+		</h:form>
+		
+		<h:outputStylesheet library="css" name="jquery.seat-charts.css" />
+		<h:outputStylesheet library="css" name="bus.css" />
+		<h:outputScript library="js" name="jquery.seat-charts.min.js" />
+		<h:outputScript library="js" name="bus-template.js" />
+	
+	</ui:define>
+				
+</ui:composition>

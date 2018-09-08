@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b383652c-78e9-4faf-986b-280111407359">
+	<property name="ireport.zoom" value="2.732053821460282"/>
+	<property name="ireport.x" value="56"/>
+	<property name="ireport.y" value="755"/>
+	<style name="table">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="1.0" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="bold" markup="styled" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<subDataset name="Table Dataset 1" uuid="71071b09-8976-402a-8901-55620e542cf2"/>
+	<subDataset name="Table Dataset 2" uuid="43c4f90c-a8e1-4417-8d9f-93d3fe85c124"/>
+	<parameter name="BOOKING_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     booking.`id` AS booking_id,
+     booking.`bayNumber` AS booking_bayNumber,
+     booking.`bookingEndDateTime` AS booking_bookingEndDateTime,
+     booking.`bookingStartDateTime` AS booking_bookingStartDateTime,
+     booking.`instructions` AS booking_instructions,
+     booking.`personVisiting` AS booking_personVisiting,
+     booking.`personBeingVisitedContactNumber` AS booking_personBeingVisitedContactNumber,
+     booking.`vehicleMake` AS booking_vehicleMake,
+     booking.`vehicleRegistration` AS booking_vehicleRegistration,
+     booking.`visitingCompany` AS booking_visitingCompany,
+     booking.`visitorContactNumber` AS booking_visitorContactNumber,
+     booking.`visitorEmail` AS booking_visitorEmail,
+     booking.`visitorFirstName` AS booking_visitorFirstName,
+     booking.`visitorSurname` AS booking_visitorSurname,
+     booking.`articleNumber` AS booking_articleNumber,
+     booking.`validationProvider` AS booking_validationProvider,
+     booking.`serialNumber` AS booking_serialNumber,
+     tenant.`code` AS tenant_code,
+     tenant.`contactCellNumber` AS tenant_contactCellNumber,
+     tenant.`contactEmail` AS tenant_contactEmail,
+     tenant.`contactNumber` AS tenant_contactNumber,
+     tenant.`contactPerson` AS tenant_contactPerson,
+     tenant.`name` AS tenant_name,
+     tenant.`parkingSite_id` AS tenant_parkingSite_id,
+     parkingsite.`manager` AS parkingsite_manager,
+     parkingsite.`managerContactNumber` AS parkingsite_managerContactNumber,
+     parkingsite.`managerEmail` AS parkingsite_managerEmail,
+     parkingsite.`numberOfBays` AS parkingsite_numberOfBays,
+     parkingsite.`parkingOfficeEmail` AS parkingsite_parkingOfficeEmail,
+     parkingsite.`siteName` AS parkingsite_siteName,
+     parkingsite.`address_id` AS parkingsite_address_id,
+     parkingsite.`qrIdentifier1` AS parkingsite_qrIdentifier1,
+     parkingsite.`qrIdentifier2` AS parkingsite_qrIdentifier2,
+     parkingsite.`qrIdentifier3` AS parkingsite_qrIdentifier3,
+     booking.`tenant_id` AS booking_tenant_id,
+     address.`id` AS address_id,
+     address.`city` AS address_city,
+     address.`country` AS address_country,
+     address.`line1` AS address_line1,
+     address.`name` AS address_name,
+     address.`postalCode` AS address_postalCode,
+     address.`province` AS address_province
+FROM
+     `Tenant` tenant INNER JOIN `Booking` booking ON tenant.`id` = booking.`tenant_id`
+     INNER JOIN `ParkingSite` parkingsite ON tenant.`parkingSite_id` = parkingsite.`id`
+     INNER JOIN `Address` address ON parkingsite.`address_id` = address.`id`
+WHERE
+     booking.id = $P{BOOKING_ID}]]>
+	</queryString>
+	<field name="booking_id" class="java.lang.Long"/>
+	<field name="booking_bayNumber" class="java.lang.String"/>
+	<field name="booking_bookingEndDateTime" class="java.sql.Timestamp"/>
+	<field name="booking_bookingStartDateTime" class="java.sql.Timestamp"/>
+	<field name="booking_instructions" class="java.lang.String"/>
+	<field name="booking_personVisiting" class="java.lang.String"/>
+	<field name="booking_personBeingVisitedContactNumber" class="java.lang.String"/>
+	<field name="booking_vehicleMake" class="java.lang.String"/>
+	<field name="booking_vehicleRegistration" class="java.lang.String"/>
+	<field name="booking_visitingCompany" class="java.lang.String"/>
+	<field name="booking_visitorContactNumber" class="java.lang.String"/>
+	<field name="booking_visitorEmail" class="java.lang.String"/>
+	<field name="booking_visitorFirstName" class="java.lang.String"/>
+	<field name="booking_visitorSurname" class="java.lang.String"/>
+	<field name="booking_articleNumber" class="java.lang.String"/>
+	<field name="booking_validationProvider" class="java.lang.String"/>
+	<field name="booking_serialNumber" class="java.lang.Long"/>
+	<field name="tenant_code" class="java.lang.String"/>
+	<field name="tenant_contactCellNumber" class="java.lang.String"/>
+	<field name="tenant_contactEmail" class="java.lang.String"/>
+	<field name="tenant_contactNumber" class="java.lang.String"/>
+	<field name="tenant_contactPerson" class="java.lang.String"/>
+	<field name="tenant_name" class="java.lang.String"/>
+	<field name="tenant_parkingSite_id" class="java.lang.Long"/>
+	<field name="parkingsite_manager" class="java.lang.String"/>
+	<field name="parkingsite_managerContactNumber" class="java.lang.String"/>
+	<field name="parkingsite_managerEmail" class="java.lang.String"/>
+	<field name="parkingsite_numberOfBays" class="java.lang.String"/>
+	<field name="parkingsite_parkingOfficeEmail" class="java.lang.String"/>
+	<field name="parkingsite_siteName" class="java.lang.String"/>
+	<field name="parkingsite_address_id" class="java.lang.Long"/>
+	<field name="parkingsite_qrIdentifier1" class="java.lang.String"/>
+	<field name="parkingsite_qrIdentifier2" class="java.lang.String"/>
+	<field name="parkingsite_qrIdentifier3" class="java.lang.String"/>
+	<field name="booking_tenant_id" class="java.lang.Long"/>
+	<field name="address_id" class="java.lang.Long"/>
+	<field name="address_city" class="java.lang.String"/>
+	<field name="address_country" class="java.lang.String"/>
+	<field name="address_line1" class="java.lang.String"/>
+	<field name="address_name" class="java.lang.String"/>
+	<field name="address_postalCode" class="java.lang.String"/>
+	<field name="address_province" class="java.lang.String"/>
+	<variable name="variable1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement x="215" y="22" width="100" height="100" uuid="b44df05e-d24e-4b7f-9602-9c7f3c2077f7"/>
+				<imageExpression><![CDATA[com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(
+     new com.google.zxing.qrcode.QRCodeWriter().encode(
+                ""+$F{parkingsite_qrIdentifier1}+$F{parkingsite_qrIdentifier2}
+         +$F{parkingsite_qrIdentifier3}+$F{booking_articleNumber}
+         +$F{booking_validationProvider}+
+         (new SimpleDateFormat("yyyyMMddHHmm").format(new Date($F{booking_bookingStartDateTime}.getTime()-(1000*60*30))))+
+         (new SimpleDateFormat("yyyyMMddHHmm").format(new Date($F{booking_bookingEndDateTime}.getTime()+(1000*60*30))))
+         +(new DecimalFormat("000000000").format($F{booking_serialNumber})),
+
+                com.google.zxing.BarcodeFormat.QR_CODE,
+                100,
+                100))]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement x="0" y="172" width="101" height="20" uuid="9978210d-15d8-4a4c-afc8-b2df1b87e64f"/>
+			</frame>
+			<frame>
+				<reportElement x="100" y="172" width="379" height="20" uuid="5e842526-2dd4-47ad-9d7d-0c74c1f0fc43"/>
+			</frame>
+			<staticText>
+				<reportElement x="3" y="172" width="476" height="20" uuid="8c18d528-3420-4207-a10d-e66eb71e1f51"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Please find below a Parking Booking made for you by Itu as follows:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="192" width="100" height="20" uuid="3545c926-2975-4409-a96d-9423c77b7b21"/>
+				<text><![CDATA[Valid From :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="212" width="100" height="20" uuid="4b6aa8d8-8d8b-4d75-940f-61a8460c5354"/>
+				<text><![CDATA[Valid Until :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="232" width="100" height="20" uuid="65fdb81b-edf4-40f9-b435-82f2f7e0c415"/>
+				<text><![CDATA[Bay Number :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="273" width="100" height="20" uuid="ce8d0d0c-60b2-4fef-b71a-6497fad3133c"/>
+				<text><![CDATA[Vehicle Make :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="293" width="100" height="20" uuid="ee080b5c-d1c8-41c3-85df-88db5e8f56f5"/>
+				<text><![CDATA[Vehicle Reg :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="103" y="192" width="376" height="20" uuid="1db05a59-a349-4522-b102-5b443e2ef65f"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + new SimpleDateFormat("yyyy/MM/dd HH:mm").format($F{booking_bookingStartDateTime})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="212" width="376" height="20" uuid="2f5e0e36-7805-45b5-8fbd-7540acd04a3c"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("yyyy/MM/dd HH:mm").format($F{booking_bookingEndDateTime})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="bold" x="103" y="232" width="376" height="20" uuid="3b8d5d3e-5e6e-4410-88b3-face6781fdea"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{booking_bayNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="273" width="376" height="20" uuid="b4641cde-771b-4177-a387-44b57b3f6db9"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{booking_vehicleMake}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="293" width="376" height="20" uuid="b269504f-3c9d-4a41-a031-b79f9c6af065"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{booking_vehicleRegistration}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="4" y="519" width="369" height="45" uuid="b35149b4-85df-43a0-ad21-5175f1b646ad"/>
+				<textField>
+					<reportElement x="0" y="15" width="249" height="20" uuid="52bb5ae8-9228-4f86-8d7a-260d6ba44645"/>
+					<textElement markup="styled">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tenant_contactPerson}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="3" y="152" width="49" height="20" uuid="abfad2ad-f276-4584-be2a-2a976085bc17"/>
+				<text><![CDATA[Attention	:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="103" y="152" width="376" height="20" uuid="64467ebc-2c36-4261-b7ff-b02723a7e788"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{booking_visitorFirstName}
++ " "
++ $F{booking_visitorSurname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="bold" x="3" y="252" width="476" height="20" uuid="3b32bfa4-1234-48bd-903d-f3c59b25f1f2"/>
+				<textElement markup="styled"/>
+				<text><![CDATA[*IF YOU EXCEED YOUR ALLOCATED TIME PLEASE PROCEED TO PAYSTATION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="4" y="358" width="116" height="20" isRemoveLineWhenBlank="true" uuid="08095131-137d-4fbc-96e3-662a984db600"/>
+				<text><![CDATA[Your appointment is with :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="313" width="100" height="20" uuid="347c3b73-3fa4-4bb0-9ce7-3bac0f26a59d"/>
+				<text><![CDATA[Address	:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="378" width="97" height="20" uuid="517d5c40-3390-4e8e-a557-6e896c6da930"/>
+				<text><![CDATA[Comments :]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="103" y="378" width="452" height="33" uuid="2ce32271-f82c-4ba7-b0ae-d8c1c09f0060"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{booking_instructions}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="519" width="100" height="15" uuid="9f31507b-fc67-4735-b808-07d3253e9d04"/>
+				<text><![CDATA[Kind Regards,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="411" width="475" height="13" uuid="9047ff9b-b647-4e0a-9bc6-5a7b4a789689"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Please print this notice with the below unique QR Code.]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="120" y="358" width="359" height="20" uuid="3e384622-802d-48e2-ae38-82c888dd2f38"/>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{booking_personVisiting}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="424" width="476" height="13" uuid="fbc69d39-eab7-45b2-a47c-4ac7b2117302"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[On arrival, please scan your QR Code at the scanner. Each SKIDATA parking device is fitted with a QR Code scanner.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="437" width="476" height="13" uuid="1400caf6-21ba-4a88-8e5d-93b5bd1aeb73"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SKIDATA parking devices with scanners are located at;]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="450" width="381" height="13" uuid="6c79dcba-d46b-4d38-a16c-ab83f96de228"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[The Visitor Entry Lane]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="463" width="381" height="13" uuid="4f4df2a2-8ecb-487b-9ac5-7b5394840d61"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[The Visitor Exit Lane]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="476" width="457" height="13" uuid="4790250e-ab44-418b-b259-ea5d851621a8"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[The Automated Pay Machine on ground level next to the lifts  should, you have overstayed your parking period.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="489" width="381" height="13" uuid="af3d747b-a14e-45d4-89da-cdb658ea69a8"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Each turnstile or located at specific lobby doors.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="450" width="86" height="13" uuid="e710e249-97f0-4c7f-bbb5-12f9801c3d5d"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="463" width="86" height="13" uuid="b6ff9942-6750-4025-880e-a5b84d825e69"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[2.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="476" width="86" height="13" uuid="c61c4ded-e14d-4e2b-850f-db77f4ff4966"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="489" width="86" height="13" uuid="c2cb36e6-344b-4b7b-816f-80d57c666dab"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[4.]]></text>
+			</staticText>
+			<image>
+				<reportElement x="194" y="564" width="160" height="160" uuid="18375042-0897-48b8-96a5-3d5f3dcd7951"/>
+				<imageExpression><![CDATA[com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(
+     new com.google.zxing.qrcode.QRCodeWriter().encode(
+                ""+$F{parkingsite_qrIdentifier1}+$F{parkingsite_qrIdentifier2}
+         +$F{parkingsite_qrIdentifier3}+$F{booking_articleNumber}
+         +$F{booking_validationProvider}+
+         (new SimpleDateFormat("yyyyMMddHHmm").format(new Date($F{booking_bookingStartDateTime}.getTime()-(1000*60*30))))+
+         (new SimpleDateFormat("yyyyMMddHHmm").format(new Date($F{booking_bookingEndDateTime}.getTime()+(1000*60*30))))
+         +(new DecimalFormat("000000000").format($F{booking_serialNumber})),
+
+                com.google.zxing.BarcodeFormat.QR_CODE,
+                160,
+                160))]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="4" y="773" width="551" height="13" uuid="dc6994ef-f84b-410b-bda0-68c2e32f5add"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Please enter the parking off Hertzog Blvd, turn right at the bottom of the ramp and proceed to the visitor lane.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="786" width="551" height="13" uuid="198b97ea-619b-4264-8dbb-049f4ff50b99"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[On arrival within the lane, please contact Interpark via the intercom should you need any assistance.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="313" width="451" height="14" uuid="2d4c7d69-34e1-468e-940b-82cc944d5552"/>
+				<textElement markup="styled">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[The Towers,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="327" width="449" height="15" uuid="f2b1b60e-4240-43b2-a2b8-1c5efd8812d5"/>
+				<textElement markup="styled">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hertzog Blvd, Foreshore, Cape Town.]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

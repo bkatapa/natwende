@@ -1,0 +1,528 @@
+body {
+	background-color: #CADFE7;
+	font-family: Arial, "Arial CE";
+	color: #000000;
+}
+
+th {
+	background-color: #233F99 !important;
+	color: #fff !important;
+}
+
+td {
+	vertical-align: middle;
+}
+
+
+a {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+p {
+	font-size: 10px;
+	font-weight: normal;
+}
+
+.logo {
+	padding: 15px 0;
+	top: 0;
+}
+.headerText {
+	padding-top: 4px;
+	padding-left: 15px;
+	font-size: 12px;
+	font-weight: bold;
+	font-weight: bold;
+	font-family: Arial, "Arial CE";
+	
+}
+
+.mainHeaderText {
+	font-size: 14px;
+	font-weight: bold; 
+	font-family: Arial, "Arial CE";
+}
+
+.formBackground {
+	background: white;
+	padding: 10px;
+}
+
+.logoContainer {
+	width: 528px;
+	margin-left: auto;
+	margin-right: auto
+}
+
+.message {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+/*
+padding: 6px 10px; 
+margin-top: 2px;
+*/
+.button {
+	background: none repeat-x scroll 50% 50% #233f99 !important;
+	border: 1px solid #233f99 !important;
+	color: #fff !important;	
+	text-align: center;
+	text-shadow: 0 -1px 0 #396715; 	
+	height: 25px;
+	margin-left: 5px; 
+	margin-right: 5px;
+}
+.button:hover {
+	opacity:.85;
+	cursor: pointer;
+}
+.rowButton {
+	background: none repeat-x scroll 50% 50% #233f99 !important;
+	border: 1px solid #233f99 !important;
+	color: #fff !important;
+	padding: 2px 10px;
+	
+	text-align: center;
+	text-shadow: 0 -1px 0 #396715; 
+}
+.rowButton:hover {
+	opacity:.85;
+	cursor: pointer;
+}
+.normalButton {
+	padding: 6px 20px;
+	text-align: center;
+	color: #000000 !important; 
+	width: 95px;
+	background: none repeat-x scroll 50% 50% #d3d3d3 !important; 
+}
+.normalButton:hover {
+	opacity:.85;
+	cursor: pointer;
+}
+.normalBackgroundColorButton {
+	background: none repeat-x scroll 50% 50% #00AED1 !important;
+	color: #fff !important;
+	padding: 2px 10px;
+	text-align: center;
+	text-shadow: 0 -1px 0 #396715;  
+}
+.normalBackgroundColorButton:hover {
+	opacity:.85;
+	cursor: pointer;
+}
+.borderStyleTable {
+	border: 1px solid #000000 !important;
+}
+.label,.button {
+	font-family: Arial, "Arial CE";
+	font-size: 10px !important;
+	font-weight: bold !important;
+}
+
+.breadcrumb {
+	font-family: Arial, "Arial CE";
+	font-size: 10px !important;
+	font-weight: bold !important;
+	color: #222;
+}
+
+h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.subheader {
+	border: 1px solid #4297d7;
+	color: #ffffff;
+	font-weight: bold;
+}
+input[type="password"],input[type="text"] {
+	background-color: #fff;
+	background-image: none;
+	border: medium none #fff;
+	box-shadow: 0 0 3px #aaa;
+	color: #000 !important;
+	padding: 4px;
+	font-size: 10px;
+	font-weight: normal;
+}
+
+#contents {
+	width: 1024px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+div#loginBox {
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 18px;
+	width: 528px;
+}
+
+#loginButton {
+	background: none repeat-x scroll 50% 50% #233f99;
+	border: medium none #233f99;
+	color: white;
+	font-size: 10px;
+	font-weight: bold;
+	padding: 0.3em 1em;
+}
+#loginButton:hover {
+	opacity:.85;
+	cursor: pointer;
+}
+
+.menuBar {
+	background-color: #233F99 !important;
+	background: repeat-x scroll 50% bottom #CADFE7;
+	box-shadow: 0 1px 1px #777; 
+}
+
+.breadCrumbBar {
+	background-color: #C4C4C4 !important;
+	background: repeat-x scroll 50% bottom #CADFE7;
+	box-shadow: 0 1px 1px #777; 
+}
+
+
+.ui-widget-content {
+	border: 1px solid #a6c9e2;
+}
+
+.ui-panel .ui-panel-content {
+	padding: 0;
+}
+
+.ui-panel-title {
+	font-size: 14px;
+}
+
+.ui-menubar .ui-menuitem-link {
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 14px;
+	font-family: Arial, "Arial CE";
+}
+
+.ui-selectonemenu-panel-custom {
+	color: #ffffff;
+	font-size: 10px;
+	width: 230px;
+	display:block;
+	padding: 0 !important;
+}
+.ui-tabViewHeader {
+	/* background: #233F99 important; */
+	background: red ;
+	color: #ffffff;
+	font-weight: bold;
+}
+.ui-menu-child {
+	background: #233f99;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	float: left;
+	padding: .5em 1em;
+	text-decoration: none;
+	background: #d3d3d3;
+}
+
+input[type="text"].ui-state-focus,input[type="password"].ui-state-focus
+	{
+	background: none repeat scroll 0 0 #233F99 !important;
+	color: #ffffff !important;
+}
+/*input[type="text"].ui-state-hover.ui-state-focus{background:none repeat scroll 0 0 #233F99 !important;}*/
+/*.ui-state-hover,.ui-state-focus{background:none repeat scroll 0 0 #00aed1 !important;}*/
+.ui-column-title {
+	font-size: 10px;
+	font-weight: bold;
+	font-family: Arial, "Arial CE"
+}
+
+li:active {
+	color: red;
+}
+
+.ui-widget {
+	vertical-align: middle;
+}
+
+.ui-panelgrid td,.ui-panelgrid tr {
+	border-style: none !important;
+	font-weight: bold;
+}
+
+.ui-tabs .ui-tabs-panel {
+	border-width: 0;
+	padding: 0em 0em 0em 0em;
+	background: #233F99;
+}
+
+.ui-paginator .ui-paginator-current, .ui-paginator {
+	margin-left: 1em;
+	margin-right: 1em;
+	background-image: none;
+	color: #FFFFFF;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+	padding: 4px 10px;
+	overflow: hidden;
+	border-width: 1px;
+	border-style: solid;
+	text-align: center;
+}
+
+.noFontBold {
+	font-weight: normal;
+}
+.alignmentRight {
+ 	text-align : right;
+ 	width: 800px;
+}
+.noBorder {
+	border-style: none !important;
+	background: repeat-x scroll 50% bottom #CADFE7;
+}
+
+.logoBackground {
+	background-color: #7a8bb5;
+	/* width: 1024px; */
+	height: 104px;
+	position: relative;
+}
+.logoBackground img {
+    position: absolute;
+    bottom: 0;
+}
+
+.logoBackground img:nth-of-type(1) {
+    left: 0;
+}
+
+.logoBackground img:nth-of-type(2) {
+    right: 0;
+    padding-right: 5px;
+}
+.rightAlign {
+	text-align: right;
+	
+}
+
+.paddingSpace {
+	padding: 2px 10px;
+}
+
+.margin {
+	margin: 25px;
+}
+
+.ui-layout-pane {
+	border: 0;
+}
+
+.ui-layout-unit {
+	background-color: #CADFE7;
+}
+
+.alignBottom {
+	vertical-align: bottom;
+}
+
+.panelGridColor {
+	background: none !important;
+	color: #ffffff;
+}
+.panelGridNoPadding {
+	padding: 2px 0px !important;
+}
+
+.ui-panel {
+	padding: 0;
+}
+
+.ui-datatable .ui-datatable-header {
+	padding: 4px 10px;
+	text-align: left;
+	background: #fff;
+	border: #CADFE7;
+}
+
+.ui-datatable .ui-paginator, .ui-datatable .ui-paginator {
+	padding: 2px;
+	background: #233F99;
+}
+.ui-panelgrid .ui-panelgrid-cell {
+	border-color: inherit;
+	border-style: solid;
+	border-width: 1px;
+	padding: 2px 10px;
+	font-family: Arial, "Arial CE";
+	font-size: 10px;
+	font-weight: bold;
+}
+.ui-helper-reset {
+	font-size: 10px;
+	line-height: 1.3;
+	list-style: none outside none;
+}
+
+.markExpired, .markExpired a, .markExpired a:VISITED {
+	color: #939393;
+}
+.floatRight {
+	float: right;
+}
+.markAlternativeItemSupplied{
+	background:none repeat scroll 0 0 #939393;
+}
+
+.outPutTextFontNotBold {
+	font-weight: normal;
+	margin-right:5px;
+}
+.partDespatched{
+	border-top-right-radius:24em;
+	background: none repeat scroll 0 0 white;
+}
+.movementColumns{
+	background: none repeat scroll 0 0 white;
+}
+.blueTriangle{
+  background:#233f99;
+}
+
+.dialogHeaders{
+	position: absolute;
+	left: 10px;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.dialogCustomerLabel{
+	position: absolute;
+	right: 150px;
+}
+.dialogCustomerValue{
+	position: absolute;
+	right: 10px;
+	float: right;
+	font-weight: normal;
+	margin-right:5px;
+}
+
+.dashboardCols_1 {
+	width: 200px; 
+}
+.dashboardCols_2 {
+	width: 100px; 
+}
+.dashboardCols_3 {
+	width: 150px; 
+}
+.dashboardHeaderCols_1 {
+	width: 200px; 
+	background: #233F99 !important;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 14px;
+	font-family: Arial, "Arial CE";
+}
+.dashboardHeaderCols_2 {
+	width: 100px; 
+	background: #233F99 !important;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 14px;
+	font-family: Arial, "Arial CE";
+}
+.dashboardHeaderCols_3 {
+	width: 150px;
+	background: #233F99 !important;
+	color: #ffffff;
+	font-weight: bold;
+	font-size: 14px;
+	font-family: Arial, "Arial CE"; 
+}
+
+
+.ui-paginator-rpp-options {
+	margin-left: 1em;
+	margin-right: 1em;
+	background-image: none;
+	background:none repeat scroll 0% 0% #FFF !important;
+}
+
+.ui-fileupload-content {
+	border: none;
+}
+
+.column_third {
+	width: 33%;
+	vertical-align: top;
+}
+
+.column_quarter{
+	width: 25%;
+	vertical-align: top;
+}
+
+.column_fifth{
+	width: 20%;
+	vertical-align: top;
+}
+
+.column_tenth{
+	width: 10%;
+	vertical-align: top;
+}
+
+.column_twothird {
+	width: 66%;
+	vertical-align: top;
+}
+
+.column_45 {
+	width: 45%;
+	vertical-align: top;
+}
+
+
+.column_half {
+	width: 50%;
+	vertical-align: top;
+}
+
+.column_full {
+	width: 100%;
+	vertical-align: top;
+}
+
+.column {
+	vertical-align: top;
+}
+
+.ui-inputfield{
+     width: 200px;
+}
+
+.ui-selectonemenu{
+     width: 200px;
+}
+
+.ui-selectonemenu-label{
+     width: 200px;
+}
+

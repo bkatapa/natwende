@@ -1,0 +1,121 @@
+<!DOCTYPE html [
+    <!ENTITY copy "&#169;"> 
+    <!ENTITY ndash "&#8211;"> 
+    ]>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<title>Natwende Portal - Login</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!-- 
+	<link rel="icon" type="image/png" href="login-resources/images/icons/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="login-resources/vendor/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/fonts/iconic/css/material-design-iconic-font.min.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/vendor/animate/animate.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/vendor/css-hamburgers/hamburgers.min.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/vendor/animsition/css/animsition.min.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/vendor/select2/select2.min.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/vendor/daterangepicker/daterangepicker.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/css/util.css" />
+	<link rel="stylesheet" type="text/css" href="login-resources/css/main.css" />
+	-->
+	
+	<h:outputStylesheet library="css" name="login-resources/vendor/bootstrap/css/bootstrap.min.css" />
+	<h:outputStylesheet library="css" name="login-resources/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+	<h:outputStylesheet library="css" name="login-resources/fonts/iconic/css/material-design-iconic-font.min.css" />
+	<h:outputStylesheet library="css" name="login-resources/vendor/animate/animate.css" />
+	<h:outputStylesheet library="css" name="login-resources/vendor/css-hamburgers/hamburgers.min.css" />
+	<h:outputStylesheet library="css" name="login-resources/vendor/animsition/css/animsition.min.css" />
+	<h:outputStylesheet library="css" name="login-resources/vendor/select2/select2.min.css" />
+	<h:outputStylesheet library="css" name="login-resources/vendor/daterangepicker/daterangepicker.css" />
+	<h:outputStylesheet library="css" name="login-resources/util.css" />
+	<h:outputStylesheet library="css" name="login-resources/main.css" />
+</h:head>
+<h:body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+			
+				<form name="loginForm" method="POST" action="j_security_check" class="login100-form validate-form">
+					<!-- 
+					<span class="login100-form-title p-b-26"> Natwende </span> -->
+					
+					<span class="login100-form-title p-b-26">
+						<p:graphicImage name="images/natwende/natwende-2.png" width="100px" height="100px" />
+					</span>
+					
+					<!-- 
+					<span class="login100-form-title p-b-48">
+						<i class="zmdi zmdi-font"></i>
+					</span> -->
+					
+					<!-- Dynamic content goes here -->		
+					<ui:insert name="content" id="content" />
+
+					<div class="wrap-input100 validate-input" 
+						 data-validate="Valid email is: a@b.c">
+						<input class="input100" type="text" name="j_username" />
+						<span class="focus-input100" data-placeholder="Email" />
+					</div>
+
+					<div class="wrap-input100 validate-input"
+						 data-validate="Enter password">
+						<span class="btn-show-pass"> <i class="zmdi zmdi-eye">
+							</i>
+						</span> 
+						<input class="input100" type="password" name="j_password" />
+						<span class="focus-input100" data-placeholder="Password" />
+					</div>
+
+					<div class="container-login100-form-btn">
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn" />
+							<input type="submit" class="login100-form-btn loginButton" value="Login" />
+						</div>
+					</div>
+
+					<div class="text-center p-t-115">
+						<span class="txt1">
+							Don’t have an account?
+						</span>
+						<a class="txt2" href="#"> Sign Up </a>
+					</div>
+					
+				</form>
+				
+			</div>
+		</div>
+	</div>
+
+	<div id="dropDownSelect1" />
+	<!--
+	<script src="login-resources/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="login-resources/vendor/animsition/js/animsition.min.js"></script>
+	<script src="login-resources/vendor/bootstrap/js/popper.js"></script>
+	<script src="login-resources/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="login-resources/vendor/select2/select2.min.js"></script>
+	<script src="login-resources/vendor/daterangepicker/moment.min.js"></script>
+	<script src="login-resources/vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="login-resources/vendor/countdowntime/countdowntime.js"></script>
+	<script src="login-resources/js/main.js"></script>
+	-->
+	<!--
+	<h:outputScript library="js" name="login-resources/vendor/jquery/jquery-3.2.1.min.js"/> -->
+	<h:outputScript library="js" name="login-resources/vendor/animsition/js/animsition.min.js"/>
+	<h:outputScript library="js" name="login-resources/vendor/bootstrap/js/popper.js"/>
+	<h:outputScript library="js" name="login-resources/vendor/bootstrap/js/bootstrap.min.js"/>
+	<h:outputScript library="js" name="login-resources/vendor/select2/select2.min.js"/>
+	<h:outputScript library="js" name="login-resources/vendor/daterangepicker/moment.min.js"/>
+	<h:outputScript library="js" name="login-resources/vendor/daterangepicker/daterangepicker.js"/>
+	<h:outputScript library="js" name="login-resources/vendor/countdowntime/countdowntime.js"/>
+	<h:outputScript library="js" name="login-resources/main.js"/>
+	
+</h:body>
+</html>

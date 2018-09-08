@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" template="/layout/mainTemplate.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="content">
+		<h:form styleClass="formBackground">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="Companies" action="SupportCompanyList" />
+				<p:menuitem value="Company" />
+			</p:breadCrumb>
+		</h:form>
+
+		<h:form id="companyViewCompanyAdminForm" styleClass="formBackground">
+		    <p:growl showDetail="true" autoUpdate="true" />
+			<p:messages id="messages" autoUpdate="true" />
+			<p:panel id="companyInfo" header="#{SupportCompanyAction.selectedEntity.name}">
+				<pe:fluidGrid hGutter="20" vGutter="20">
+
+					<pe:fluidGridItem type="input">
+						<div class="fluidLabel">
+							<p:outputLabel for="company-Name" value="Name" />
+						</div>
+						<p:outputLabel id="company-Name" value="#{SupportCompanyAction.selectedEntity.name}" />
+						<p:message for="company-Name" style="color:red" />
+					</pe:fluidGridItem>
+
+					<pe:fluidGridItem type="input">
+						<div class="fluidLabel">
+							<h:outputLabel for="company-code" value="Code" />
+						</div>
+						<p:outputLabel id="company-code" value="#{SupportCompanyAction.selectedEntity.code}" />
+						<p:message for="company-code" style="color:red" />
+					</pe:fluidGridItem>
+
+					<pe:fluidGridItem type="input">
+						<div class="fluidLabel">
+							<h:outputLabel for="company-hubCode" value="Hub Code" />
+						</div>
+						<p:inputText id="company-hubCode" value="#{SupportCompanyAction.selectedEntity.hubCode}" validator="#{SupportCompanyAction.validateHubCode}"/>
+						<p:message for="company-hubCode" style="color:red" />
+					</pe:fluidGridItem>
+				</pe:fluidGrid>
+				
+				<p:panel style="text-align: right">
+					<p:commandButton id="updateCompany" ajax="true" value="Update" update="companyInfo" process="companyInfo" styleClass="button" 
+                                				 icon="ui-icon-search" action="#{SupportCompanyAction.updateCompany(SupportCompanyAction.selectedEntity)}" />
+					<p:commandButton id="resendWelcomeEmails" ajax="true" value="Re-send Buyer Welcome Emails" update="companyInfo" process="companyInfo" styleClass="button" 
+							 icon="ui-icon-check" action="#{SupportCompanyAction.sendSupplierWelcomeEmailToNonRegisteredBuyers()}" />
+				  	
+				</p:panel>				
+			</p:panel>
+			<p:accordionPanel>
+				<p:tab title="Contact" titleStyle="ui-panel-title">
+					<pe:fluidGrid hGutter="20" vGutter="20">
+					
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<p:outputLabel for="company-contactPerson" value="Contact Person" />
+							</div>
+							<p:outputLabel id="company-contactPerson" value="#{SupportCompanyAction.selectedEntity.contactPerson}" />
+							<p:message for="company-contactPerson" style="color:red" />
+						</pe:fluidGridItem>
+						
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<h:outputLabel for="company-cellNumber" value="Cell No" />
+							</div>
+							<p:outputLabel id="company-cellNumber" value="#{SupportCompanyAction.selectedEntity.cellNumber}" />
+							<p:message for="company-cellNumber" style="color:red" />
+						</pe:fluidGridItem>
+						
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<h:outputLabel for="company-phoneNumber" value="Landline" />
+							</div>
+							<p:outputLabel id="company-phoneNumber" value="#{SupportCompanyAction.selectedEntity.phoneNumber}" />
+							<p:message for="company-phoneNumber" style="color:red" />
+						</pe:fluidGridItem>
+						
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<h:outputLabel for="company-faxNumber" value="Fax No" />
+							</div>
+							<p:outputLabel id="company-faxNumber" value="#{SupportCompanyAction.selectedEntity.faxNumber}" />
+							<p:message for="company-faxNumber" style="color:red" />
+						</pe:fluidGridItem>
+						
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<h:outputLabel for="company-emailAddress" value="Email" />
+							</div>
+							<p:outputLabel id="company-emailAddress" value="#{SupportCompanyAction.selectedEntity.emailAddress}" />
+							<p:message for="company-emailAddress" style="color:red" />
+						</pe:fluidGridItem>
+						
+					</pe:fluidGrid>
+				</p:tab>						
+			</p:accordionPanel>
+		</h:form>
+	</ui:define>
+</ui:composition>

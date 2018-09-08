@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+		<h:form styleClass="formBackground" id="breadcrumb-menuForm-tenant">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="Tenants" />
+			</p:breadCrumb>
+			<p:messages id="messages" severity="error" closable="true" autoUpdate="true" globalOnly="false" showDetail="true"/>
+		</h:form>
+		
+		<h:form id="tenantsViewForm" styleClass="formBackground">			
+			
+			<p:panel header="Active Tenants" id="active-tenants" rendered="#{userSessionAction.systemAdmin or userSessionAction.skidataAdministratorUser or userSessionAction.parkingSiteOperator}">
+			
+				<p:panel header="Search Filters" style="margin-bottom:20px;" id="tenant-search-panel">		
+					<pe:fluidGrid hGutter="20" vGutter="20" id="tenant-grid-search">
+						<pe:fluidGridItem type="input" id="tenant-search-panel-code">
+							<div class="fluidLabel">
+								<p:outputLabel for="tenant-code" value="Tenant Code" />
+							</div>
+							<p:inputText id="tenant-code"
+								value="#{TenantAction.searchVO.code}" />
+							<p:message for="tenant-code" style="color:red" />
+						</pe:fluidGridItem>
+						<pe:fluidGridItem type="input" id="tenant-search-panel-name">
+							<div class="fluidLabel">
+								<p:outputLabel for="tenant-name" value="Tenant Name" />
+							</div>
+							<p:inputText id="tenant-name"
+								value="#{TenantAction.searchVO.name}" />
+							<p:message for="tenant-name" style="color:red" />
+						</pe:fluidGridItem>
+						
+<!--						<pe:fluidGridItem type="input" id="tenant-search-panel-bays">
+							<div class="fluidLabel" id="tenant-search-panel-slider-label">
+								<h:outputLabel for="tenant-search-panel-slider" value="Number of Bays between {TenantAction.numberMin} and {TenantAction.numberMax}" />
+							</div>  														
+    						<h:panelGrid columns="1" style="margin-bottom: 10px" id="sliderGRid">    							     						
+        						<p:slider for="txtMin,txtMax" id="tenant-search-panel-slider"        								  
+        								  style="width: 200px" 
+        								  range="true" 
+        								  displayTemplate="Between {min} and {max}">
+        							<p:ajax event="slideEnd" 
+        									listener="{TenantAction.onSlideEnd}" 
+        									process="tenant-grid-search"
+        									update="@widgetVar(var_TenantsTable), tenant-grid-search" />  
+        						</p:slider>
+        						<h:inputHidden id="txtMin" value="{TenantAction.numberMin}" />
+    							<h:inputHidden id="txtMax" value="{TenantAction.numberMax}" />
+    							<p:message for="txtMin" style="color:red" id="tenant-search-panel-slider-message"/>
+    							<p:message for="txtMax" style="color:red" />       						
+    						</h:panelGrid>    						
+						</pe:fluidGridItem>-->
+					</pe:fluidGrid>
+					<p:panel style="text-align: left; border: 0px;">
+						<p:commandButton id="search" ajax="true" value="Search"
+										 action="#{TenantAction.refresh()}" update="tenantsTable"
+										 styleClass="button" icon="ui-icon-search" />
+						<p:commandButton id="reset" ajax="true" value="Reset"
+										 styleClass="button"
+										 style="margin-left: 10px;"
+										 action="#{TenantAction.tenantSearchVO.clearSearch()}"
+										 icon="ui-icon-cancel"
+										 process="tenant-search-panel"
+										 update="tenantsTable tenant-search-panel" />
+					</p:panel>	
+				</p:panel>
+				
+				<p:toolbar rendered="#{userSessionAction.parkingSiteOperator}">
+					<f:facet name="left">
+						<p:commandButton id="newTenant-button"
+									 action="#{TenantAction.createTenant(tenantMgtContext)}"
+									 process="@this"									 
+									 ajax="true" 
+									 value="New Tenant"
+									 styleClass="button" icon="ui-icon-plus"/>
+						<p:tooltip for="newTenant-button" value="Click to create new Tenant"/>
+					</f:facet>					
+				</p:toolbar>		
+			
+				<p:dataTable id="tenantsTable"
+							 widgetVar="var_TenantsTable"
+							 value="#{TenantAction.entityList}" 
+							 var="tenant" 
+							 paginator="true"
+							 paginatorPosition="bottom"
+							 rows="10" 
+							 lazy="true"
+          					 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+          					 rowsPerPageTemplate="10,20,50" resizableColumns="true">
+					
+					<f:facet name="header"  >
+					</f:facet>
+					
+					<p:column headerText="TENANT NAME">
+						<h:outputText value="#{tenant.name}" />
+					</p:column>					
+					
+					<p:column headerText="CONTACT PERSON">
+						<h:outputText value="#{tenant.contactPerson}" />
+					</p:column>
+					
+					<p:column headerText="TELEPHONE NUMBER">
+						<h:outputText value="#{tenant.contactNumber}" />
+					</p:column>
+					
+					<p:column headerText="TENANT EMAIL">
+						<h:outputText value="#{tenant.contactEmail}" />
+					</p:column>
+					
+					<p:column headerText="ALLOCATED BAYS">
+						<h:outputText value="#{tenant.allocatedBays}" />
+					</p:column>
+					
+					<p:column headerText="PARKING SITE" rendered="#{userPermissionSet.contains('SYSTEM_ADMINISTRATOR') or userPermissionSet.contains('SKIDATA_ADMINISTRATOR')}">
+						<h:outputText value="#{empty tenant.parkingSiteVO ? 'Unallocated' : tenant.parkingSiteVO.siteName}" />
+					</p:column>
+					
+					<p:column headerText="STATUS" style="width: 80px">
+						<h:outputText value="#{tenant.status}" />
+					</p:column>
+					
+					<p:column headerText="ACTIONS" rendered="#{userSessionAction.parkingSiteOperator or userSessionAction.tenantAdministrator}">
+						<p:commandButton value="Edit" 
+										 ajax="true" 
+										 action="#{TenantAction.editTenant(tenant, tenantMgtContext, selectedParkingSite)}"
+										 icon="ui-icon-pencil"/>
+					</p:column>
+					
+				</p:dataTable>
+			
+			</p:panel>
+		</h:form>
+		
+</ui:composition>

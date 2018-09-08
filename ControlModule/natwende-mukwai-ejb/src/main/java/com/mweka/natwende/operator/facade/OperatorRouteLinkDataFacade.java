@@ -1,0 +1,62 @@
+package com.mweka.natwende.operator.facade;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
+
+import com.mweka.natwende.exceptions.EntityNotFoundException;
+import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.operator.entity.OperatorRouteLink;
+import com.mweka.natwende.operator.vo.OperatorRouteLinkVO;
+
+@Stateless
+public class OperatorRouteLinkDataFacade extends AbstractDataFacade<OperatorRouteLinkVO, OperatorRouteLink> {
+
+	public OperatorRouteLinkDataFacade() {
+		super(OperatorRouteLinkVO.class, OperatorRouteLink.class);
+	}
+
+	@Override
+	protected void convertEntitytoVO(OperatorRouteLink entity, OperatorRouteLinkVO vo) {		
+		convertBaseEntityToVO(entity, vo);
+		
+		if (entity.getOperator() != null) {
+			vo.setOperator(serviceLocator.getOperatorDataFacade().getCachedVO(entity.getOperator()));
+		}
+		if (entity.getRoute() != null) {
+			vo.setRoute(serviceLocator.getRouteDataFacade().getCachedVO(entity.getRoute()));
+		}
+	}
+
+	@Override
+	protected OperatorRouteLink convertVOToEntity(OperatorRouteLinkVO vo, OperatorRouteLink entity) {
+		convertBaseVOToEntity(vo, entity);
+		
+		if (vo.getOperator() != null) {
+			entity.setOperator(serviceLocator.getOperatorDataFacade().findById(vo.getId()));
+		}
+		if (vo.getRoute() != null) {
+			entity.setRoute(serviceLocator.getRouteDataFacade().findById(vo.getId()));
+		}
+		return entity;
+	}
+
+	@Override
+	protected OperatorRouteLink updateEntity(OperatorRouteLinkVO vo) throws EntityNotFoundException {
+		OperatorRouteLink entity = vo.getId() > 0 ? findById(vo.getId()) : new OperatorRouteLink();
+		convertVOToEntity(vo, entity);
+		update(entity);
+		return entity;
+	}
+	
+	public List<OperatorRouteLinkVO> getListByOperatorId(Long operatorId) {
+		return transformList(findListByOperatorId(operatorId));
+	}
+	
+	private List<OperatorRouteLink> findListByOperatorId(Long operatorId) {
+		final TypedQuery<OperatorRouteLink> query = createNamedQuery(OperatorRouteLink.QUERY_FIND_LIST_BY_OPERATOR_ID, getEntityClass())
+				.setParameter(OperatorRouteLink.PARAM_OPERATOR_ID, operatorId);
+		return query.getResultList();
+	}
+}

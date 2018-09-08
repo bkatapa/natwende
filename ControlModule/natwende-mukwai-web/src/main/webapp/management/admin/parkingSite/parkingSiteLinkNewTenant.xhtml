@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui">
+	
+	<ui:define name="content">
+        <p:messages id="messages" severity="error" />
+        <h:form styleClass="formBackground">
+            <p:breadCrumb>
+                <p:menuitem value="Home" action="Home" />
+                <p:menuitem value="Parking Site List" action="ParkingSiteList" />
+                <p:menuitem value="Site View (#{ParkingSiteAction.selectedEntity.siteName})" action="ParkingSiteView"/>
+                <p:menuitem value="Site Edit Tenant Links" />
+            </p:breadCrumb>
+        </h:form>
+        <h:form id="linkTenantsForm">
+        	<p:panel header="Link New Tenants" widgetVar="var_LinkTenants">
+        		<p:dataTable id="linkTenantsTable" 
+				 			 var="tenant"
+				 	    	 paginator="true"
+				 	 		 paginatorPosition="bottom" 
+				 			 rows="10"				 	
+				 			 lazy="true"
+				 			 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" 
+				 			 value="#{ParkingSiteAction.tenantVOs}" 
+				 			 selection="#{ParkingSiteAction.selectedTenantVOs}" 
+				 			 rowKey="#{tenant.id}" 
+				 			 style="margin-bottom:0">
+				 
+					<f:facet name="header">
+            			<p:commandButton process="linkTenantsTable"
+            				 			update="linkTenantsTable, @widgetVar(var_LinkedTenants)"            				 	
+            				 			icon="ui-icon-search" 
+            				 			action="#{ParkingSiteAction.linkTenants()}"
+            				 			value="Link Selected Tenant(s)" />
+        			</f:facet>
+        
+        			<p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+        
+        			<p:column headerText="NAME">
+            			<h:outputText value="#{tenant.name}" />
+        			</p:column>
+        
+        			<p:column headerText="CONTACT PERSON">
+            			<h:outputText value="#{tenant.contactPerson}" />
+        			</p:column>
+        
+        			<p:column headerText="PHONE NUMBER">
+            			<h:outputText value="#{tenant.contactNumber}" />
+        			</p:column>        			
+        
+        			<f:facet name="footer">
+            			<p:commandButton process="@this"
+            				 update="linkTenantsTable, @widgetVar(var_LinkedTenants)"            				 
+            				 icon="ui-icon-arrow-w" 
+            				 action="#{ParkingSiteTenantLinkEditAction.cancel()}"
+            				 value="Back" />
+        			</f:facet>
+    			</p:dataTable>
+    		</p:panel>
+    	</h:form>
+    </ui:define>	
+	
+</ui:composition>

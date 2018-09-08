@@ -1,0 +1,14 @@
+
+System properties that we understand that can be defined in standalone.xml
+An up to date list can be seen in EJB/com.adaptris.skidata.parking.util.SystemConfigurationBean
+Values are logged on startup as '####### SKIDATA CONFIG #######:'
+
+<system-properties>
+        <property name="skidata-base-url" value="http://localhost:8080/skidata-parking"/>
+        <property name="skidata-report-engine-path" value="/opt/reports/skidata-parking/"/>
+        <property name="skidata-send-welcome-emails" value="false"/>
+        <property name="skidata-parking-database-host" value="localhost"/>
+        <property name="skidata-parking-database-name" value="skidata_parking"/>
+        <property name="skidata-parking-database-username" value="supply db username"/>
+        <property name="skidata-parking-database-password" value="supply db password"/>
+</system-properties>

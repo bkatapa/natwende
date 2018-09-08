@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<f:metadata>
+      	<f:event type="preRenderView" listener="#{UserEditAction.initPage()}"/>
+   	</f:metadata>
+
+	<ui:define name="content">		
+		<h:form styleClass="formBackground" id="breadcrumb-menuForm">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="Users" />
+			</p:breadCrumb>
+			<p:messages id="messages" severity="error" closable="true" autoUpdate="false" globalOnly="false"/>
+		</h:form>
+		<p:panel header="#{TenantAction.selectedEntity.name}"
+			rendered="#{not empty TenantAction.selectedEntity.name}">
+			<h:form id="companyViewTenantAdminForm" styleClass="formBackground">
+				<pe:fluidGrid hGutter="20" vGutter="20">
+					<pe:fluidGridItem type="input">
+						<div class="fluidLabel">
+							<p:outputLabel for="company-Name" value="Name" />
+						</div>
+						<p:outputLabel id="company-Name"
+							value="#{TenantAction.selectedEntity.name}" />
+						<p:message for="company-Name" style="color:red" />
+					</pe:fluidGridItem>
+					<pe:fluidGridItem type="input">
+						<div class="fluidLabel">
+							<h:outputLabel for="company-code" value="Code" />
+						</div>
+						<p:outputLabel id="company-code"
+							value="#{TenantAction.selectedEntity.code}" />
+						<p:message for="company-code" style="color:red" />
+					</pe:fluidGridItem>
+				</pe:fluidGrid>
+			</h:form>
+		</p:panel>
+		
+		<c:choose>
+			<c:when test="#{not empty userSessionAction.userVO.parkingSiteVO and request.isUserInRole('TENANT_ADMINISTRATOR')}">
+				<c:set var="headerTitle" value="TENANT(#{userSessionAction.userVO.fullname}) | PARKING SITE(#{userSessionAction.userVO.parkingSiteVO.siteName})" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="headerTitle" value="Users" />
+			</c:otherwise>
+		</c:choose>
+		
+		
+		<p:panel>
+			<f:facet name="header">
+				<h:outputText value="#{headerTitle}" style="color:#3f3f3d"/>
+			</f:facet>
+			<h:form id="companyViewUserAdminForm" styleClass="formBackground">
+				<p:panel style="margin-top: 10px;" header="Filter"
+					id="companyViewUserAdminSearchPanel">
+					<pe:fluidGrid hGutter="20" vGutter="20">
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<p:outputLabel for="userSearch-firstname" value="First Name" />
+							</div>
+							<p:inputText id="userSearch-firstname"
+								value="#{UserAction.userSearchVO.firstname}" />
+							<p:message for="userSearch-firstname" style="color:red" />
+						</pe:fluidGridItem>
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<p:outputLabel for="userSearch-lastname" value="Last Name" />
+							</div>
+							<p:inputText id="userSearch-lastname"
+								value="#{UserAction.userSearchVO.lastname}" />
+							<p:message for="userSearch-lastname" style="color:red" />
+						</pe:fluidGridItem>
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<h:outputLabel for="userSearch-username" value="Username" />
+							</div>
+							<p:inputText id="userSearch-username"
+								value="#{UserAction.userSearchVO.username}" />
+							<p:message for="userSearch-username" style="color:red" />
+						</pe:fluidGridItem>
+						<pe:fluidGridItem type="input">
+							<div class="fluidLabel">
+								<p:outputLabel for="userSearch-status" value="Status" />
+							</div>
+							<p:selectOneMenu id="userSearch-status"
+								value="#{UserAction.userSearchVO.status}">
+								<f:selectItem itemLabel="All" itemValue="#{null}" />
+								<f:selectItems value="#{listHelper.userStatusMap}" />
+							</p:selectOneMenu>
+							<p:message for="userSearch-status" style="color:red" />
+						</pe:fluidGridItem>
+					</pe:fluidGrid>
+					<p:panelGrid columns="2" columnClasses="alignBottom">
+						<p:commandButton id="search" ajax="true" value="Search"
+										 action="#{UserAction.refresh()}" update="userTable"
+										 styleClass="button" icon="ui-icon-search" />
+						<p:commandButton id="reset" ajax="true" value="Reset"
+										 styleClass="normalButton"
+										 action="#{UserAction.userSearchVO.clearSearch()}"
+										 icon="ui-icon-close"
+										 update="companyViewUserAdminSearchPanel, userTable" />
+					</p:panelGrid>						
+				</p:panel>
+				
+				<p:toolbar style="margin-top: 20px;">
+					<f:facet name="left">
+						<p:commandButton id="newUser-btn"
+									 action="#{UserEditAction.createUser()}"
+									 process="@this"									 
+									 ajax="true" 
+									 value="New User"
+									 styleClass="button" icon="ui-icon-plus"/>
+						<p:tooltip for="newUser-btn" value="Click to create new User"/>
+					</f:facet>					
+				</p:toolbar>
+				
+				<p:dataTable id="userTable" widgetVar="var_UserTable" value="#{UserAction.entityList}"
+					var="user" paginator="true" rows="10" lazy="true" paginatorPosition="bottom"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="10,20,50" resizableColumns="true">
+				
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Full Name" style="font-weight: bold"/>
+						</f:facet>
+						<h:outputText value="#{user.fullname}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Username" style="font-weight: bold"/>
+						</f:facet>
+						<h:outputText value="#{user.username}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Email" style="font-weight: bold"/>
+						</f:facet>
+						<h:outputText value="#{user.email}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="User Phone" style="font-weight: bold"/>
+						</f:facet>
+						<h:outputText value="#{user.contactNumber}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Assigned Parking Site" style="font-weight: bold"/>
+						</f:facet>
+						<h:outputText value="#{user.parkingSiteVO.siteName}" />
+					</p:column>					
+
+					<p:column width="50">
+						<f:facet name="header">
+							<h:outputText value="Status" style="font-weight: bold"/>
+						</f:facet>
+						<h:outputText value="#{user.status}" />
+					</p:column>
+					
+					<p:column width="100"
+						style="text-align: center;">
+						<f:facet name="header">
+							<h:outputText value="Actions" style="font-weight: bold"/>
+						</f:facet>
+						<p:commandButton value="Edit" icon="ui-icon-pencil"
+							styleClass="rowButton" ajax="true"
+							process="@this"							
+							action="#{UserEditAction.editUser(user)}"/>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+
+		</p:panel>
+		
+		<!-- Dialog for creating new user
+		<p:dialog widgetVar="var_NewUser" 
+				  modal="true" 
+				  showEffect="fade" 
+				  hideEffect="fade"
+				  width="500px"
+				  header="#{not empty UserEditAction.userEditMode and UserEditAction.userEditMode eq 'EDIT_USER' ? 'Editing User ['.concat(UserEditAction.userVO.fullname).concat(']') : 'Creating New User'}" 
+				  fitViewport="true">
+			<p:ajax event="close" update="newUserForm, :breadcrumb-menuForm:messages, :menuForm" listener="{UserEditAction.handleClose}" />
+			<h:form id="newUserForm">				
+				<ui:include src="user/userEdit.xhtml" />
+			</h:form>		
+		</p:dialog> -->
+
+		<p:dialog header="Tenant Account Details"
+			widgetVar="jsAmendTenantDetails" modal="true" fitViewport="true"
+			resizable="false">
+			<h:form id="amendTenantDetails-form">
+				<p:growl id="msgs" showDetail="true" autoUpdate="true" />
+
+				<p:panelGrid columns="2" columnClasses="columnHeader,columnNormal">
+					<h:outputText value="Contact Person" />
+					<p:inputText value="#{TenantAction.amendedTenant.contactPerson}" />
+
+					<h:outputText value="Cell No" />
+					<p:inputText value="#{TenantAction.amendedTenant.cellNumber}" />
+
+					<h:outputText value="Landline" />
+					<p:inputText value="#{TenantAction.amendedTenant.phoneNumber}" />
+
+					<h:outputText value="Fax" />
+					<p:inputText value="#{TenantAction.amendedTenant.faxNumber}" />
+
+					<h:outputText value="Email" />
+					<p:inputText value="#{TenantAction.amendedTenant.emailAddress}" />
+
+					<h:outputText value="Delivery Address" />
+					<p:inputText value="#{TenantAction.amendedAddress.name}" />
+
+					<p:spacer />
+					<p:inputText value="#{TenantAction.amendedAddress.line1}" />
+
+					<p:spacer />
+					<p:inputText value="#{TenantAction.amendedAddress.city}" />
+
+					<p:spacer />
+					<p:inputText value="#{TenantAction.amendedAddress.province}" />
+
+					<p:spacer />
+					<p:inputText value="#{TenantAction.amendedAddress.postalCode}" />
+
+					<p:spacer />
+					<p:inputText value="#{TenantAction.amendedAddress.country}" />
+				</p:panelGrid>
+
+				<p:outputPanel styleClass="columnNormalRight">
+					<p:commandButton value="Cancel" ajax="false" type="button"
+						onclick="PF('jsAmendTenantDetails').hide()" />
+					<p:commandButton value="Submit"
+						actionListener="#{TenantAction.requestContactAmendment}"
+						oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('jsAmendTenantDetails').hide(); PF('jsAmendDone').show() }" />
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Tenant Account Details" widgetVar="jsAmendDone"
+			modal="true" fitViewport="true" resizable="false">
+			<p:panelGrid columns="1" columnClasses="columnNormalCenter">
+				<h:outputText
+					value="Your Tenant Account amendment request has been submitted." />
+				<h:outputText
+					value="You will be contacted should your assistance be required in fulfilling this request." />
+				<h:outputText
+					value="Please note the current contact details remain active while your request is being processed." />
+
+				<p:commandButton value="Close" ajax="false" type="button"
+					onclick="PF('jsAmendDone').hide()" />
+
+			</p:panelGrid>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

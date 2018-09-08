@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+	<datasource jndi-name="natwendeDatasource" enabled="true"
+		use-java-context="true" pool-name="natwendeDatasource_pool">
+		<connection-url>jdbc:mysql://localhost:3306/natwende</connection-url>
+		<driver>mysql-connector-java-5.1.24-bin.jar</driver>
+		
+		<transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+		<pool> 
+			<min-pool-size>10</min-pool-size>
+			<max-pool-size>100</max-pool-size>
+		</pool>
+		<security>
+			<user-name>mweka</user-name>
+			<password>xxppyy</password>
+		</security>
+		<validation>				
+		</validation>
+	</datasource>
+</datasources>

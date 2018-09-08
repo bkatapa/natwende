@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+
+	<o:importConstants type="com.mweka.natwende.types.PagePath" />
+
+	<ui:define name="content">
+	
+	<h:form id="stopView-form">
+		<p:panel id="stopView-panel" header="New station">
+		
+			<p:toolbar style="border: none;">
+				<p:toolbarGroup align="left">
+					<p:button value="Cancel"
+							  outcome="/admin/adminPanel?faces-redirect=true"
+							  icon="ui-icon-close" />	 
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Save"
+							  actionListener="#{StopAction.saveEntity}"
+							  ajax="true"
+							  process="@this, stopView-form"
+							  icon="ui-icon-disk" />	 
+				</p:toolbarGroup>
+			</p:toolbar>		
+		
+			<p:panelGrid id="stopView-grid" columns="2" columnClasses="columnHeader, columnNormal" layout="grid" style="margin-top: 10px;">
+				<p:outputLabel value="*Enter station name: "/>
+				<p:inputText value="#{StopAction.selectedEntity.name}" size="50" maxlength="100"/>
+			</p:panelGrid>
+			
+			<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal" layout="grid">
+				<p:selectOneMenu id="choose-town" 
+						  		 value="#{StopAction.selectedEntity.town}" 
+								 effect="fade" 
+								 var="townName"
+								 filter="true"
+								 filterMatchMode="contains">
+					<f:selectItem itemLabel="Select town name" itemValue="" />
+					<f:selectItems value="#{StopAction.townList}" 
+								   var="selectedTownName" 
+								   itemLabel="#{selectedTownName.display}" itemValue="#{selectedTownName}"/>
+					<p:column>
+						<h:outputText value="#{townName.display}" />
+					</p:column>
+					<p:ajax event="change" update="choose-province"/>
+				</p:selectOneMenu>
+				<p:selectOneMenu id="choose-province" 
+						  		 value="#{StopAction.selectedEntity.province}" 
+								 effect="fade" 
+								 var="provinceName"
+								 filter="true"
+								 filterMatchMode="contains">
+					<f:selectItem itemLabel="Select province name" itemValue="" />
+					<f:selectItems value="#{StopAction.provinceList}" 
+								   var="selectedProvinceName" 
+								   itemLabel="#{selectedProvinceName.display}" itemValue="#{selectedProvinceName}"/>
+					<p:column>
+						<h:outputText value="#{provinceName.display}" />
+					</p:column>
+					<p:ajax event="change" />
+				</p:selectOneMenu>
+			</p:panelGrid>		
+			
+		</p:panel>
+	</h:form>
+	
+	</ui:define>
+	
+</ui:composition>

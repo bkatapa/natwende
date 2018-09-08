@@ -1,0 +1,190 @@
+package com.mweka.natwende.trip.vo;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import com.mweka.natwende.base.vo.BaseVO;
+import com.mweka.natwende.types.Town;
+import com.mweka.natwende.types.TripStatus;
+
+public class TripVO extends BaseVO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2083473637510194261L;
+
+	private String busReg;
+	private String routeName;
+	private Town from;
+	private Town to;
+	private String driverName;
+	private Date scheduledDepartureDate;
+	private Date actualDepartureDate;
+	private Date actualDepartureTime;
+	private Date scheduledArrivalDate;
+	private Date actualArrivalDate;
+	private int totalNumOfSeats;
+	private int availableNumOfSeats;
+	private int bookedNumOfSeats;
+	private String travelDurationExpected; // HH:mm
+	private String travelDurationActual; // HH:mm
+	private TripStatus tripStatus;
+	private Set<String> occupiedSeats;
+	private List<BookingVO> bookings;
+	private TripScheduleVO tripSchedule;
+	
+	public String getBusReg() {
+		return busReg;
+	}
+	
+	public void setBusReg(String busReg) {
+		this.busReg = busReg;
+	}
+	
+	public String getRouteName() {
+		return routeName;
+	}
+	
+	public void setRouteName(String routeName) {
+		this.routeName = routeName;
+	}
+	
+	public Town getFrom() {
+		return from;
+	}
+	
+	public void setFrom(Town from) {
+		this.from = from;
+	}
+	
+	public Town getTo() {
+		return to;
+	}
+	
+	public void setTo(Town to) {
+		this.to = to;
+	}
+	
+	public String getDriverName() {
+		return driverName;
+	}
+	
+	public void setDriverName(String driverName) {
+		this.driverName = driverName;
+	}
+	
+	public Date getScheduledDepartureDate() {
+		return scheduledDepartureDate;
+	}
+	
+	public void setScheduledDepartureDate(Date scheduledDepartureDate) {
+		this.scheduledDepartureDate = scheduledDepartureDate;
+	}
+	
+	public Date getActualDepartureDate() {
+		return actualDepartureDate;
+	}
+	
+	public void setActualDepartureDate(Date actualDepartureDate) {
+		this.actualDepartureDate = actualDepartureDate;
+	}
+	
+	public Date getActualDepartureTime() {
+		return actualDepartureTime;
+	}
+	
+	public void setActualDepartureTime(Date actualDepartureTime) {
+		this.actualDepartureTime = actualDepartureTime;
+	}
+	
+	public Date getScheduledArrivalDate() {
+		return scheduledArrivalDate;
+	}
+	
+	public void setScheduledArrivalDate(Date scheduledArrivalDate) {
+		this.scheduledArrivalDate = scheduledArrivalDate;
+	}
+	
+	public Date getActualArrivalDate() {
+		return actualArrivalDate;
+	}
+	
+	public void setActualArrivalDate(Date actualArrivalDate) {
+		this.actualArrivalDate = actualArrivalDate;
+	}
+	
+	public int getTotalNumOfSeats() {
+		return totalNumOfSeats;
+	}
+	
+	public void setTotalNumOfSeats(int totalNumOfSeats) {
+		this.totalNumOfSeats = totalNumOfSeats;
+	}
+	
+	public int getAvailableNumOfSeats() {
+		return availableNumOfSeats;
+	}
+	
+	public void setAvailableNumOfSeats(int availableNumOfSeats) {
+		this.availableNumOfSeats = availableNumOfSeats;
+	}
+	
+	public int getBookedNumOfSeats() {
+		return bookedNumOfSeats;
+	}
+	
+	public void setBookedNumOfSeats(int bookedNumOfSeats) {
+		this.bookedNumOfSeats = bookedNumOfSeats;
+	}
+	
+	public String getTravelDurationExpected() {
+		return travelDurationExpected;
+	}
+	
+	public void setTravelDurationExpected(String travelDurationExpected) {
+		this.travelDurationExpected = travelDurationExpected;
+	}
+	
+	public String getTravelDurationActual() {
+		return travelDurationActual;
+	}
+	
+	public void setTravelDurationActual(String travelDurationActual) {
+		this.travelDurationActual = travelDurationActual;
+	}
+	
+	public TripStatus getTripStatus() {
+		return tripStatus;
+	}
+
+	public void setTripStatus(TripStatus tripStatus) {
+		this.tripStatus = tripStatus;
+	}
+
+	public Set<String> getOccupiedSeats() {
+		return occupiedSeats;
+	}
+	
+	public void setOccupiedSeats(Set<String> occupiedSeats) {
+		this.occupiedSeats = occupiedSeats;
+	}
+	
+	public List<BookingVO> getBookings() {
+		return bookings;
+	}
+	
+	public void setBookings(List<BookingVO> bookings) {
+		this.bookings = bookings;
+	}
+
+	public TripScheduleVO getTripSchedule() {
+		return tripSchedule;
+	}
+
+	public void setTripSchedule(TripScheduleVO tripSchedule) {
+		this.tripSchedule = tripSchedule;
+	}	
+	
+}

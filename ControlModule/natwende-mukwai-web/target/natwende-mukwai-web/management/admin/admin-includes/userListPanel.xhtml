@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:pe="http://primefaces.org/ui/extensions"
+		xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:form id="companyViewUserAdminForm" styleClass="formBackground">		
+		<p:panel style="margin-top: 10px;" header="Filter" styleClass="companyViewUserAdminSearchPanelClass"
+			 id="companyViewUserAdminSearchPanel">
+			<pe:fluidGrid hGutter="20" vGutter="20">
+				<pe:fluidGridItem type="input">
+					<div class="fluidLabel">
+						<h:outputLabel for="userSearch-username" value="Username" />
+					</div>
+					<p:inputText id="userSearch-username"
+						     value="#{UserAction.userSearchVO.username}" />
+					<p:message for="userSearch-username" style="color:red" />
+				</pe:fluidGridItem>
+				<pe:fluidGridItem type="input">
+					<div class="fluidLabel">
+						<p:outputLabel for="userSearch-firstname" value="First Name" />
+					</div>
+					<p:inputText id="userSearch-firstname"
+						     value="#{UserAction.userSearchVO.firstname}" />
+					<p:message for="userSearch-firstname" style="color:red" />
+				</pe:fluidGridItem>
+				<pe:fluidGridItem type="input">
+					<div class="fluidLabel">
+						<p:outputLabel for="userSearch-lastname" value="Last Name" />
+					</div>
+					<p:inputText id="userSearch-lastname"
+						     value="#{UserAction.userSearchVO.lastname}" />
+					<p:message for="userSearch-lastname" style="color:red" />
+				</pe:fluidGridItem>
+				
+				<pe:fluidGridItem type="input">
+					<div class="fluidLabel">
+						<p:outputLabel for="userSearch-status" value="Status" />
+					</div>
+					<p:selectOneMenu id="userSearch-status"
+							 value="#{UserAction.userSearchVO.status}">
+						<f:selectItem itemLabel="All" itemValue="#{null}" />
+						<f:selectItems value="#{listHelper.userStatusMap}" />
+						<p:ajax process="@this, @(.companyViewUserAdminSearchPanelClass)" 
+								update="@(.userTableClass)" 
+								listener="#{UserAction.testListener()}"/>
+					</p:selectOneMenu>
+					<p:message for="userSearch-status" style="color:red" />
+				</pe:fluidGridItem>
+			</pe:fluidGrid>
+			<p:panelGrid columns="2" columnClasses="alignBottom">
+				<p:commandButton id="search" ajax="true" value="Search"
+						 action="#{UserAction.refresh()}" update="userTable"
+						 styleClass="button" icon="ui-icon-search" />
+				<p:commandButton id="reset" ajax="true" value="Reset"
+						 styleClass="normalButton"
+						 action="#{UserAction.userSearchVO.clearSearch()}"
+						 icon="ui-icon-close"
+						 update="companyViewUserAdminSearchPanel, userTable" />
+			</p:panelGrid>						
+		</p:panel>
+
+		<p:toolbar style="margin-top: 20px;">
+			<f:facet name="left">
+				<p:commandButton id="newUser-btn"
+						 action="#{UserEditAction.createUser(userType)}"
+						 process="@this"									 
+						 ajax="true" 
+						 value="New User"
+						 styleClass="button" icon="ui-icon-plus"/>
+				<p:tooltip for="newUser-btn" value="Click to create new User"/>
+			</f:facet>					
+		</p:toolbar>
+
+		<p:dataTable id="userTable" widgetVar="var_UserTable" value="#{UserAction.entityList}" styleClass="userTableClass"
+			     var="user" paginator="true" rows="10" lazy="true" paginatorPosition="bottom"
+			     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			     rowsPerPageTemplate="10,20,50" resizableColumns="true">
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Username" style="font-weight: bold"/>
+				</f:facet>
+				<h:outputText value="#{user.username}" />
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Full Name" style="font-weight: bold"/>
+				</f:facet>
+				<h:outputText value="#{user.fullname}"/>
+			</p:column>
+			
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Email" style="font-weight: bold"/>
+				</f:facet>
+				<h:outputText value="#{user.email}" />
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="User Phone" style="font-weight: bold"/>
+				</f:facet>
+				<h:outputText value="#{user.contactNumber}" />
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Assigned Parking Site" style="font-weight: bold"/>
+				</f:facet>
+				<h:outputText value="#{user.parkingSiteVO.siteName}" />
+			</p:column>					
+
+			<p:column width="50">
+				<f:facet name="header">
+					<h:outputText value="Status" style="font-weight: bold"/>
+				</f:facet>
+				<h:outputText value="#{user.status}" />
+			</p:column>
+
+			<p:column width="150"
+				  style="text-align: center;">
+				<f:facet name="header">
+					<h:outputText value="Actions" style="font-weight: bold"/>
+				</f:facet>
+				<p:commandButton value="Edit" icon="ui-icon-pencil"
+						 styleClass="rowButton" ajax="true"
+						 process="@this"							
+						 action="#{UserEditAction.editUser(user, userType)}"/>
+				<p:commandButton value="#{user.status eq 'ACTIVE' ? 'Deactivate' : 'Activate'}" 
+						 icon="#{user.status eq 'ACTIVE' ? 'ui-icon-cancel' : 'ui-icon-check'}"
+						 styleClass="rowButton" ajax="true"
+						 style="margin-left: 10px;"
+						 process="@this"	
+						 update="userTable"
+						 action="#{UserAction.toggleUserStatus(user)}">
+					<p:confirm header="Confirmation" message="Are you sure you want to proceed with this action?" icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+
+
+</ui:composition>

@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<ui:define name="content">
+
+		<h:form styleClass="formBackground" id="breadcrumb-menuForm">
+			<p:breadCrumb>
+				<p:menuitem value="Home" action="Home" />
+				<p:menuitem value="ParkingSites" action="ParkingSiteList" />
+				<p:menuitem value="#{ParkingSiteAction.selectedEntity.siteName}" />
+			</p:breadCrumb>
+		</h:form>
+		<h:form id="linkUsersToParkingSiteForm">
+			<p:toolbar>
+				<f:facet name="left">
+					<p:commandButton process="@this, linkUsersTable"
+						ajax="true"
+						update="linkUsersTable"						
+						icon="ui-icon-search"
+						actionListener="#{ParkingSiteAction.linkUsersToParkingSite(ParkingSiteAction.selectedEntity)}"
+						value="Link Selected User(s)" />
+				</f:facet>
+			</p:toolbar>
+			<p:dataTable id="linkUsersTable" 
+				var="entityRow" 
+				paginator="true"
+				paginatorPosition="bottom"
+				rows="10" lazy="true"
+				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				value="#{ParkingSiteAction.usersWithoutParkingSites}"
+				selection="#{ParkingSiteAction.selectedUsersWithoutParkingSites}"
+				rowKey="#{entityRow.id}" style="margin-bottom:0">
+				<p:column selectionMode="multiple"
+					style="width:16px;text-align:center" />
+
+				<p:column headerText="Name">
+					<h:outputText value="#{entityRow.fullname}" />
+				</p:column>
+
+				<p:column headerText="User ID">
+					<h:outputText value="#{entityRow.username}" />
+				</p:column>
+
+				<p:column headerText="Phone Number">
+					<h:outputText value="#{entityRow.contactNumber}" />
+				</p:column>
+
+				<p:column headerText="Email Address">
+					<h:outputText value="#{entityRow.email}" />
+				</p:column>
+
+				<p:column headerText="Parking Site">
+					<h:outputText value="#{entityRow.parkingSiteVO.siteName}" />
+				</p:column>
+			</p:dataTable>
+
+			<p:toolbar>
+				<f:facet name="left">
+					<p:commandButton process="@this" ajax="true"
+						update="linkUsersTable"
+						icon="ui-icon-search" action="#{ParkingSiteAction.listPage}"
+						value="Back" />
+				</f:facet>
+			</p:toolbar>
+		</h:form>
+	</ui:define>
+</ui:composition>

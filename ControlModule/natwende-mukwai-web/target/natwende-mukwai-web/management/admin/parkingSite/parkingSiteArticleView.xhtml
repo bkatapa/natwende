@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/layout/mainTemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="content">        
+        <h:form styleClass="formBackground">
+            <p:breadCrumb>
+                <p:menuitem value="Home" action="Home" />
+                <p:menuitem value="Parking Site List" action="ParkingSiteList" />
+                <p:menuitem value="Site View (#{ParkingSiteAction.selectedEntity.siteName})"/>
+		<p:menuitem value="Article View"/>
+            </p:breadCrumb>
+        </h:form>
+        <h:form id="createNewSiteForm">
+        	<p:panel header="Article" id="articlePanel" widgetVar="var_article">
+				<h:panelGrid columns="3">
+					<p:fieldset legend="Article Details" style="height: 220px;">
+						<p:panelGrid columns="2" columnClasses="columnHeader, columnNormal" style="border: 0px;">
+							<h:outputLabel for="input-articleNumber" value="Article Number:" />
+							<p:inputText id="input-articleNumbere" value="#{ParkingSiteArticleAction.selectedEntity.articleNumber}" 
+								 	required="true" requiredMessage="Article Number is missing"/>
+					
+							<h:outputLabel for="input-articleDescription" value="Article Description" />
+							<p:inputText id="input-articleDescription" value="#{ParkingSiteArticleAction.selectedEntity.articleDescription}" 
+								 	required="true" requiredMessage="Article Description is missing"/>			
+			
+						</p:panelGrid>							
+					</p:fieldset>
+				</h:panelGrid>				
+
+				<p:toolbar style="margin-top: 10px;">
+					<f:facet name="left">
+						<p:panelGrid columns="2">
+							<p:commandButton id="close-btn" 
+								ajax="false" 
+								value="Back"
+								process="@this"	
+								immediate="true"
+								styleClass="button" icon="ui-icon-arrow-1-w"								
+								action="#{ParkingSiteArticleAction.getListPage()}" />
+							<p:commandButton id="save-site" ajax="true" value="Save"
+								process="@(form)" 
+								update="@widgetVar(var_ParkingSiteArticleTable)"				
+								styleClass="button" 
+								icon="ui-icon-disk"
+								action="#{ParkingSiteArticleAction.facadeUpdate(ParkingSiteArticleAction.selectedEntity)}"/>
+						</p:panelGrid>			
+					</f:facet>
+				</p:toolbar>
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

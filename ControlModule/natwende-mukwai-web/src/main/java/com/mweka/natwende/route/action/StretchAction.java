@@ -1,0 +1,275 @@
+package com.mweka.natwende.route.action;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.joda.time.DateTime;
+import org.primefaces.context.RequestContext;
+
+import com.mweka.natwende.helper.MessageHelper;
+import com.mweka.natwende.route.vo.StretchVO;
+import com.mweka.natwende.route.vo.RouteStopLinkVO;
+import com.mweka.natwende.route.vo.RouteVO;
+import com.mweka.natwende.route.vo.StopVO;
+import com.mweka.natwende.util.ReverseTransitComparator;
+
+@Named("StretchAction")
+@SessionScoped
+public class StretchAction extends MessageHelper<StretchVO> {
+
+	private static final long serialVersionUID = 1L;
+
+	// private StretchSearchVO searchVO;
+	private int currentIndex, initialGraphLen;
+	private boolean mirror;
+	private List<StopVO> allRouteStationList;
+	private List<StretchVO> finalEntityList, allStretchList;
+
+	@Inject
+	private RouteAction routeAction;
+
+	@PostConstruct
+	//@Override
+	public void init() {
+		setSelectedEntity(new StretchVO());
+		entityList = new ArrayList<>();
+		finalEntityList = new ArrayList<>();
+		allStretchList = new ArrayList<>();
+		allRouteStationList = new ArrayList<>();
+		currentIndex = 0;
+		initialGraphLen = 0;
+		mirror = false;		
+	}
+
+	@Override
+	public List<StretchVO> getEntityList() {		
+		return entityList;
+	}
+	
+	public List<StretchVO> getFinalEntityList() {		
+		return finalEntityList;
+	}
+	
+	public List<StretchVO> getFinalEntityListDB() {		
+		return serviceLocator.getStretchFacade().obtainStretchListGivenRouteId(routeAction.getSelectedEntity().getId());
+	}
+	
+	public Date getTotalTravelTime() {
+		return DateTime.now().toDate();
+	}
+
+	public boolean isMirror() {
+		return mirror;
+	}
+
+	public int getInitialGraphLen() {
+		return initialGraphLen;
+	}
+
+	public void setMirror(boolean mirror) {
+		this.mirror = mirror;
+	}
+
+	@Override
+	public String createEntity() {
+		init();
+		return viewEntity();
+	}
+
+	@Override
+	public String saveEntity() {
+		try {
+			serviceLocator.getStretchFacade().saveStretch(getSelectedEntity());
+		} catch (Exception ex) {
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}
+		return "";//SUCCESS_PAGE;
+	}
+	
+	public void saveEntityList() throws Exception {
+		serviceLocator.getStretchFacade().saveStretchList(entityList);
+	}
+
+	@Override
+	public String viewEntity() {
+		return "";//VIEW_PAGE;
+	}
+
+	@Override
+	public void deleteEntity() {
+		try {
+			serviceLocator.getRouteFacade().deleteRoute(getSelectedEntity().getId());
+			onMessage(SEVERITY_INFO, "Record deleted successfully");
+		} catch (Exception ex) {
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}
+	}
+
+	public List<StopVO> getAllRouteStationList() {
+		return allRouteStationList;
+	}
+	
+	public void getAllRouteStationList(List<StopVO> allRouteStationList) {
+		this.allRouteStationList = allRouteStationList;
+	}
+
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+
+	public void loadEntityList() {
+		entityList = serviceLocator.getStretchFacade().obtainStretchListGivenRouteId(routeAction.getSelectedEntity().getId());
+	}
+
+	public void onPageLoad() {
+		activateLast();
+		if (allRouteStationList.isEmpty()) {
+			allRouteStationList.add(routeAction.getSelectedEntity().getStart());
+			allRouteStationList.addAll(routeAction.getStationPickList().getTarget());
+			allRouteStationList.add(routeAction.getSelectedEntity().getStop());
+			try {
+				allStretchList.clear();
+				Iterator<StopVO> it = allRouteStationList.iterator();
+				while (it.hasNext()) {
+					StopVO from = it.next();
+					for (int i = allRouteStationList.indexOf(from) + 1; i < allRouteStationList.size(); i++) {
+						StopVO to = allRouteStationList.get(i);
+						StretchVO result = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
+						allStretchList.add(result == null ? new StretchVO(from, to) : result);
+					}
+				}
+				initialGraphLen = allRouteStationList.size() - 1;
+				StopVO from = allRouteStationList.get(currentIndex);
+				StopVO to = allRouteStationList.get(currentIndex + 1);
+				StretchVO nextStretch = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
+				setSelectedEntity(nextStretch == null ? new StretchVO(from, to) : nextStretch);
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				onMessage(SEVERITY_ERROR, ex.getMessage());
+			}
+		}
+	}
+	
+	public void addToEntityList() {
+		if (allRouteStationList.size() > currentIndex) {
+			entityList.add(selectedEntity);
+			activateLast();
+			setCurrentIndex(currentIndex + 1);
+			//log.debug("Step5 complete");
+			//
+			
+			if (allRouteStationList.size() - 1 == currentIndex) { // done.
+				try { // Compute travel times between all route stretch permutations
+					finalEntityList = serviceLocator.getStretchHelper().computeAllTravelTimePermutations(entityList, allStretchList);
+					log.debug("Step5 complete");
+					onMessage(SEVERITY_INFO, "All travel time estimates for all route stretches configured successfully.");
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+					onMessage(SEVERITY_ERROR, ex.getMessage());
+				}
+			}
+			else {
+				getSelectedEntity().setFrom(allRouteStationList.get(currentIndex));
+				getSelectedEntity().setFrom(allRouteStationList.get(currentIndex + 1));
+				activateLast();
+				setSelectedEntity(new StretchVO());
+				setCurrentIndex(currentIndex + 1);
+			}
+		}		
+		RequestContext.getCurrentInstance().update("@(.stretchTable-class(stretch-table))");
+	}
+	
+	public void onEntityRemove() {
+		if (entityList.isEmpty()) {
+			return;
+		}
+		try {
+			StopVO from = entityList.get(currentIndex - 1).getFrom();
+			StopVO to = entityList.get(currentIndex - 1).getTo();
+			Date estimatedTravelTime = entityList.get(currentIndex - 1).getEstimatedTravelTime();
+			StretchVO prevStretch = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
+			
+			if (prevStretch == null) {
+				selectedEntity.setFrom(from);
+				selectedEntity.setTo(to);
+				selectedEntity.setEstimatedTravelTime(estimatedTravelTime);
+			}
+			else {
+				setSelectedEntity(prevStretch);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}
+	}
+	
+	//@Transactional
+	public String createMirror() {
+		try {
+			// 1. Reverse route name.
+			String[] splitRouteName = routeAction.getSelectedEntity().getName().split(" - ");
+			String reversedRouteName = splitRouteName.length == 2 ? splitRouteName[1] + " - " + splitRouteName[0].trim()
+					: new StringBuilder(routeAction.getSelectedEntity().getName()).reverse().toString();
+			
+			// 2. Reverse transit routes.
+			List<RouteStopLinkVO> transitStationList = new ArrayList<>(serviceLocator.getRouteStopLinkFacade().obtainAllByRouteId(routeAction.getSelectedEntity().getId()));
+			Collections.sort(transitStationList, new ReverseTransitComparator());
+			for (RouteStopLinkVO link : transitStationList) {
+				link.setStationIndex(transitStationList.indexOf(link));
+			}
+			
+			// 3. Save route.
+			RouteVO reversedRoute = new RouteVO(reversedRouteName, routeAction.getSelectedEntity().getStop(), routeAction.getSelectedEntity().getStart());
+			reversedRoute.setMirrorRoute(routeAction.getSelectedEntity());
+			reversedRoute = serviceLocator.getRouteFacade().saveRoute(reversedRoute);
+			serviceLocator.getRouteStopLinkFacade().saveRouteStopLinkList(transitStationList, reversedRoute);
+			
+			// 4. Reverse route-stretch end-points.
+			List<StretchVO> stretchList = serviceLocator.getStretchFacade().obtainStretchListGivenRouteId(routeAction.getSelectedEntity().getId());
+			List<StretchVO> reverseStretchList = new ArrayList<>();
+			for (StretchVO s : stretchList) {
+				StopVO from = s.getTo();
+				StopVO to = s.getFrom();
+				reverseStretchList.add(new StretchVO(from, to, s.getEstimatedTravelTime()));
+			}
+			serviceLocator.getStretchFacade().saveStretchList(reverseStretchList);
+			RequestContext.getCurrentInstance().execute(HIDE_CONFIRM_MIRROR_DIALOG);
+			return ROUTE_SUCCESS_PAGE;
+		}
+		catch (Exception ex) {
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}
+		return null;
+	}
+	
+	public void onStretchSelect() {		
+	}
+	
+	private void activateLast() {
+		if (entityList.isEmpty()) {
+			return;
+		}
+		for (StretchVO graph : entityList) {
+			graph.setSelected(true);
+		}
+		entityList.get(entityList.size() - 1).setSelected(false);
+	}
+	
+	private static transient final String SHOW_CONFIRM_MIRROR_DIALOG = "PF('var_ConfirmMirrorDlg').show();";
+	private static transient final String HIDE_CONFIRM_MIRROR_DIALOG = SHOW_CONFIRM_MIRROR_DIALOG.replace("show", "hide");
+
+}

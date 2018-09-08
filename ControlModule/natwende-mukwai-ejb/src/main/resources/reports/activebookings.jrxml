@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="activebookings" language="groovy" pageWidth="1050" pageHeight="515" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="87" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="360b4a56-5aa0-4c7d-b7b4-458d3c4818af">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1">
+		<box leftPadding="5"/>
+	</style>
+	<parameter name="PARKING_SITE_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USERNAME" class="java.lang.String"/>
+	<parameter name="START_DATE" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="END_DATE" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TENANT_ID_CLAUSE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARKING_SITE_NAME" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     booking.`id` AS booking_id,
+     booking.`insertDate` AS booking_insertDate,
+     booking.`status` AS booking_status,
+     booking.`uniqueId` AS booking_uniqueId,
+     booking.`updateDate` AS booking_updateDate,
+     booking.`version` AS booking_version,
+     booking.`bayNumber` AS booking_bayNumber,
+     booking.`bookingEndDateTime` AS booking_bookingEndDateTime,
+     booking.`bookingStartDateTime` AS booking_bookingStartDateTime,
+     booking.`instructions` AS booking_instructions,
+     booking.`personVisiting` AS booking_personVisiting,
+     booking.`vehicleMake` AS booking_vehicleMake,
+     booking.`vehicleRegistration` AS booking_vehicleRegistration,
+     booking.`visitingCompany` AS booking_visitingCompany,
+     booking.`visitorContactNumber` AS booking_visitorContactNumber,
+     booking.`visitorEmail` AS booking_visitorEmail,
+     booking.`visitorFirstName` AS booking_visitorFirstName,
+     booking.`visitorSurname` AS booking_visitorSurname,
+     booking.`tenant_id` AS booking_tenant_id,
+     booking.`personBeingVisitedContactNumber` AS booking_personBeingVisitedContactNumber,
+     booking.`articleNumber` AS booking_articleNumber,
+     booking.`validationProvider` AS booking_validationProvider,
+     booking.`serialNumber` AS booking_serialNumber,
+     booking.`bookingType_id` AS booking_bookingType_id,
+     booking.`bookingEndDate` AS booking_bookingEndDate,
+     booking.`bulkBooking_id` AS booking_bulkBooking_id,
+     parkingsite.`siteName` AS parkingsite_siteName,
+     tenant.`id` AS tenant_id,
+     tenant.`name` AS tenant_name,
+     bookingtype.`id` AS bookingtype_id,
+     bookingtype.`name` AS bookingtype_name,
+     TIMESTAMPDIFF(HOUR, booking.`bookingStartDateTime`,booking.`bookingEndDateTime`) as booking_duration
+FROM
+     `ParkingSite` parkingsite INNER JOIN `Tenant` tenant ON parkingsite.`id` = tenant.`parkingSite_id`
+     INNER JOIN `Booking` booking ON tenant.`id` = booking.`tenant_id`
+     INNER JOIN `BookingType` bookingtype ON booking.`bookingType_id` = bookingtype.`id`
+     AND tenant.`id` = bookingtype.`tenant_id`
+
+where tenant.parkingSite_id = $P{PARKING_SITE_ID}
+and  booking.`bookingStartDateTime` >=  $P{START_DATE}
+and  booking.`bookingStartDateTime` <=  $P{END_DATE}
+and booking.`bookingStartDateTime` >= now()
+and booking.`status` = 'ACTIVE'
+and $P!{TENANT_ID_CLAUSE}]]>
+	</queryString>
+	<field name="booking_id" class="java.lang.Long"/>
+	<field name="booking_insertDate" class="java.sql.Timestamp"/>
+	<field name="booking_status" class="java.lang.String"/>
+	<field name="booking_uniqueId" class="java.lang.String"/>
+	<field name="booking_updateDate" class="java.sql.Timestamp"/>
+	<field name="booking_version" class="java.lang.Long"/>
+	<field name="booking_bayNumber" class="java.lang.String"/>
+	<field name="booking_bookingEndDateTime" class="java.sql.Timestamp"/>
+	<field name="booking_bookingStartDateTime" class="java.sql.Timestamp"/>
+	<field name="booking_instructions" class="java.lang.String"/>
+	<field name="booking_personVisiting" class="java.lang.String"/>
+	<field name="booking_vehicleMake" class="java.lang.String"/>
+	<field name="booking_vehicleRegistration" class="java.lang.String"/>
+	<field name="booking_visitingCompany" class="java.lang.String"/>
+	<field name="booking_visitorContactNumber" class="java.lang.String"/>
+	<field name="booking_visitorEmail" class="java.lang.String"/>
+	<field name="booking_visitorFirstName" class="java.lang.String"/>
+	<field name="booking_visitorSurname" class="java.lang.String"/>
+	<field name="booking_tenant_id" class="java.lang.Long"/>
+	<field name="booking_personBeingVisitedContactNumber" class="java.lang.String"/>
+	<field name="booking_articleNumber" class="java.lang.String"/>
+	<field name="booking_validationProvider" class="java.lang.String"/>
+	<field name="booking_serialNumber" class="java.lang.Integer"/>
+	<field name="booking_bookingType_id" class="java.lang.Long"/>
+	<field name="booking_bookingEndDate" class="java.sql.Timestamp"/>
+	<field name="parkingsite_siteName" class="java.lang.String"/>
+	<field name="tenant_id" class="java.lang.Long"/>
+	<field name="tenant_name" class="java.lang.String"/>
+	<field name="bookingtype_id" class="java.lang.Long"/>
+	<field name="bookingtype_name" class="java.lang.String"/>
+	<field name="booking_duration" class="java.lang.Long"/>
+	<field name="booking_bulkBooking_id" class="java.lang.Long"/>
+	<variable name="vistorName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="516" height="20" uuid="790ff865-2018-4f02-a740-83d5bf34ecc3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Active Bookings Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="516" y="0" width="188" height="20" uuid="e4916059-5478-4df9-b26c-90542126a850"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Report Run Date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH:mm:ss">
+				<reportElement style="style1" x="704" y="0" width="302" height="20" uuid="92baa178-d15d-4cb0-85fe-3af33b916467"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style1" x="0" y="20" width="128" height="20" uuid="935d5b2a-85b8-4cfa-874a-e8cda0589f00"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Parking Site:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="516" y="20" width="188" height="20" uuid="2db91ed4-3579-4e27-b509-3f9eab102f15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[User:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style1" x="704" y="20" width="302" height="20" uuid="02bffbc5-ea7f-4cb0-8d05-b4658168dd21"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{USERNAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="128" y="20" width="348" height="20" uuid="feffd83d-ec68-4da7-b602-83c2e37ae0bb"/>
+				<textFieldExpression><![CDATA[$P{PARKING_SITE_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="style1" x="0" y="0" width="128" height="20" uuid="8b4b93b3-0ad9-41ac-974c-85a7a6253190"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Start Date (Time)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="128" y="0" width="120" height="20" uuid="fe8f97b6-476c-4985-bd3a-5a0bebc7cf41"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[End Date (Time)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="248" y="0" width="73" height="20" uuid="ba8e8d4e-9677-463c-b9a1-4c4af5c2e66a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Bay Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="321" y="0" width="98" height="20" uuid="c064c0ed-617f-40c6-a9db-e895ddd4349c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Tenant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="419" y="0" width="97" height="20" uuid="c0f5d6e0-fbdb-4a06-9ab2-8af561f6b6dc"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Visitor Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="516" y="0" width="103" height="20" uuid="602fd891-a5a7-49de-889d-b61569d0a9f8"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Visitor Surname]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="619" y="0" width="85" height="20" uuid="ff06fa30-537c-48d1-84c3-bf9ff59a90bf"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Vehicle Reg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="782" y="0" width="100" height="20" uuid="69caeb00-ef80-43ce-8952-ebb9898cffbc"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[Booking Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="704" y="0" width="78" height="20" uuid="a078d96f-3ead-4979-b75d-fe07252c93a8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Duration]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style1" x="882" y="0" width="124" height="20" uuid="6668116d-7921-4613-bddd-c70a4b842606"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[Single / Bulk]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement style="style1" x="0" y="0" width="128" height="21" uuid="87e4333e-8f37-4de0-a7a2-ce544453e76a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy (HH:mm)").format($F{booking_bookingStartDateTime})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="128" y="0" width="120" height="21" uuid="9d8a9ff8-63c0-4e55-a866-079551687c51"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy (HH:mm)").format($F{booking_bookingEndDateTime})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="248" y="0" width="73" height="21" uuid="fdf74654-5d51-4b72-a12e-0be6b4489055"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{booking_bayNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="321" y="0" width="98" height="21" uuid="a44d4cfe-71b3-4120-98d7-0fc0a23e6aa0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{tenant_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="419" y="0" width="97" height="21" uuid="751426e0-7ab4-4c97-9ec2-699f203ddd6b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{booking_visitorFirstName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="516" y="0" width="103" height="21" uuid="00ff5c19-6f2b-4b5a-8d18-588403ba3594"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{booking_visitorSurname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="619" y="0" width="85" height="21" uuid="c9fa8892-392b-4442-9f50-365d1836b26c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{booking_vehicleRegistration}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="782" y="0" width="100" height="21" uuid="283e53a7-82b6-4142-bc4d-c5ecd1167c10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{bookingtype_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="704" y="0" width="78" height="21" uuid="064bb192-7a4b-42c0-992c-9a1dd80d2680"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{booking_duration}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style1" x="882" y="0" width="124" height="21" uuid="e3c150ca-59c5-415e-9610-bce96c2060c0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{booking_bulkBooking_id} == null ? "Single" : "Bulk"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="50"/>
+	</summary>
+</jasperReport>
