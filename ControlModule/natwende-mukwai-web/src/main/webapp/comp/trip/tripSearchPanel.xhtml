@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"	
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+				
+	<h:panelGrid columns="2" cellpadding="5">
+		<p:fieldset legend="Travelling from" style="border: none;">
+			<p:autoComplete id="searchTrip-fromTown"
+							dropdown="true"
+							value="#{TripAction.selectedEntity.from}"
+							var="town"
+							completeMethod="#{TripAction.completeTown}"
+							itemLabel="#{town.display}"
+							itemValue="#{town}"
+							required="true"
+							forceSelection="true"
+							requiredMessage="Please select the town you will be travelling from.">
+				<p:ajax event="itemSelect" listener="#{TripAction.onTownFromSelect}" update="#{searchTripPanel}" />
+			</p:autoComplete>
+		</p:fieldset>
+		
+		<p:fieldset legend="Going to" style="border: none;">
+			<p:autoComplete id="searchTrip-toTown"
+							dropdown="true"
+							value="#{TripAction.selectedEntity.to}"
+							var="town"
+							completeMethod="#{TripAction.completeTown}"
+							itemLabel="#{town.display}"
+							itemValue="#{town}"
+							required="true"
+							forceSelection="true"
+							requiredMessage="Please select the town you will be travelling to.">
+				<p:ajax event="itemSelect" listener="#{TripAction.onTownToSelect}" update="#{searchTripPanel}" />
+			</p:autoComplete>
+		</p:fieldset>
+		
+		<p:fieldset legend="Departure date" style="border: none;">
+			<p:calendar mode="inline" value="#{TripAction.travelDate}">
+				<p:ajax event="dateSelect" process="@this" update="#{searchTripPanel}"/>
+			</p:calendar>
+		</p:fieldset>
+		
+		<p:fieldset legend="Return date" style="border: none;" rendered="#{TripAction.bookReturn}">
+			<p:calendar mode="inline" value="#{TripAction.returnDate}">
+				<p:ajax event="dateSelect" process="@this" update="#{searchTripPanel}"/>
+			</p:calendar>
+		</p:fieldset>
+		
+		<p:fieldset style="border: none;" rendered="#{not TripAction.bookReturn}"/>
+		
+		<p:fieldset style="border: none;">
+			<h:panelGrid colums="1" style="background: #fff176;">
+				<h:outputText value="Travelling on: #{TripAction.travelDateAsString}" rendered="#{not empty TripAction.travelDate}" />
+				<h:outputText value="Coming back on: #{TripAction.returnDateAsString}" rendered="#{TripAction.bookReturn}" />
+			</h:panelGrid>
+		</p:fieldset>
+		
+		<p:fieldset style="border: none;">
+			<p:selectBooleanCheckbox id="searchTrip-bookReturn"
+									 value="#{TripAction.bookReturn}">
+				<p:ajax process="@this, searchTrip-bookReturn" update="#{searchTripPanel}" listener="#{TripAction.toggleBookReturn}"/>
+			</p:selectBooleanCheckbox>
+			<h:outputText value="Book a return ticket as well?" style="margin-left: 5px;"/>
+		</p:fieldset>
+	</h:panelGrid>			
+				
+</ui:composition>
