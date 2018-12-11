@@ -9,9 +9,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class ReportParameters_ extends com.mweka.natwende.base.BaseEntity_ {
 
 	public static volatile SingularAttribute<ReportParameters, String> paramkey;
+	public static volatile SingularAttribute<ReportParameters, String> paramType;
 	public static volatile SingularAttribute<ReportParameters, Report> report;
 	public static volatile SingularAttribute<ReportParameters, Integer> displayOrder;
-	public static volatile SingularAttribute<ReportParameters, String> paramType;
 	public static volatile SingularAttribute<ReportParameters, String> paramvalue;
 
 }

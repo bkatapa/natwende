@@ -11,9 +11,9 @@ public abstract class Bus_ extends com.mweka.natwende.base.BaseEntity_ {
 
 	public static volatile SingularAttribute<Bus, String> imgUrl;
 	public static volatile SingularAttribute<Bus, String> reg;
-	public static volatile SingularAttribute<Bus, Integer> capacity;
 	public static volatile ListAttribute<Bus, Seat> seats;
 	public static volatile SingularAttribute<Bus, Operator> operator;
+	public static volatile SingularAttribute<Bus, Integer> capacity;
 
 }
 

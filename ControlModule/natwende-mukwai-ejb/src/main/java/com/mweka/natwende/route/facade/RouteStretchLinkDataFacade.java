@@ -2,6 +2,8 @@ package com.mweka.natwende.route.facade;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
+
 import org.apache.commons.logging.LogFactory;
 
 import com.mweka.natwende.facade.AbstractDataFacade;
@@ -10,6 +12,7 @@ import com.mweka.natwende.route.entity.RouteStretchLink;
 import com.mweka.natwende.route.entity.Stretch;
 import com.mweka.natwende.route.vo.RouteStretchLinkVO;
 
+@Stateless
 public class RouteStretchLinkDataFacade extends AbstractDataFacade<RouteStretchLinkVO, RouteStretchLink> {
 
     public RouteStretchLinkDataFacade() {
@@ -62,7 +65,14 @@ public class RouteStretchLinkDataFacade extends AbstractDataFacade<RouteStretchL
 				.setParameter(Stretch.PARAM_STRETCH_ID, stretchId)				
 				.getResultList();
 		return getVOFromList(resultList);
-	}    
+	} 
+    
+    public List<RouteStretchLinkVO> getByStretchId(Long stretchId) {
+		List<RouteStretchLink> resultList = createNamedQuery(RouteStretchLink.QUERY_FIND_BY_STRETCH_ID, getEntityClass())
+				.setParameter(Stretch.PARAM_STRETCH_ID, stretchId)				
+				.getResultList();
+		return transformList(resultList);
+	}
 	
 	public int deleteByRouteId(Long routeId) throws Exception {
 		return getEntityManager().createQuery(RouteStretchLink.QUERY_DELETE_BY_ROUTE_ID).setParameter(Route.PARAM_ROUTE_ID, routeId).executeUpdate();

@@ -22,7 +22,7 @@ public class StretchHelper implements Serializable {
 		List<StretchVO> resultList = new ArrayList<>();
 		
 		for (StretchVO outer : allStretchList) {
-			if (outer.getId() > -1L) {
+			if (outer.getId() > -1L || outer.getEstimatedTravelTime() == null) {
 				outer.setEstimatedTravelTime(getZeroDate());
 			}
 			StopVO outerFrom = outer.getFrom();
@@ -31,6 +31,9 @@ public class StretchHelper implements Serializable {
 			StopVO innerTo;
 			Calendar cOuter = Calendar.getInstance();
 			Calendar cInner = Calendar.getInstance();
+			
+			//System.out.println("Outer => " + outer + ", outer.getEstimatedTravelTime() => " + outer.getEstimatedTravelTime());
+			
 			cOuter.setTime(outer.getEstimatedTravelTime());
 			
 			for (StretchVO inner : stretchList) {

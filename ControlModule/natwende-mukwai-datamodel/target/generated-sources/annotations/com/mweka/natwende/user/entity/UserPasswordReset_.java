@@ -9,10 +9,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(UserPasswordReset.class)
 public abstract class UserPasswordReset_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<UserPasswordReset, String> email;
-	public static volatile SingularAttribute<UserPasswordReset, String> resetPin;
 	public static volatile SingularAttribute<UserPasswordReset, Date> expiryDate;
+	public static volatile SingularAttribute<UserPasswordReset, String> resetPin;
 	public static volatile SingularAttribute<UserPasswordReset, User> user;
+	public static volatile SingularAttribute<UserPasswordReset, String> email;
 
 }
 

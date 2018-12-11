@@ -7,7 +7,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,13 +26,13 @@ public class StopVOConverter implements Converter {
 
 	    @Override
 	    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-	    	if (value == null || "".equals(value.trim())) {
+	    	if (StringUtils.isBlank(value)) {
 	    		return new StopVO();
 	    	}
-	    	Long id = NumberUtils.toLong(value, -2L);
-	        if (id == null || id == -2L) {
-	            return new StopVO();
-	        }	        
+	    	Long id = Long.valueOf(value);//NumberUtils.toLong(value, -2L);
+	        //if (id == null || id == -2L) {
+	            //return new StopVO();
+	        //}	        
 	        try {
 	        	return serviceLocator.getStopFacade().obtainStopById(id);
 	        }

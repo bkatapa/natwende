@@ -27,11 +27,13 @@ import com.mweka.natwende.types.Town;
 import com.mweka.natwende.types.TripStatus;
 
 @Entity
-@Table(name = "Trip", uniqueConstraints = {@UniqueConstraint(columnNames = {"fromTown", "toTown"})})
+@Table(name = "Trip", uniqueConstraints = {@UniqueConstraint(columnNames = {"busReg", "fromTown", "toTown", "scheduledDepartureDate"})})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = Trip.QUERY_FIND_ALL, query=" SELECT t FROM Trip t "),
-    @NamedQuery(name = Trip.QUERY_FIND_LIST_BY_ROUTE_NAME, query = " SELECT t FROM Trip t WHERE t.routeName = :routeName ")
+    @NamedQuery(name = Trip.QUERY_FIND_LIST_BY_ROUTE_NAME, query = " SELECT t FROM Trip t WHERE t.routeName = :routeName "),
+    @NamedQuery(name = Trip.QUERY_FIND_ACTIVE_BY_STRETCH_AND_TRAVEL_DATE, query = " SELECT t FROM Trip t, RouteStretchLink rsl WHERE t.tripSchedule.route.id = rsl.route.id AND t.scheduledDepartureDate > CURRENT_DATE AND t.scheduledDepartureDate BETWEEN :date1 AND :date2 AND rsl.stretch.from.town = :fromTown AND rsl.stretch.to.town = :toTown "),
+    @NamedQuery(name = Trip.QUERY_FIND_BY_BUS_ID_AND_DEPARTURE_DATETIME, query = " SELECT t FROM Trip t WHERE t.busReg = :busReg AND t.scheduledDepartureDate = :departureDate AND t.tripSchedule.scheduledDepartureTime = :departureTime ")
 })
 public class Trip extends BaseEntity {
 
@@ -45,7 +47,9 @@ public class Trip extends BaseEntity {
 	 * Named queries
 	 */
 	public static transient final String QUERY_FIND_ALL = "Trip.findAll";
-	public static transient final String QUERY_FIND_LIST_BY_ROUTE_NAME = "Trip.findListByRouteName";	
+	public static transient final String QUERY_FIND_LIST_BY_ROUTE_NAME = "Trip.findListByRouteName";
+	public static transient final String QUERY_FIND_ACTIVE_BY_STRETCH_AND_TRAVEL_DATE = "Trip.findActiveByStretchAndTravelDate";
+	public static transient final String QUERY_FIND_BY_BUS_ID_AND_DEPARTURE_DATETIME = "Trip.findByBusIdAndDepartureDateTime";
 	
 	/**
 	 * Query parameters

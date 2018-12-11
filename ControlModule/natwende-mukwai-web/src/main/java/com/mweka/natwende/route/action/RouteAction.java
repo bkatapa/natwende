@@ -100,6 +100,10 @@ public class RouteAction extends MessageHelper<RouteVO> {
 		}
 	}
 	
+	public String listEntities() {
+		return LIST_PAGE;
+	}
+	
 	public List<StopVO> getStationList() {
 		return stationList;
 	}
@@ -142,7 +146,8 @@ public class RouteAction extends MessageHelper<RouteVO> {
 		this.stationPickList = stationPickList;
 	}
 	
-	public List<StopVO> getTransitStationList() {
+	public List<StopVO> getTransitStationList() {		
+		onReorder();
 		return transitStationList;
 	}
 
@@ -156,9 +161,15 @@ public class RouteAction extends MessageHelper<RouteVO> {
 	}
 	
 	public void onSelect(SelectEvent event) {
-		selectedTransitStation = (StopVO) event.getObject();
-		String logMsg = "Item selected: " + selectedTransitStation + ", item index: " + transitStationList.indexOf(selectedTransitStation);
-		log.debug(logMsg);
+		Object obj = event.getObject();
+		if (obj instanceof StopVO) {
+			selectedTransitStation = (StopVO) event.getObject();
+			String logMsg = "Item selected: " + selectedTransitStation + ", item index: " + transitStationList.indexOf(selectedTransitStation);
+			log.debug(logMsg);
+		}
+		else {
+			log.error("event.getObject() : expected instance was StopVO. Received [" + obj.getClass().getName() + "]");
+		}
 	}
 	
 	public void onReorder() {
@@ -170,14 +181,20 @@ public class RouteAction extends MessageHelper<RouteVO> {
 	}
 	
 	public void onTransfer(TransferEvent event) {
-		for (Object item : event.getItems()) {
-			StopVO station = (StopVO) item;
-			if (!transitStationList.contains(station)) {
-				transitStationList.add(station);
-				station.setIndex(transitStationList.indexOf(station));
+		/*
+		for (Object item : event.getItems()) {			
+			if (item instanceof StopVO) {
+				StopVO station = (StopVO) item;
+				if (!transitStationList.contains(station)) {
+					transitStationList.add(station);
+					station.setIndex(transitStationList.indexOf(station));
+				}
 			}
-		}
-	}
+			else {
+				log.error("event.getObject() : expected instance was StopVO. Received [" + item.getClass().getName() + "]");
+			}
+		} */
+	}	
 
 	private void loadEntityList() {
 		entityList = serviceLocator.getRouteDataFacade().getAllByStatus(Status.ACTIVE);

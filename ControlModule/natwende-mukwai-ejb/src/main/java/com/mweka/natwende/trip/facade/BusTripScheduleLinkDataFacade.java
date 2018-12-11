@@ -57,4 +57,12 @@ public class BusTripScheduleLinkDataFacade extends AbstractDataFacade<BusTripSch
 				.getResultList();
 		return getVOFromList(resultList);
 	}
+	
+	public List<BusTripScheduleLinkVO> getListByScheduleId(Long tripScheduleId) {
+		List<BusTripScheduleLink> resultList = createNamedQuery(BusTripScheduleLink.QUERY_FIND_BY_BUS_ID_AND_TRIPSCHEDULE_ID, getEntityClass())
+				.setParameter(TripSchedule.PARAM_TRIPSCHEDULE_ID, tripScheduleId)
+				.getResultList();
+		
+		return transformList(resultList);
+	}
 }

@@ -7,7 +7,9 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import com.mweka.natwende.facade.AbstractFacade;
+import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.route.vo.StretchVO;
+import com.mweka.natwende.types.Town;
 
 @Stateless
 @LocalBean
@@ -68,6 +70,44 @@ public class StretchFacade extends AbstractFacade<StretchVO> {
 	public StretchVO getStretchByEndpoints(Long fromId, Long toId) throws Exception {
 		try {
 			return serviceLocator.getStretchDataFacade().getByEndpointIds(fromId, toId);
+		}
+		catch (Exception ex) {
+			log.debug(ex);
+			throw new EJBException(ex);
+		}
+	}
+	
+	public StretchVO getStretchByEndpoints(Town fromTown, Town toTown) throws Exception {
+		try {
+			List<StopVO> resultList = serviceLocator.getStopFacade().obtainStopByTown(fromTown);
+			StopVO from = null;
+			StopVO to = null;
+			
+			if (resultList.isEmpty()) {
+				log.debug("StopVO for departure town was not found");
+				return null;
+			}
+			else {
+				from = resultList.get(0);
+			}
+			
+			resultList = serviceLocator.getStopFacade().obtainStopByTown(toTown);
+			
+			if (resultList.isEmpty()) {
+				log.debug("StopVO for destination town was not found");
+				return null;
+			}
+			else {
+				to = resultList.get(0);
+			}
+			
+			StretchVO result = serviceLocator.getStretchDataFacade().getByEndpointIds(from.getId(), to.getId());
+			
+			if (result == null) {
+				log.debug("StetchVO for search towns departure [" + fromTown + "], destination [" + toTown + "], was not found");
+			}
+			
+			return result;
 		}
 		catch (Exception ex) {
 			log.debug(ex);

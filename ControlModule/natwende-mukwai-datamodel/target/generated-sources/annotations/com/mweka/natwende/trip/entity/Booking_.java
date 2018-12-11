@@ -11,17 +11,17 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Booking.class)
 public abstract class Booking_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<Booking, String> customerName;
-	public static volatile SingularAttribute<Booking, String> to;
-	public static volatile SingularAttribute<Booking, Payment> payment;
-	public static volatile SingularAttribute<Booking, OperatorName> operatorName;
-	public static volatile SingularAttribute<Booking, String> seatNumber;
-	public static volatile SingularAttribute<Booking, String> accountUserEmail;
 	public static volatile SingularAttribute<Booking, Trip> trip;
 	public static volatile SingularAttribute<Booking, String> customerEmail;
-	public static volatile SingularAttribute<Booking, String> from;
 	public static volatile SingularAttribute<Booking, String> accountUser;
+	public static volatile SingularAttribute<Booking, String> accountUserEmail;
 	public static volatile SingularAttribute<Booking, BookingStatus> bookingStatus;
+	public static volatile SingularAttribute<Booking, String> from;
+	public static volatile SingularAttribute<Booking, Payment> payment;
+	public static volatile SingularAttribute<Booking, String> to;
+	public static volatile SingularAttribute<Booking, OperatorName> operatorName;
+	public static volatile SingularAttribute<Booking, String> seatNumber;
+	public static volatile SingularAttribute<Booking, String> customerName;
 
 }
 

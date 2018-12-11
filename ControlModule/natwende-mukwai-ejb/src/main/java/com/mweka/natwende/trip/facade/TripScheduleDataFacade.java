@@ -1,5 +1,6 @@
 package com.mweka.natwende.trip.facade;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -9,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import com.mweka.natwende.exceptions.EntityNotFoundException;
 import com.mweka.natwende.facade.AbstractDataFacade;
 import com.mweka.natwende.operator.entity.Operator;
+import com.mweka.natwende.route.entity.Stop;
+import com.mweka.natwende.route.vo.StretchVO;
 import com.mweka.natwende.trip.entity.TripSchedule;
 import com.mweka.natwende.trip.vo.TripScheduleVO;
 import com.mweka.natwende.types.OperatorName;
@@ -66,14 +69,19 @@ public class TripScheduleDataFacade extends AbstractDataFacade<TripScheduleVO, T
 	}
 	
 	public List<TripScheduleVO> getListByOperatorNameAndStatus(OperatorName operatorName, Status status) {
-		return transformList(findListByOperatorNameAndStatus(operatorName, status));
-	}
-	
-	private List<TripSchedule> findListByOperatorNameAndStatus(OperatorName operatorName, Status status) {
 		List<TripSchedule> resultList = createNamedQuery(TripSchedule.QUERY_FIND_LIST_BY_OPERATORNAME_AND_STATUS, getEntityClass())
 				.setParameter(Operator.PARAM_OPERATOR_NAME, operatorName)
 				.setParameter(TripSchedule.PARAM_STATUS, status)
 				.getResultList();
-		return resultList;
+		
+		return transformList(resultList);
+	}
+	
+	public List<TripScheduleVO> getListByRouteStretchAndTravelDate(StretchVO stretch, Date travelDate) {
+		List<TripSchedule> resultList = createNamedQuery(TripSchedule.QUERY_FIND_LIST_BY_ROUTE_STRETCH_AND_TRAVELDATE, getEntityClass())
+				.setParameter(Stop.PARAM_FROM_TOWN, stretch.getFrom().getTown())
+				.setParameter(Stop.PARAM_TO_TOWN, stretch.getTo().getTown())
+				.getResultList();
+		return transformList(resultList);
 	}
 }

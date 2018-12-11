@@ -35,7 +35,8 @@ import com.mweka.natwende.types.DaysOfWeek;
 @NamedQueries({
     @NamedQuery(name = TripSchedule.QUERY_FIND_ALL, query=" SELECT t FROM Trip t "),
     @NamedQuery(name = TripSchedule.QUERY_FIND_LIST_BY_ROUTE_ID, query = " SELECT t FROM TripSchedule t WHERE t.route.id = :routeId "),
-    @NamedQuery(name = TripSchedule.QUERY_FIND_LIST_BY_OPERATORNAME_AND_STATUS, query = " SELECT ts FROM TripSchedule ts WHERE ts.operator.name = :operatorName AND ts.status = :status ")
+    @NamedQuery(name = TripSchedule.QUERY_FIND_LIST_BY_OPERATORNAME_AND_STATUS, query = " SELECT ts FROM TripSchedule ts WHERE ts.operator.name = :operatorName AND ts.status = :status "),
+    @NamedQuery(name = TripSchedule.QUERY_FIND_LIST_BY_ROUTE_STRETCH_AND_TRAVELDATE, query = " SELECT ts FROM TripSchedule ts, RouteStretchLink rsl WHERE ts.route.id = rsl.route.id AND ts.endDate > CURRENT_DATE AND rsl.stretch.from.town = :fromTown AND rsl.stretch.to.town = :toTown ")
 })
 public class TripSchedule extends BaseEntity {
 
@@ -51,6 +52,7 @@ public class TripSchedule extends BaseEntity {
 	public static transient final String QUERY_FIND_ALL = "TripSchedule.findAll";
 	public static transient final String QUERY_FIND_LIST_BY_ROUTE_ID = "TripSchedule.findListByRouteId";
 	public static transient final String QUERY_FIND_LIST_BY_OPERATORNAME_AND_STATUS = "TripSchedule.findListByOperatorNameAndStatus";
+	public static transient final String QUERY_FIND_LIST_BY_ROUTE_STRETCH_AND_TRAVELDATE = "TripSchedule.findListByRouteStretchAndTravelDate";
 	
 	/**
 	 * Query parameters

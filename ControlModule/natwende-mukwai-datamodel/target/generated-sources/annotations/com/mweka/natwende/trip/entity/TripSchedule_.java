@@ -13,13 +13,13 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(TripSchedule.class)
 public abstract class TripSchedule_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile ListAttribute<TripSchedule, BusTripScheduleLink> busTripScheduleLinkList;
-	public static volatile SingularAttribute<TripSchedule, Date> startDate;
 	public static volatile SingularAttribute<TripSchedule, Route> route;
 	public static volatile SingularAttribute<TripSchedule, Date> endDate;
-	public static volatile ListAttribute<TripSchedule, DaysOfWeek> frequency;
-	public static volatile SingularAttribute<TripSchedule, Operator> operator;
+	public static volatile ListAttribute<TripSchedule, BusTripScheduleLink> busTripScheduleLinkList;
 	public static volatile SingularAttribute<TripSchedule, Date> scheduledDepartureTime;
+	public static volatile SingularAttribute<TripSchedule, Date> startDate;
+	public static volatile SingularAttribute<TripSchedule, Operator> operator;
+	public static volatile ListAttribute<TripSchedule, DaysOfWeek> frequency;
 
 }
 

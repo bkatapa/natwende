@@ -51,6 +51,16 @@ public class StopFacade extends AbstractFacade<StopVO> {
 		}
 	}
 	
+	public List<StopVO> obtainStopByTown(Town town) throws Exception {
+		try {
+			return serviceLocator.getStopDataFacade().getByTown(town);
+		}
+		catch (Exception ex) {
+			log.debug(ex);
+			throw new EJBException(ex);
+		}
+	}
+	
 	public List<StopVO> obtainAllByStatus(Status status) throws Exception {
 		try {
 			return serviceLocator.getStopDataFacade().getAllByStatus(status);

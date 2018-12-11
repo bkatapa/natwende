@@ -9,8 +9,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(DriverTripScheduleLink.class)
 public abstract class DriverTripScheduleLink_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<DriverTripScheduleLink, TripSchedule> tripSchedule;
 	public static volatile SingularAttribute<DriverTripScheduleLink, User> driver;
+	public static volatile SingularAttribute<DriverTripScheduleLink, TripSchedule> tripSchedule;
 
 }
 

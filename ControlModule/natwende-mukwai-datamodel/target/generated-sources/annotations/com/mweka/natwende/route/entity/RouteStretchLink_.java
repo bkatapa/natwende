@@ -8,8 +8,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(RouteStretchLink.class)
 public abstract class RouteStretchLink_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<RouteStretchLink, Route> route;
 	public static volatile SingularAttribute<RouteStretchLink, Stretch> stretch;
+	public static volatile SingularAttribute<RouteStretchLink, Route> route;
 
 }
 

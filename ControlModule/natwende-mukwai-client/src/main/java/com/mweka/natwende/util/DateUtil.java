@@ -136,4 +136,19 @@ public class DateUtil {
 
 		return (sb.toString());
 	}
+	
+	public static Date mergeDateAndTime(Date datePortion, Date timePortion) {
+		Calendar calendarA = Calendar.getInstance();
+		calendarA.setTime(datePortion);
+		Calendar calendarB = Calendar.getInstance();
+		calendarB.setTime(timePortion);
+	 
+		calendarA.set(Calendar.HOUR_OF_DAY, calendarB.get(Calendar.HOUR_OF_DAY));
+		calendarA.set(Calendar.MINUTE, calendarB.get(Calendar.MINUTE));
+		calendarA.set(Calendar.SECOND, calendarB.get(Calendar.SECOND));
+		calendarA.set(Calendar.MILLISECOND, calendarB.get(Calendar.MILLISECOND));
+	 
+		Date result = calendarA.getTime();
+		return result; 
+	}
 }

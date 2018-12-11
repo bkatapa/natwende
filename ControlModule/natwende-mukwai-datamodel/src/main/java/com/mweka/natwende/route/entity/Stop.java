@@ -29,6 +29,7 @@ import com.mweka.natwende.types.Town;
     @NamedQuery(name = Stop.QUERY_FIND_ALL, query="SELECT s FROM Stop s"),
     @NamedQuery(name = Stop.QUERY_FIND_ALL_BY_STATUS, query="SELECT s FROM Stop s WHERE s.status = :status"),
     @NamedQuery(name = Stop.QUERY_FIND_STOP_BY_NAME, query="SELECT s FROM Stop s WHERE s.name = :stopName"),
+    @NamedQuery(name = Stop.QUERY_FIND_STOP_BY_TOWN, query="SELECT s FROM Stop s WHERE s.town = :town"),
     @NamedQuery(name = Stop.QUERY_FIND_BY_NAME_TOWN_AND_PROVINCE, query="SELECT s FROM Stop s WHERE s.name = :stopName AND s.town = :town AND s.province = :province"),
 })
 public class Stop extends BaseEntity {
@@ -44,6 +45,7 @@ public class Stop extends BaseEntity {
 	public static final String QUERY_FIND_ALL = "Stop.findAll";
 	public static final String QUERY_FIND_ALL_BY_STATUS = "Stop.findAllByStatus";
 	public static final String QUERY_FIND_STOP_BY_NAME = "Stop.findStopByName";
+	public static final String QUERY_FIND_STOP_BY_TOWN = "Stop.findStopByTown";
 	public static final String QUERY_FIND_BY_NAME_TOWN_AND_PROVINCE = "Stop.findByNameTownAndProvince";
 	
 	/**
@@ -54,6 +56,8 @@ public class Stop extends BaseEntity {
 	public static final String PARAM_FINAL_STOP_ID = "finalStopId";
 	public static final String PARAM_STOP_NAME = "stopName";
 	public static final String PARAM_TOWN = "town";
+	public static final String PARAM_FROM_TOWN = "fromTown";
+	public static final String PARAM_TO_TOWN = "toTown";
 	public static final String PARAM_PROVINE = "province";
 	public static final String PARAM_FROM_ID = "fromId";
 	public static final String PARAM_TO_ID = "toId";

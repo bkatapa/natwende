@@ -8,8 +8,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(FareRouteLink.class)
 public abstract class FareRouteLink_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<FareRouteLink, Route> route;
 	public static volatile SingularAttribute<FareRouteLink, Fare> fare;
+	public static volatile SingularAttribute<FareRouteLink, Route> route;
 
 }
 

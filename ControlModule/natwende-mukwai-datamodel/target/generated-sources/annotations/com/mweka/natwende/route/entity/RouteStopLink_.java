@@ -8,8 +8,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(RouteStopLink.class)
 public abstract class RouteStopLink_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<RouteStopLink, Stop> stop;
 	public static volatile SingularAttribute<RouteStopLink, Route> route;
+	public static volatile SingularAttribute<RouteStopLink, Stop> stop;
+	public static volatile SingularAttribute<RouteStopLink, Integer> stationIndex;
 
 }
 

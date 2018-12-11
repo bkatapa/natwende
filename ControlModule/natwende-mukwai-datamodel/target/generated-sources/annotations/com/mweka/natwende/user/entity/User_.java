@@ -10,14 +10,14 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(User.class)
 public abstract class User_ extends com.mweka.natwende.base.BaseEntity_ {
 
+	public static volatile SingularAttribute<User, String> firstname;
 	public static volatile SingularAttribute<User, String> passwd;
 	public static volatile SingularAttribute<User, String> contactNumber;
-	public static volatile SingularAttribute<User, String> username;
-	public static volatile SingularAttribute<User, String> email;
-	public static volatile SingularAttribute<User, String> lastname;
 	public static volatile ListAttribute<User, UserRoleLink> userRoleLinkList;
-	public static volatile SingularAttribute<User, String> firstname;
+	public static volatile SingularAttribute<User, String> email;
 	public static volatile SingularAttribute<User, Operator> operator;
+	public static volatile SingularAttribute<User, String> username;
+	public static volatile SingularAttribute<User, String> lastname;
 
 }
 

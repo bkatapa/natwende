@@ -13,6 +13,7 @@ import javax.inject.Named;
 import org.joda.time.DateTime;
 import org.primefaces.context.RequestContext;
 
+import com.mweka.natwende.helper.Config;
 import com.mweka.natwende.helper.MessageHelper;
 import com.mweka.natwende.route.vo.StretchVO;
 import com.mweka.natwende.route.vo.RouteStopLinkVO;
@@ -31,6 +32,7 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	private boolean mirror;
 	private List<StopVO> allRouteStationList;
 	private List<StretchVO> finalEntityList, allStretchList;
+	private Config config;
 
 	@Inject
 	private RouteAction routeAction;
@@ -45,7 +47,8 @@ public class StretchAction extends MessageHelper<StretchVO> {
 		allRouteStationList = new ArrayList<>();
 		currentIndex = 0;
 		initialGraphLen = 0;
-		mirror = false;		
+		mirror = false;
+		config = new Config();
 	}
 
 	@Override
@@ -75,6 +78,10 @@ public class StretchAction extends MessageHelper<StretchVO> {
 
 	public void setMirror(boolean mirror) {
 		this.mirror = mirror;
+	}
+	
+	public Config getConfig() {
+		return config;
 	}
 
 	@Override
@@ -136,8 +143,8 @@ public class StretchAction extends MessageHelper<StretchVO> {
 		activateLast();
 		if (allRouteStationList.isEmpty()) {
 			allRouteStationList.add(routeAction.getSelectedEntity().getStart());
-			allRouteStationList.addAll(routeAction.getStationPickList().getTarget());
-			allRouteStationList.add(routeAction.getSelectedEntity().getStop());
+			allRouteStationList.addAll(routeAction.getTransitStationList());
+			allRouteStationList.add(routeAction.getSelectedEntity().getStop());			
 			try {
 				allStretchList.clear();
 				Iterator<StopVO> it = allRouteStationList.iterator();
@@ -149,28 +156,25 @@ public class StretchAction extends MessageHelper<StretchVO> {
 						allStretchList.add(result == null ? new StretchVO(from, to) : result);
 					}
 				}
-				initialGraphLen = allRouteStationList.size() - 1;
-				StopVO from = allRouteStationList.get(currentIndex);
-				StopVO to = allRouteStationList.get(currentIndex + 1);
-				StretchVO nextStretch = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
-				setSelectedEntity(nextStretch == null ? new StretchVO(from, to) : nextStretch);
+				StretchVO nextStretch = fetchNextStretch();
+				setSelectedEntity(nextStretch);
+				config.setStretchLen(allRouteStationList.size() - 1);
+				updateStep5();
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
 				onMessage(SEVERITY_ERROR, ex.getMessage());
 			}
 		}
-	}
+	}	
 	
 	public void addToEntityList() {
 		if (allRouteStationList.size() > currentIndex) {
 			entityList.add(selectedEntity);
 			activateLast();
 			setCurrentIndex(currentIndex + 1);
-			//log.debug("Step5 complete");
-			//
 			
-			if (allRouteStationList.size() - 1 == currentIndex) { // done.
+			if (allRouteStationList.size() - 1 == getCurrentIndex()) { // done.
 				try { // Compute travel times between all route stretch permutations
 					finalEntityList = serviceLocator.getStretchHelper().computeAllTravelTimePermutations(entityList, allStretchList);
 					log.debug("Step5 complete");
@@ -182,13 +186,10 @@ public class StretchAction extends MessageHelper<StretchVO> {
 				}
 			}
 			else {
-				getSelectedEntity().setFrom(allRouteStationList.get(currentIndex));
-				getSelectedEntity().setFrom(allRouteStationList.get(currentIndex + 1));
-				activateLast();
-				setSelectedEntity(new StretchVO());
-				setCurrentIndex(currentIndex + 1);
+				setSelectedEntity(fetchNextStretch());				
 			}
-		}		
+		}
+		updateStep5();
 		RequestContext.getCurrentInstance().update("@(.stretchTable-class(stretch-table))");
 	}
 	
@@ -196,25 +197,9 @@ public class StretchAction extends MessageHelper<StretchVO> {
 		if (entityList.isEmpty()) {
 			return;
 		}
-		try {
-			StopVO from = entityList.get(currentIndex - 1).getFrom();
-			StopVO to = entityList.get(currentIndex - 1).getTo();
-			Date estimatedTravelTime = entityList.get(currentIndex - 1).getEstimatedTravelTime();
-			StretchVO prevStretch = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
-			
-			if (prevStretch == null) {
-				selectedEntity.setFrom(from);
-				selectedEntity.setTo(to);
-				selectedEntity.setEstimatedTravelTime(estimatedTravelTime);
-			}
-			else {
-				setSelectedEntity(prevStretch);
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			onMessage(SEVERITY_ERROR, ex.getMessage());
-		}
+		currentIndex = entityList.size() - 1;
+		setSelectedEntity(entityList.get(currentIndex));
+		updateStep5();
 	}
 	
 	//@Transactional
@@ -267,6 +252,27 @@ public class StretchAction extends MessageHelper<StretchVO> {
 			graph.setSelected(true);
 		}
 		entityList.get(entityList.size() - 1).setSelected(false);
+	}
+	
+	private StretchVO fetchNextStretch() {
+		StopVO from = allRouteStationList.get(currentIndex);
+		StopVO to = allRouteStationList.get(currentIndex + 1);
+		StretchVO nextStretch = null;
+		try {
+			nextStretch = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
+		}
+		catch (Exception ex) {
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}
+		return nextStretch == null ? new StretchVO(from, to) : nextStretch;
+	}
+	
+	private void updateStep5() {
+		config.setCurIndex(currentIndex);
+		if (selectedEntity != null) {
+			config.setEditTravelTime(selectedEntity.getId() == -1L);
+		}
+		config.setDone(config.getStretchLen() == config.getCurIndex());
 	}
 	
 	private static transient final String SHOW_CONFIRM_MIRROR_DIALOG = "PF('var_ConfirmMirrorDlg').show();";

@@ -43,6 +43,7 @@ public class Bus extends BaseEntity {
 	 * Query parameters
 	 */
 	public static final String PARAM_BUS_ID = "busId";
+	public static final String PARAM_BUS_REG = "busReg";
 
 	@NotNull
 	private int capacity;

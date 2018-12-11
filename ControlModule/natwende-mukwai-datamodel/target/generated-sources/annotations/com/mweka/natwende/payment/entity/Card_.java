@@ -9,11 +9,11 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Card.class)
 public abstract class Card_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<Card, String> cardNumberEncrypted;
 	public static volatile SingularAttribute<Card, String> expiryDate;
-	public static volatile SingularAttribute<Card, String> nameOnCard;
 	public static volatile SingularAttribute<Card, User> owner;
 	public static volatile SingularAttribute<Card, String> cvv2;
+	public static volatile SingularAttribute<Card, String> nameOnCard;
+	public static volatile SingularAttribute<Card, String> cardNumberEncrypted;
 
 }
 

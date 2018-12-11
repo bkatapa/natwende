@@ -69,5 +69,9 @@ public class StopVO extends BaseVO {
 				+ this.town.getDisplay() + ", "
 				+ this.province.getDisplay();
 	}
+	
+	public String getAsString() {
+		return toString();
+	}
 
 }

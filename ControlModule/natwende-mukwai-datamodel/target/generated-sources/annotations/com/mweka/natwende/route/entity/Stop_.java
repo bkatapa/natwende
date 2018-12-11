@@ -11,10 +11,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Stop.class)
 public abstract class Stop_ extends com.mweka.natwende.base.BaseEntity_ {
 
+	public static volatile SingularAttribute<Stop, Town> town;
+	public static volatile SingularAttribute<Stop, Province> province;
 	public static volatile ListAttribute<Stop, RouteStopLink> routeStops;
 	public static volatile SingularAttribute<Stop, String> name;
-	public static volatile SingularAttribute<Stop, Province> province;
-	public static volatile SingularAttribute<Stop, Town> town;
 
 }
 

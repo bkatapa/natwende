@@ -19,7 +19,7 @@ public class MenuAction implements Serializable {
 	 */
 	private static final long serialVersionUID = -5245675908645653237L;
 	
-	private Integer selectedTabIndex = null;
+	private Integer selectedTabIndex = null;	
 
 	public Integer getSelectedTabIndex() {
 		return selectedTabIndex;
@@ -34,6 +34,10 @@ public class MenuAction implements Serializable {
         selectedTabIndex = tabViewPanel.getChildren().indexOf(event.getTab());
         LOGGER.log(Level.INFO, "Active index is: {0}", selectedTabIndex);
     }
+	
+	public String[] getSlideList() {
+		return new String[] {"01.jpg", "02.jpg", "03.jpg", "04.png", "05.jpeg", "06.jpg", "07.jpg", "08.jpg", "09.jpg", "10.jpg", "11.jpg"};
+	}
 
 	private static transient final Logger LOGGER = Logger.getLogger(MenuAction.class.getName()); 
 }

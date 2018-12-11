@@ -84,5 +84,14 @@ public class StopDataFacade extends AbstractDataFacade<StopVO, Stop> {
 				.getResultList();
 		return resultList.isEmpty() ? null : convertEntityToVO(resultList.get(0));
 	}
+	
+	/*========================================================================================================*/
+	
+	public List<StopVO> getByTown(Town town) {
+		List<Stop> resultList = createNamedQuery(Stop.QUERY_FIND_STOP_BY_TOWN, getEntityClass())
+				.setParameter(Stop.PARAM_TOWN, town)
+				.getResultList();
+		return transformList(resultList);
+	}
 
 }

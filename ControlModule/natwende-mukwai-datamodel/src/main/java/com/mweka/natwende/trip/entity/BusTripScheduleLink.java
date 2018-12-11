@@ -22,6 +22,7 @@ import com.mweka.natwende.user.entity.User;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = BusTripScheduleLink.QUERY_FIND_ALL, query=" SELECT btsl FROM BusTripScheduleLink btsl "),
+    @NamedQuery(name = BusTripScheduleLink.QUERY_FIND_BY_TRIPSCHEDULE_ID, query = " SELECT btsl FROM BusTripScheduleLink btsl WHERE btsl.tripSchedule.id = :tripScheduleId "),
     @NamedQuery(name = BusTripScheduleLink.QUERY_FIND_BY_BUS_ID_AND_TRIPSCHEDULE_ID, query = " SELECT btsl FROM BusTripScheduleLink btsl WHERE btsl.bus.id = :busId AND btsl.tripSchedule.id = :tripScheduleId ")
 })
 public class BusTripScheduleLink extends BaseEntity {
@@ -36,7 +37,8 @@ public class BusTripScheduleLink extends BaseEntity {
 	 * Named queries
 	 */
 	public static transient final String QUERY_FIND_ALL = "BusTripScheduleLink.findAll";
-	public static transient final String QUERY_FIND_BY_BUS_ID_AND_TRIPSCHEDULE_ID = "BusTripScheduleLink.findByBusIdAndTripScheduleId";	
+	public static transient final String QUERY_FIND_BY_BUS_ID_AND_TRIPSCHEDULE_ID = "BusTripScheduleLink.findByBusIdAndTripScheduleId";
+	public static transient final String QUERY_FIND_BY_TRIPSCHEDULE_ID = "BusTripScheduleLink.findByTripScheduleId";
 	
 	/**
 	 * Query parameters

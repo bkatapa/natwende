@@ -11,11 +11,11 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(SystemNotification.class)
 public abstract class SystemNotification_ extends com.mweka.natwende.base.BaseEntity_ {
 
-	public static volatile SingularAttribute<SystemNotification, String> message;
-	public static volatile SingularAttribute<SystemNotification, String> subject;
-	public static volatile SingularAttribute<SystemNotification, Date> notificationDate;
 	public static volatile SingularAttribute<SystemNotification, Media> attachment;
+	public static volatile SingularAttribute<SystemNotification, String> subject;
+	public static volatile SingularAttribute<SystemNotification, String> message;
 	public static volatile SingularAttribute<SystemNotification, Operator> operator;
+	public static volatile SingularAttribute<SystemNotification, Date> notificationDate;
 
 }
 

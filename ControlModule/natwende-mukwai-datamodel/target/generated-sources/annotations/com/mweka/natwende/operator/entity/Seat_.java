@@ -10,9 +10,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Seat_ extends com.mweka.natwende.base.BaseEntity_ {
 
 	public static volatile SingularAttribute<Seat, Bus> bus;
-	public static volatile SingularAttribute<Seat, String> seatNo;
 	public static volatile SingularAttribute<Seat, SeatClass> seatClass;
 	public static volatile SingularAttribute<Seat, String> coordinates;
+	public static volatile SingularAttribute<Seat, String> seatNo;
 
 }
 

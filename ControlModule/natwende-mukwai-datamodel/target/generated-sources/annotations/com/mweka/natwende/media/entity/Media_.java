@@ -10,8 +10,8 @@ public abstract class Media_ extends com.mweka.natwende.base.BaseEntity_ {
 
 	public static volatile SingularAttribute<Media, String> fileName;
 	public static volatile SingularAttribute<Media, byte[]> data;
-	public static volatile SingularAttribute<Media, Long> length;
 	public static volatile SingularAttribute<Media, String> mime;
+	public static volatile SingularAttribute<Media, Long> length;
 
 }
 

@@ -8,12 +8,12 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(EmbeddedAddress.class)
 public abstract class EmbeddedAddress_ {
 
+	public static volatile SingularAttribute<EmbeddedAddress, String> country;
+	public static volatile SingularAttribute<EmbeddedAddress, String> province;
+	public static volatile SingularAttribute<EmbeddedAddress, String> city;
 	public static volatile SingularAttribute<EmbeddedAddress, String> postalCode;
 	public static volatile SingularAttribute<EmbeddedAddress, String> name;
-	public static volatile SingularAttribute<EmbeddedAddress, String> province;
 	public static volatile SingularAttribute<EmbeddedAddress, String> line1;
-	public static volatile SingularAttribute<EmbeddedAddress, String> country;
-	public static volatile SingularAttribute<EmbeddedAddress, String> city;
 
 }
 

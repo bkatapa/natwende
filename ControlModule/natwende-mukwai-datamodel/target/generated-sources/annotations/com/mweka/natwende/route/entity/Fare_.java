@@ -10,8 +10,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Fare_ extends com.mweka.natwende.base.BaseEntity_ {
 
 	public static volatile SingularAttribute<Fare, BigDecimal> amount;
-	public static volatile SingularAttribute<Fare, Stop> to;
 	public static volatile SingularAttribute<Fare, Stop> from;
+	public static volatile SingularAttribute<Fare, Stop> to;
 
 }
 

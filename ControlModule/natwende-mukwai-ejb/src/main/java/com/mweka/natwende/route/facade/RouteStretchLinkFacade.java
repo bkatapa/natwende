@@ -1,5 +1,7 @@
 package com.mweka.natwende.route.facade;
 
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
@@ -26,6 +28,10 @@ public class RouteStretchLinkFacade extends AbstractFacade<RouteStretchLinkVO> {
 	
 	public RouteStretchLinkVO obtainByRouteIdAndStretchId(Long routeId, Long stretchId) {
 		return serviceLocator.getRouteStretchLinkDataFacade().getByRouteIdAndStretchId(routeId, stretchId);
+	}
+	
+	public List<RouteStretchLinkVO> obtainByStretchId(Long stretchId) {
+		return serviceLocator.getRouteStretchLinkDataFacade().getByStretchId(stretchId);
 	}
 	
 	public int deleteByRouteId(Long routeId) throws Exception {
