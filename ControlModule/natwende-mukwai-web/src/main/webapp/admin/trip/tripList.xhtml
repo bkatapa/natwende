@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions">
+				
+	<p:toolbar style="margin-bottom: 5px; border: none;">
+		<f:facet name="right">
+			<p:commandButton value="New trip"
+							 process="@this"
+							 action="#{TripScheduleAction.createEntity}"
+							 icon="ui-icon-plusthick"
+							 title="Click to schedule new trip" />
+		</f:facet>
+	</p:toolbar>
+	
+	<p:dataTable value="#{TripScheduleAction.entityList}"
+				 id="trip-dataTable"
+				 sortBy="#{entity.id}"
+				 var="entity"
+				 paginator="true"
+				 paginatorPosition="bottom"
+				 rows="10"
+				 emptyMessage="No trips scheduled."
+				 styleClass="paginated">
+	
+		<p:column headerText="Trip" style="text-align: center; width: 80px;">
+			<p:graphicImage name="images/default-bus.png" width="50" height="30" />
+		</p:column>
+		
+		<p:column headerText="Route name">
+			<h:outputText value="#{entity.route.name}" />
+		</p:column>
+		
+		<p:column headerText="Bus (driver)">
+			<h:outputText value="#{entity.assignedDriverPerBus}" />
+		</p:column>
+		
+		<p:column headerText="Start date">
+			<h:outputText value="#{entity.startDateAsString}" />
+		</p:column>
+		
+		<p:column headerText="End date">
+			<h:outputText value="#{entity.endDateAsString}" />
+		</p:column>
+		
+		<p:column headerText="Scheduled departure time">
+			<h:outputText value="#{entity.scheduledDepartureTimeAsString}" />
+		</p:column>
+		
+		<p:column headerText="Trip frequency">
+			<h:outputText value="#{entity.formattedFrequency}" />
+		</p:column>
+		
+		<p:column headerText="Actions" style="text-align: center; width: 120px;">
+			<p:toolbar style="border: none;">
+				<f:facet name="left">
+					<p:commandButton action="#{TripScheduleAction.viewEntity}"
+									 ajax="true"
+									 process="@this"
+									 icon="ui-icon-trash"
+									 title="Delete this schedule.">
+						<f:setPropertyActionListener value="#{entity}" target="#{TripScheduleAction.selectedEntity}" />				 
+					 </p:commandButton>
+				</f:facet>
+			</p:toolbar>
+		</p:column>
+	
+	</p:dataTable>				
+				
+</ui:composition>

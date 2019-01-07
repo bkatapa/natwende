@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+				xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+				xmlns:o="http://omnifaces.org/ui">
+
+	<ui:define name="content">
+	
+		<h:form id="operatorRouteLink-form">
+			<p:outputPanel rendered="#{OperatorRouteLinkAction.selectedEntity.id gt 0}">
+			
+				<c:set value="#{OperatorRouteLinkAction.selectedEntity.route}" var="selectedRoute" scope="session" />
+				
+				<p:panel header="#{selectedRoute.name}">
+				
+					<p:toolbar style="border: none;">
+						<p:toolbarGroup align="left">
+							<p:commandButton name="Back"
+											 process="@this"
+											 icon="ui-icon-arrowthick-1-w"
+											 action="#{OperatorRouteLinkAction.cancel}"/>
+						</p:toolbarGroup>
+					</p:toolbar>
+					
+					<p:accordionPanel style="margin-top: 10px;">
+						<p:tab title="Summary">
+							<p:panelGrid columns="2" layout="grid">
+								<p:outputLabel value="Depart from:" />
+								<h:outputText value="#{selectedRoute.start.name}"/>
+								
+								<p:outputLabel value="Final destination:" />
+								<h:outputText value="#{selectedRoute.stop.name}"/>
+								
+								<p:outputLabel value="Transit stations:" />
+								<p:outputPanel>
+									<ui:repeat value="#{selectedRoute.stops}" var="transitStation" varStatus="counter">
+										<h:outputText value="#{counter.index + 1}) #{transitStation.stop.name}"/>
+									</ui:repeat>
+								</p:outputPanel>								
+							</p:panelGrid>
+						</p:tab>
+						
+						<p:tab title="Fare chart">
+							<p:growl severity="info,error" autoUpdate="true" />
+							<p:dataTable id="fareView-table"
+										 styleClass="fareViewTable-class"
+										 value="#{FareAction.entityList}"
+										 style="margin-top: 10px;"
+										 var="entity"
+										 paginator="true"
+										 paginatorPosition="bottom"
+										 rowIndexVar="curRow">
+								
+								<f:facet name="header">
+									<div class="parent">
+										<p:graphicImage name="images/icons/yellow-dot.png" width="30" height="30"/>
+										<h:outputText value="Global average fare" styleClass="child"/>
+										<p:graphicImage name="images/icons/green-dot.png" width="30" height="30" style="margin-left: 50px;"/>
+										<h:outputText value="Operator fare" styleClass="child"/>
+									</div>
+								</f:facet>
+								
+								<p:column headerText="Fare source" width="70" style="text-align=center;">
+									<p:graphicImage name="images/icons/#{entity.id lt 0 ? 'yellow-dot.png' : 'green-dot.png'}" width="30" height="30"/>
+								</p:column>
+								
+								<p:column headerText="From">
+									<h:outputText value="#{entity.stretch.from}"/>
+								</p:column>
+								
+								<p:column headerText="To">
+									<h:outputText value="#{entity.stretch.to}"/>
+								</p:column>
+								
+								<p:column headerText="Distance (Km)">
+									<h:outputText value="#{entity.stretch.distanceKM}"/>
+								</p:column>
+								
+								<p:column headerText="Amount" width="250" id="saveColumn">
+									<p:toolbar style="border: none; font-weight: normal">
+										<f:facet name="left">
+											<h:outputText value="K#{entity.amount}" rendered="#{not entity.selected}"/>
+											<p:inputNumber value="#{entity.amount}"
+														   valueChangeListener="#{FareAction.amountChanged}"
+														   rendered="#{entity.selected}"
+														   size="12"
+														   style="text-align: right"
+														   placeholder="0.00"
+														   decimalPlaces="2"
+														   thousandSeparator=","
+														   symbol="K"
+														   emptyValue="0.00"
+														   minValue="0">
+												<p:ajax event="keyup" process="@this" update="saveFare-btn"/>
+												<p:ajax event="blur" process="@this" update="saveFare-btn"/>
+												<p:ajax event="click" process="@this" listener="#{FareAction.onFareSelect(entity, entity.selected)}"/>			   
+								   			</p:inputNumber>
+										</f:facet>
+										<f:facet name="right">
+											<p:commandButton ajax="true"
+															 actionListener="#{FareAction.onFareSelect(entity, true)}"
+															 rendered="#{not entity.selected}"
+															 process="@this"
+															 update="fareView-table:@row(#{curRow})"
+															 icon="ui-icon-pencil"
+															 title="Click to edit fare" />
+									 		<p:commandButton ajax="true"
+															 actionListener="#{FareAction.onFareSelect(entity, false)}"
+															 rendered="#{entity.selected}"
+															 process="@this"
+															 update="fareView-table:@row(#{curRow})"
+															 icon="ui-icon-close"
+															 title="Click to cancel" />
+									 		<p:commandButton ajax="true"
+									 						 id="saveFare-btn"
+															 actionListener="#{FareAction.saveEntity(entity)}"
+															 rendered="#{entity.selected}"
+															 process="@this"
+															 update="fareView-table:@row(#{curRow}), fareView-table:saveColumn"
+															 icon="ui-icon-disk"
+															 title="Click to save fare"
+															 style="margin-left: 10px;"
+															 disabled="#{entity.amount.unscaledValue() eq 0}"/>
+										</f:facet>
+									</p:toolbar>
+								</p:column>
+								
+							</p:dataTable>
+						</p:tab>
+					</p:accordionPanel>
+				
+				</p:panel>
+			</p:outputPanel>
+			
+			<p:outputPanel rendered="#{OperatorRouteLinkAction.selectedEntity.id lt 0}">
+				<p:steps activeIndex="#{OperatorRouteLinkAction.currentStep}"
+						 styleClass="custom"
+						 style="margin-top: 20px;">
+					<p:menuitem value="Route registration"/>
+					<p:menuitem value="Route registration - Confirm"/>		 
+		 		</p:steps>
+		 		
+		 		<p:panel id="step1" header="Register new route" rendered="#{OperatorRouteLinkAction.currentStep eq 0}" style="margin-top: 50px;">
+		 			<p:pickList id="operatorRouteLink-picklist" style="width: 400px;"
+		 						value="#{OperatorRouteLinkAction.routePickList}"
+		 						var="route"
+		 						itemLabel="#{route.name}"
+		 						itemValue="#{route}"
+		 						converter="#{RouteVOConverter}">
+						
+						<f:facet name="sourceCaption">Available for registration.</f:facet>
+						<f:facet name="targetCaption">Currently registered routes.</f:facet>
+						
+						<p:ajax event="transfer" listener="#{OperatorRouteLinkAction.onTransfer}" update="step1" />
+					</p:pickList>
+					
+					<p:toolbar style="border: none; margin-top: 5px;">
+						<p:toolbarGroup align="left">
+							<p:commandButton value="Cancel"
+											 process="@this"
+											 icon="ui-icon-close"
+											 action="#{OperatorRouteLinkAction.cancel}"/>
+						</p:toolbarGroup>
+						<p:toolbarGroup align="right">
+							<p:commandButton process="@this, step1"
+											 update="operatorRouteLink-form"
+											 value="Next"
+											 icon="ui-icon-arrowthic-1-e"
+											 iconPos="right"
+											 actionListener="#{OperatorRouteLinkAction.step}"/>
+						</p:toolbarGroup>
+					</p:toolbar>
+		 		</p:panel>
+		 		
+		 		<p:panel id="step2" header="Confirm routes" rendered="#{OperatorRouteLinkAction.currentStep eq 1}" style="margin-top: 50px;">
+		 			<p:messages autoUpdate="true" closable="true" severity="info,error" showIcon="true"/>
+		 			<p:panel header="Click 'Finish' to register the following routes." style="border: none;">
+		 				<p:panelGrid columns="1" layout="grid">
+		 					<ui:repeat value="#{OperatorRouteLinkAction.routePickList.target}" var="route" varStatus="counter">
+		 						<h:outputText value="#{counter.index + 1}. #{route.name} [Loading station: #{route.start.asString} -> Final destination: #{route.stop.asString}]"
+		 									  style="font-size: 15pt; font-weight: normal;" />
+						  		<p:separator rendered="${counter.index lt OperatorRouteLinkAction.routePickList.target.size() - 1}"/>
+		 					</ui:repeat>
+		 				</p:panelGrid>
+		 			</p:panel>
+		 			<p:toolbar style="border: none; margin-top: 5px;">
+		 				<p:toolbarGroup align="left">
+		 					<p:commandButton update="operatorRouteLink-form"
+		 									 value="Prev"
+		 									 icon="ui-icon-arrowthick-1-w"
+		 									 actionListener="#{OperatorRouteLinkAction.step}"/>
+		 				</p:toolbarGroup>
+		 				<p:toolbarGroup align="right">
+		 					<p:commandButton immediate="true"
+		 									 process="@this"
+		 									 value="Finish"
+		 									 icon="ui-icon-check"
+		 									 action="#{OperatorRouteLinkAction.saveEntity}"/>
+		 				</p:toolbarGroup>
+		 			</p:toolbar>
+		 		</p:panel> 
+			</p:outputPanel>
+		</h:form>
+		
+		<style>
+			.ui-steps.custom { margin-bottom: 30px; }
+			
+			.ui-steps.custom .ui-steps-item .ui-menuitem-link { height: 10px; padding: 0 1em; }
+			
+			.ui-steps.custom .ui-steps-item .ui-steps-number {
+				background-color: #0081c2; 
+				color: #FFFFFF; 
+				display: inline-block; 
+				width: 30px; 
+				border-radius: 10px;
+				margin-top: -10px;
+				margin-bottom: 10px;
+				margin-bottom: 10px;
+			 }
+			 
+			 .ui-picklist .ui-picklist-list { width: 580px !important; }
+			 
+			 .parent { display: table; }
+			 
+			 .child { display: tabble-cell; vertical-align: middle; padding-left: 10px; }
+		</style>
+	
+	</ui:define>
+	
+</ui:composition>
