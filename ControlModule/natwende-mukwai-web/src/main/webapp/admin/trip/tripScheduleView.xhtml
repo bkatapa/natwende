@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui"
+				xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+				
+	<ui:define name="content">
+	
+		<h:form id="viewTripSchedule-form" styleClass="viewTripScheduleForm-class">
+			<p:panel header="#{TripScheduleAction.selectedEntity.id lt 0 ? 'Schedule new trip' : TripScheduleAction.selectedEntity.route.start.town.display.concat(' ->').concat(TripScheduleAction.selectedEntity.route.stop.town.display)}">
+				<p:outputPanel rendered="#{TripScheduleAction.selectedEntity.id lt 0}">
+					
+					<p:steps activeIndex="#{TripScheduleAction.currentStep}"
+							 styleClass="custom"
+							 style="margin-top: 20px; margin-bottom: 20px;">
+						<p:menuitem value="Route selection"/>
+						<p:menuitem value="Bus selection"/>
+						<p:menuitem value="Driver selection"/>
+						<p:menuitem value="Trip scheduling"/>
+						<p:menuitem value="Confirmation"/>		 
+			 		</p:steps>
+			 		
+			 		<!-- Step #1 -->
+			 		<p:panel id="step1" header="Select route" rendered="#{TripScheduleAction.currentStep eq 0}" style="margin-top: 50px; border: none;">
+			 			<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info, error" />
+			 			<p:selectOneMenu id="newTripSchedule-route"
+			 							 value="#{TripScheduleAction.selectedEntity.route}"
+			 							 style="margin-top: 10px;">
+			 				<f:selectItems value="#{RouteAction.entityList}"
+			 							   var="route"
+			 							   itemValue="#{route}"
+			 							   itemLabel="#{route.name}"/>
+				   			<f:converter converterId=""/>
+				   			<p:ajax process="step1" />
+			 			</p:selectOneMenu>
+			 			<p:toolbar style="margin-bottom: 5px; margin-top: 7px; border: none;">
+			 				<f:facet name="left">
+			 					<p:commandButton value="Cancel"
+			 									 process="@this"
+			 									 action="#{TripScheduleAction.listEntities}"
+			 									 icon="ui-icon-close"
+			 									 title="Back to trips" />
+			 				</f:facet>
+			 				<f:facet name="right">
+			 					<p:commandButton value="Next"
+			 									 process="@this, step1"
+			 									 update="viewTripSchedule-form"
+			 									 actionListener="#{TripScheduleAction.step}"
+			 									 icon="ui-icon-arrowthick-1-e"
+			 									 iconPos="right" />
+			 				</f:facet>
+			 			</p:toolbar>
+			 		</p:panel>
+			 		
+			 		<!-- Step #2 -->
+			 		<p:panel id="step2" header="Select bus" rendered="#{TripScheduleAction.currentStep eq 1}" style="margin-top: 50px; border: none;">
+			 			<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info, error" />
+			 			<h:panelGrid columns="2" cellpadding="5">
+			 				<h:outputText value="1. Selected route: "/>
+			 				<h:outputText value="#{TripScheduleAction.selectedEntity.route}"/>
+			 			</h:panelGrid>
+			 			<p:separator />
+			 			<ui:include src="/admin/trip/editBus.xhtml">
+			 				<ui:param name="tripSchedule" value="#{TripScheduleAction.selectedEntity}" />
+			 			</ui:include>
+			 			<p:toolbar style="margin-bottom: 5px; margin-top: 5px; border: none;">
+			 				<f:facet name="left">
+			 					<p:commandButton process="@this"
+			 									 update="viewTripSchedule-form"
+			 									 value="Prev"
+			 									 icon="ui-icon-arrowthick-1-e"
+			 									 actionListener="#{TripScheduleAction.step}">			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+			 				<f:facet name="right">
+			 					<p:commandButton process="@this, step2"
+			 									 update="viewTripSchedule-form"
+			 									 value="Next"
+			 									 icon="ui-icon-arrowthick-1-w"
+			 									 iconPos="right"
+			 									 actionListener="#{TripScheduleAction.step}">
+						 			<f:actionListener binding="#{UserAction.loadDriverList()}"/>			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+			 			</p:toolbar>
+			 		</p:panel>
+					
+					<!-- Step #3 -->
+			 		<p:panel id="step3" 
+			 				 header="Select driver" 
+			 				 rendered="#{TripScheduleAction.currentStep eq 2}" 
+			 				 style="margin-top: 50px; border: none;">
+			 			<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info, error" />
+			 			<h:panelGrid columns="2" cellpadding="5">
+			 				<h:outputText value="1. Selected route: "/>
+			 				<h:outputText value="#{TripScheduleAction.selectedEntity.route}"/>
+			 				<h:outputText value="2. Selected bus(es): "/>
+			 				<h:outputText value="#{TripScheduleAction.selectedEntity.busListAsString}"/>
+			 			</h:panelGrid>
+			 			<p:separator />
+			 			<ui:include src="/admin/trip/editAssignedDriver.xhtml">
+			 				<ui:param name="tripSchedule" value="#{TripScheduleAction.selectedEntity}" />
+			 				<ui:param name="idPrefix" value="viewTripSchedule-form" />
+			 			</ui:include>
+			 			<p:toolbar style="margin-bottom: 5px; margin-top: 30px; border: none;">
+			 				<f:facet name="left">
+			 					<p:commandButton process="@this"
+			 									 update="viewTripSchedule-form"
+			 									 value="Prev"
+			 									 icon="ui-icon-arrowthick-1-w"
+			 									 actionListener="#{TripScheduleAction.step}">			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+			 				<f:facet name="right">
+			 					<p:commandButton process="@this, step3"
+			 									 update="viewTripSchedule-form"
+			 									 value="Next"
+			 									 icon="ui-icon-arrowthick-1-e"
+			 									 iconPos="right"
+			 									 actionListener="#{TripScheduleAction.step}">
+						 			<f:actionListener binding="#{TripScheduleAction.assignedDriversToBuses()}"/>			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+			 			</p:toolbar>
+			 		</p:panel>
+					
+					<!-- Step #4 -->
+					<p:panel id="step4" 
+			 				 header="Configure schedules" 
+			 				 rendered="#{TripScheduleAction.currentStep eq 3}" 
+			 				 style="margin-top: 50px; border: none;">
+			 			<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info, error" />
+			 			<h:panelGrid columns="1" cellpadding="5">
+			 				<h:outputText value="1. Selected route: #{TripScheduleAction.selectedEntity.route}"/>
+			 				<h:outputText value="2. Selected bus(es): #{TripScheduleAction.selectedEntity.busListAsString}"/>
+			 				<h:outputText value="3. Assigned driver(es): #{TripScheduleAction.selectedEntity.assignedDriverPerBus}"/>
+			 			</h:panelGrid>
+			 			<p:separator />
+						<ui:include src="/admin/trip/editRunningSchedule.xhtml">
+			 				<ui:param name="tripSchedule" value="#{TripScheduleAction.selectedEntity}" />
+			 			</ui:include>
+			 			<p:toolbar style="margin-bottom: 5px; margin-top: 10px; border: none;">
+			 				<f:facet name="left">
+			 					<p:commandButton process="@this"
+			 									 update="viewTripSchedule-form"
+			 									 value="Prev"
+			 									 icon="ui-icon-arrowthick-1-w"
+			 									 actionListener="#{TripScheduleAction.step}">			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+			 				<f:facet name="right">
+			 					<p:commandButton process="@this, step4"
+			 									 update="viewTripSchedule-form"
+			 									 value="Next"
+			 									 icon="ui-icon-arrowthick-1-e"
+			 									 iconPos="right"
+			 									 actionListener="#{TripScheduleAction.step}">			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+			 			</p:toolbar>
+		 			</p:panel>
+		 			
+		 			<!-- Step #5 -->
+					<p:panel id="step5" 
+			 				 header="Confirm trip schedule" 
+			 				 rendered="#{TripScheduleAction.currentStep eq 4}" 
+			 				 style="margin-top: 50px; border: none;">
+			 			<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info, error" />
+			 			<h:panelGrid columns="2" cellpadding="5">
+			 				<h:outputText value="1. Selected route: #{TripScheduleAction.selectedEntity.route}"/>
+			 				<h:outputText value="2. Selected bus(es): #{TripScheduleAction.selectedEntity.busListAsString}"/>
+			 				<h:outputText value="3. Assigned driver(es): #{TripScheduleAction.selectedEntity.assignedDriverPerBus}"/>
+			 				<h:outputText value="4. Start date: #{TripScheduleAction.selectedEntity.assignedDriverPerBus}"/>
+			 				<h:outputText value="5. End date: #{TripScheduleAction.selectedEntity.assignedDriverPerBus}"/>
+			 				<h:outputText value="6. Departure time: #{TripScheduleAction.selectedEntity.assignedDriverPerBus}"/>
+			 				<h:outputText value="6. Frequency: #{TripScheduleAction.selectedEntity.assignedDriverPerBus}"/>
+			 			</h:panelGrid>
+		 				<p:toolbar style="margin-top: 5px; border: none;">
+			 				<f:facet name="left">
+			 					<p:commandButton process="@this"
+			 									 update="@widgetVar(var_TripScheduleEditDlg)"			 									 
+			 									 icon="ui-icon-pencil"
+			 									 oncomplete="PF('var_TripScheduleEditDlg').show(); PF('var_TripScheduleEditDlg').toggleMaximize();"
+			 									 title="Edit this schedule.">
+						 			<f:setPropertyActionListener value="false" target="#{TripScheduleAction.showMirror}" />			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+		 				</p:toolbar>
+		 				<p:toolbar style="border: none;" rendered="#{empty TripScheduleAction.mirrorSchedule}">
+			 				<f:facet name="left">
+			 					<p:commandButton process="@this"
+			 									 update="viewTripSchedule-form"
+			 									 value="Configure mirror schedule"
+			 									 icon="ui-icon-gear"
+			 									 actionListener="#{TripScheduleAction.createMirror}"
+			 									 title="Configure mirror of this schedule.">			 										 
+						 		</p:commandButton>						 		
+			 				</f:facet>
+		 				</p:toolbar>
+				</p:outputPanel>
+			</p:panel>
+		</h:form>
+	
+	</ui:define>
+</ui:composition>
