@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<p:dataTable value="#{tripSchedule.busTripScheduleLinkList}"
+				 var="entity"
+				 id="editBus-selectedBusTable">
+				 
+			<f:facet name="footer">
+				<p:outputPanel id="editBus-selectedBusMenu" layout="block">
+					<p:selectOneMenu id="editTripSchedule-selectBus"
+									 value="#{TripScheduleAction.selectedBusTripScheduleLink}"
+									 style="float: left;"
+									 converter="#{busTripScheduleLinkConveter}">
+						<f:selectItems value="#{TripScheduleAction.candidateBusTripScheduleLinkList}"
+									   var="link"
+									   itemValue="#{link}"
+									   itemLabel="#{link.bus.reg}" />
+						<p:ajax process="editBus-selectedBusMenu" update="editBus-selectedBusBtn" />
+					</p:selectOneMenu>
+					<p:commandButton id="editBus-selectedBusBtn"
+									 icon="ui-icon-plusthick"
+									 process="@this, editBus-selectedBusMenu"
+									 update="editBus-selectedBusMenu, editBus-selectedBusTable"
+									 title="Click to add #{TripScheduleAction.selectedBusTripScheduleLink.bus.reg} to table">
+						<p:collector unique="true" value="#{TripScheduleAction.selectedBusTripScheduleLink}" addTo="#{tripSchedule.busTripScheduleLinkList}" />				 
+			 		</p:commandButton>
+				</p:outputPanel>
+			</f:facet>			 
+				
+			<p:column headerText="Bus reg">
+				<h:outputText value="#{entity.bus.reg}"/>
+			</p:column>
+			
+			<p:column headerText="Capacity">
+				<h:outputText value="#{entity.bus.capacity}"/>
+			</p:column>
+			
+			<p:column headerText="Bus pic">
+				<p:graphicImage name="#{entity.bus.reg}" style="width: 35px; height: 30px;"/>
+			</p:column>
+			
+			<p:column headerText="Actions" style="text-align: center;">
+				<p:commandButton icon="ui-icon-close"
+								 process="@this"
+								 update="editBus-selectedBusTable"
+								 title="Click to remove #{entity.bus.reg} from the table.">
+					<p:collector unique="true" value="#{entity}" removeFrom="#{tripSchedule.busTripScheduleLinkList}" />				 
+			 	</p:commandButton>
+			</p:column>
+	 </p:dataTable>		
+				
+</ui:composition>
