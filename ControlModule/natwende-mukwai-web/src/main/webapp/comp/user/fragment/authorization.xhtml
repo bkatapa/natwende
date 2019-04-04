@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<h:panelGrid columns="2" cellpadding="5">
+		<h:outputText value="Password: *" />
+		<p:password value="#{UserAction.selectedEntity.passwd}" required="true" label="Password"/>
+		
+		<h:outputText value="Confirm password: *" />
+		<p:password value="#{UserAction.selectedEntity.confirmPasswd}" required="true" label="Confirm password"/>
+	</h:panelGrid>
+
+	<p:separator />
+	
+	<p:selectOneRadio id="permissions"
+					  value="#{UserAction.userRole}"
+					  layout="responsive"
+					  columns="3"
+					  converter="#{RoleVOConverter}">
+		<f:selectItems value="#{UserAction.roleList}"
+					   var="role"
+					   itemLabel="#{role}"
+					   itemValue="#{role}" />
+	   <p:ajax />				  
+  	</p:selectOneRadio>
+  	
+  	<p:toolbar style="margin-bottom: 5px; margin-top: 5px; border:none;">
+  		<f:facet name="left">
+  			<p:commandButton value="Validate"
+  							 process="@this"
+  							 icon="ui-icon-check"
+  							 title="Click to validate profile." />
+  		</f:facet>
+  	</p:toolbar>
+	
+</ui:composition>

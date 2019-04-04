@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<p:panelGrid id="userDetails-grid" columns="4" layout="grid">
+		<p:fieldset legend="Personal details" style="border: none;">
+			<h:panelGrid columns="2" columnClasses="label, value">
+				<h:outputText value="First name: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.firstname}"/>
+				
+				<h:outputText value="Last name: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.lastname}"/>
+				
+				<h:outputText value="Email: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.email}"/>
+				
+				<h:outputText value="Phone: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.contactNumber}"/>
+			</h:panelGrid>
+		</p:fieldset>
+		
+		<p:fieldset legend="Address" style="border: none;">
+			<h:panelGrid columns="2" columnClasses="label, value">
+				<h:outputText value="Street: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.address.street}"/>
+				
+				<h:outputText value="Surbab: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.address.surbab}"/>
+				
+				<h:outputText value="Town: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.address.town.display}"/>
+				
+				<h:outputText value="Province: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.address.town.province.display}"/>
+			</h:panelGrid>
+		</p:fieldset>
+		
+		<p:fieldset legend="Permissions" style="border: none;">
+			<h:panelGrid columns="2" columnClasses="label, value">
+				<h:outputText value="Permissions allowed: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.userRole}"/>
+			</h:panelGrid>
+		</p:fieldset>
+		
+		<p:fieldset legend="Permissions" style="border: none;">
+			<p:outputPanel>
+				<p:graphicImage value="#{UserAction.previewImage}"
+								style="width: 70px; height: 73px;"
+								styleClass="ui-corner-all"/>
+			</p:outputPanel>
+		</p:fieldset>
+	</p:panelGrid>			
+				
+</ui:composition>

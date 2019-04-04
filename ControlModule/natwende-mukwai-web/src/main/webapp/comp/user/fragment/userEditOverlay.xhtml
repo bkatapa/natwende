@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<p:overlayPanel id="userEdit-panel"
+					widgetVar="var_UserEditPanel"
+					for="#{p:component('userEdit-btn')}"
+					showEffect="blind"
+					hideEffect="fade"
+					showCloseIcon="false"
+					dismissable="false">
+	
+		<p:messages closable="true" severity="error,info" />
+		
+		<p:tabView activeIndex="0"
+				   effect="slide"
+				   id="userEdit-tabView"
+				   style="border: none;">
+			
+			<p:tab title="Personal info">
+				<ui:include src="/comp/user/fragment/personalInfo.xhtml" />
+			</p:tab>
+			
+			<p:tab title="Address">
+				<ui:include src="/comp/user/fragment/address.xhtml" />
+			</p:tab>
+			
+			<p:tab title="Permissions">
+				<ui:include src="/comp/user/fragment/authorization.xhtml" />
+			</p:tab>
+			
+			<p:tab title="Profile pic">
+				<ui:include src="/comp/user/fragment/profilePic.xhtml" />
+			</p:tab>
+			
+		</p:tabView>
+		
+		<p:toolbar style="border: none; margin-top: 5px;">
+			<f:facet name="left">
+				<p:commandButton value="Cancel"
+								 icon="ui-icon-close"
+								 process="@this"
+								 oncomplete="PF('var_UserEditPanel').hide();" />
+			</f:facet>
+			
+			<f:facet name="right">
+				<p:commandButton value="Save"
+								 actionListener="#{UserAction.updateEntity}"
+								 icon="ui-icon-disk"
+								 process="@this, userEdit-tabView"
+								 update="#{p:component('userView-form')}" />
+			</f:facet>
+		</p:toolbar>
+		
+	</p:overlayPanel>
+	
+</ui:composition>

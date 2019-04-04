@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<h:panelGrid columns="2" columnClasses="label,value">
+		<h:outputText value="Premises: " />
+		<p:inputText value="#{UserAction.selectedEntity.address.line1}" />
+		
+		<h:outputText value="Street: " />
+		<p:inputText value="#{UserAction.selectedEntity.address.street}" />
+		
+		<h:outputText value="Surbab: " />
+		<p:inputText value="#{UserAction.selectedEntity.address.surbab}" />
+		
+		<h:outputText value="Town: " />
+		<p:selectOneMenu value="#{UserAction.selectedEntity.address.town}"
+						 id="select-town"
+						 effect="fade">
+ 			<f:selectItem itemLabel="Select town" itemValue=""/>
+ 			<f:selectItems value="#{MenuAction.towns}"
+						   var="town"
+						   itemLabel="#{town.display}"
+						   itemValue="#{town}" />
+   			<p:ajax event="itemSelect" process="@this" update="#{p:component('province-textLabel')}, #{p:component('province-textBox')}" />
+ 		</p:selectOneMenu>
+ 		
+ 		<h:outputText value="Province: "
+ 					  id="province-textLabel"
+ 					  rendered="#{not empty UserAction.selectedEntity.address.town}" />
+  		<p:inputText id="province-textBox"
+  					 value="#{UserAction.selectedEntity.address.town.province.display}"
+  					 rendered="#{not empty UserAction.selectedEntity.address.town}"
+  					 readonly="true" />
+	</h:panelGrid>				
+				
+</ui:composition>
