@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+				
+	<ui:define name="content">
+	
+		<h:form id="userView-form">		
+			<p:panel header="User: #{UserAction.selectedEntity.name}">
+			
+				<ui:include src="/comp/user/userDetailsView.xhtml" />
+				
+				<p:toolbar style="border: none;">
+					<f:facet name="left">
+						<p:commandButton action="/admin/adminPanel?i=2"
+										 process="@this" 
+										 value="Back" 
+										 icon="ui-icon-arrowthick-1-w" />
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton id="userEdit-btn"
+										 oncomplete="PF('var_UserEditDlg').show();"
+										 process="@this"
+										 update="@widgetVar(var_UserEditDlg)" 
+										 value="Edit" 
+										 icon="fa fa-edit" />
+					</f:facet>
+				</p:toolbar>
+				
+				<p:accordionPanel activeIndex="#{UserAction.activeIndex}"
+								  id="admin-accordion-panel"
+								  style="margin-top: 5px;">
+								  				
+					<p:tab title="Cards" id="cards-tab">
+						<p:growl id="userCards" severity="info,error" />
+						
+						<p:dataTable value="#{CardAction.entityList}"
+									 id="card-dataTable"
+									 var="entity"
+									 paginator="true"
+									 paginatorPosition="bottom"
+									 rows="10"
+									 styleClass="paginated"
+									 selection="#{CardAction.selectedEntity}"
+									 rowKey="#{entity.id}">
+									 
+			 				<f:facet name="header">
+			 					<div align="right">
+			 						<p:commandButton actionListener="#{CardAction.viewEntity}"
+			 										 process="@this"
+			 										 value="Add new"
+			 										 icon="ui-icon-plusthick"
+			 										 title="Add a new card">
+							 			<f:actionListener binding="#{CardAction.createEntity()}" />
+						 			</p:commandButton>
+			 					</div>
+			 				</f:facet>
+			 				
+			 				<p:ajax event="rowSelectRadio" listener="#{CardAction.promoteCard}" update="card-dataTable, #{p:component('userCards')}" />
+			 				
+			 				<p:column headerText="Card number" style="text-align: center;">
+			 					<h:outputText value="#{entity.cardNumberMasked}" />
+			 				</p:column>
+			 				
+			 				<p:column headerText="Expiry date" style="text-align: center;">
+			 					<h:outputText value="#{entity.expiryDate}" />
+			 				</p:column>
+			 				
+			 				<p:column headerText="Cvv 2" style="text-align: center;">
+			 					<h:outputText value="#{entity.cvv2}" />
+			 				</p:column>
+			 				
+			 				<p:column headerText="Action" style="text-align: center; width: 100px;">
+			 					<p:commandButton actionListener="#{CardAction.deleteEntity}"
+			 									 process="@this, card-dataTable"
+			 									 update="@form"
+			 									 icon="ui-icon-trash"
+			 									 title="Remove this card"
+			 									 style="margin-left: 10px;">
+						 			<f:setPropertyActionListener value="#{entity}" target="#{CardAction.selectedEntity}" />
+						 		</p:commandButton>
+			 				</p:column>
+						
+							<p:column selectionMode="single"
+									  headerText="Make primary"
+									  style="width: 100px; text-align: center;" />
+									  
+						</p:dataTable>						
+						
+					</p:tab>
+				</p:accordionPanel>				
+				
+			</p:panel>		
+		</h:form>
+	
+		<style type="text/css">
+			.textLabel { font-weight: bold; }
+		</style>
+	
+	</ui:define>
+	
+</ui:composition>

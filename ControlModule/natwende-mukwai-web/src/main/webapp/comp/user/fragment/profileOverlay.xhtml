@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+			
+	<p:overlayPanel id="imgPanel"
+					widgetVar="var_ImgPanel"
+					for="#{p:component('profile-link')}"
+					showEffect="blind"
+					hideEffect="fade"
+					showEvent="mouseover"
+					hideEvent="mousedown"
+					showCloseIcon="true"
+					dismissable="true"
+					rendered="#{not empty request.userPrincipal}">
+		
+		<h:panelGrid columns="2" cellpadding="5">		
+			<p:outputLabel value="Name: "/>
+			<h:outputText value="#{UserAction.loggedInUser.name}"/>
+			
+			<p:outputLabel value="Phone: "/>
+			<h:outputText value="#{UserAction.loggedInUser.contactNumber}"/>
+			
+			<p:outputLabel value="Email: "/>
+			<h:outputText value="#{UserAction.loggedInUser.email}"/>
+			
+			<p:outputLabel value="NRC: "/>
+			<h:outputText value="#{UserAction.loggedInUser.nrc}"/>		
+		</h:panelGrid>
+		
+		<p:toolbar style="border: none; margin-top: 5px;">
+			<f:facet name="left">
+				<p:commandButton value="Manage"
+								 process="@this"
+								 update="@widgetVar(var_UserEditPanel)"
+								 oncomplete="PF('var_UserEditDlg').show();"
+								 icon="ui-icon-person">
+					<f:setPropertyActionListener value="#{UserAction.loggedInUser}" target="#{UserAction.selectedEntity}" />	 
+		 		</p:commandButton>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton value="Sign out"
+								 process="@this"								 
+								 actionListener="#{UserAction.logout}"
+								 icon="ui-icon-power" />
+			</f:facet>
+		</p:toolbar>
+		
+	</p:overlayPanel>
+	
+</ui:composition>
