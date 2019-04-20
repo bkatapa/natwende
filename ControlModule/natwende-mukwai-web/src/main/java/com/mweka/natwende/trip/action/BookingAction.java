@@ -1,141 +1,121 @@
-package com.mweka.natwende.trip.action;
+package com.mweka.natwende.booking.action;
 
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.mweka.natwende.action.AbstractActionBean;
-import com.mweka.natwende.cdi.LoggedInUser;
+import org.primefaces.component.accordionpanel.AccordionPanel;
+import org.primefaces.event.TabChangeEvent;
+import org.primefaces.event.TabCloseEvent;
+
+import com.mweka.natwende.helper.MessageHelper;
 import com.mweka.natwende.trip.vo.BookingVO;
-import com.mweka.natwende.types.PagePath;
-import com.mweka.natwende.user.vo.UserVO;
-import com.mweka.natwende.util.ServiceLocator;
+import com.mweka.natwende.types.PaymentStatus;
 
-@Named("BookingAction")
+@Named("BookingAction1")
 @SessionScoped
-public class BookingAction extends AbstractActionBean<BookingVO> {
-    private static final long serialVersionUID = 1L;
-    //private static final String SHOW_BULK_BOOKING_WARNING = "PF('var_BulkBookingWarnForm').show();";
-    
-    @EJB
-    private ServiceLocator serviceLocator;
-    
-    @Inject
-    @LoggedInUser
-    private UserVO userVO;
-    
-    private BookingVO selectedBookingVO;    
-    //private BookingSearchVO bookingSearchVO = new BookingSearchVO();
-    private boolean bulk = true;
-    
-	@Override
-	protected List<BookingVO> getListFromFacade() {
-		List<BookingVO> resultList = new ArrayList<>();
-		try{
-			//bookingSearchVO.setStatus(Status.ACTIVE);
-			resultList = null; //serviceLocator.getBookingFacade().fetchAllTenantBookings(bookingSearchVO);
-		}catch(Exception e){
-			log.debug(e,e);
-			addFacesMessageError("Error", e.getMessage());
-		}	
-			
-		return resultList;
-	}
-
-	@Override
-	protected BookingVO facadeUpdate(BookingVO dataItem) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected void facadeDelete(BookingVO dataItem) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-    public String getViewPage() {
-        return PagePath.BOOKING_MANAGEMENT_VIEW.getPath();
-    }
-
-    @Override
-    public String getListPage() {
-    	refresh();
-        return PagePath.BOOKING_MANAGEMENT_LIST.getPath();
-    }
-    
-    public String createBooking() {	
-    	return PagePath.BOOKING_MANAGEMENT_EDIT.getPath();
-    }
-    
-    public BookingVO getSelectedBookingVO() {
-		return selectedBookingVO;
-	}
-
-	public void setSelectedBookingVO(BookingVO selectedBookingVO) {
-		this.selectedBookingVO = selectedBookingVO;
-	}
-
-//	public BookingSearchVO getBookingSearchVO() {
-//		return bookingSearchVO;
-//	}
-//
-//	public void setBookingSearchVO(BookingSearchVO bookingSearchVO) {
-//		this.bookingSearchVO = bookingSearchVO;
-//	}
-
+public class BookingAction extends MessageHelper<BookingVO> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5605106821593815447L;
+	
+	private int activeIndex;
+	private boolean paymentTabEnabled;
+	
 	@PostConstruct
-	public void postConstruct() {
-		if (userVO != null) {
-//			bookingSearchVO = new BookingSearchVO();
-//			bookingSearchVO.setTenantId(userVO.getTenantVO().getId());
+	public void init() {
+		selectedEntity = new BookingVO();
+		activeIndex = 0;
+	}
+
+	@Override
+	protected List<BookingVO> getEntityList() {
+		populateEntityList();
+		return entityList;
+	}
+
+	public int getActiveIndex() {
+		return activeIndex;
+	}
+
+	public void setActiveIndex(int activeIndex) {
+		this.activeIndex = activeIndex;
+	}
+
+	public boolean isPaymentTabEnabled() {
+		return paymentTabEnabled;
+	}
+
+	public void setPaymentTabEnabled(boolean paymentTabEnabled) {
+		this.paymentTabEnabled = paymentTabEnabled;
+	}
+
+	@Override
+	protected String createEntity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String saveEntity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String viewEntity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void deleteEntity() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void onTabChange(TabChangeEvent event) {
+		AccordionPanel accordion = (AccordionPanel) event.getComponent();
+		activeIndex = Integer.parseInt(accordion.getActiveIndex());
+		switch (activeIndex) {
+		case 0 : revealConfirmBookingDetailsTab();
+		break;
+		case 1 : revealPaymentTab();
+		break;
+		default : break;
 		}
 	}
-
-	public void cancelBooking() {
-		//bookingEditAction.setActionMode(UserActionMode.CANCEL);
+	
+	public void onTabClose(TabCloseEvent event) {		
 	}
 	
-	public String editBooking(BookingVO selectedBookingVO) {
-//		if (selectedBookingVO.getBulkBookingVO() != null && bulk) {
-//			this.selectedBookingVO = selectedBookingVO;
-//			RequestContext.getCurrentInstance().execute(SHOW_BULK_BOOKING_WARNING);
-//			return null;
-//		}
-//		bookingEditAction.setActionMode(UserActionMode.EDIT);
-//		bookingEditAction.setBookingVO(selectedBookingVO);
-		bulk = true;
-		return PagePath.BOOKING_MANAGEMENT_EDIT.getPath();
+	public void revealConfirmBookingDetailsTab() {
+		selectedEntity.setId(1L);
+		//selectedEntity.setFromTown(Town);
+		//selectedEntity.setToTown(Town);
+		//selectedEntity.setOperator(Operator);
+		activeIndex = 0;
 	}
 	
-	public void search() {		
-		super.refresh();
+	public void revealPaymentTab() {
+		selectedEntity.getPayment().setCardNumber("");
+		selectedEntity.getPayment().setPaymentStatus(PaymentStatus.PENDING);
+		selectedEntity.getPayment().setCustomerName("");
+		//selectedEntity.getPayment().setNameOnCard("");
+		//selectedEntity.getPayment().setBeneficiary("");
+		paymentTabEnabled = true;
+		activeIndex = 1;
 	}
 	
-	public void reset() {
-//		bookingSearchVO.clearSearch();
-//		bookingSearchVO.setTenantId(userVO.getTenantVO().getId());
-	}
-	
-	@Override
-	public void refresh() {
-		super.refresh();
-		//bookingSearchVO.clearSearch();
+	public String authorizePayment() {
+		// Send payment
+		
+		return "/booking/bookingSuccess";
 	}
 
-	public boolean isBulk() {
-		return bulk;
-	}
-	
-	public String switchToBulkEditingMode() {		
-		return null; //bulkBookingAction.editBulkBooking(selectedBookingVO.getBulkBookingVO());		
-	}
-	
-	public String ignoreBulkEditingMode() {		
-		bulk = false;
-		return editBooking(selectedBookingVO);
+	private void populateEntityList() {		
 	}
 }

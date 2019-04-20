@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<f:view contentType="text/html">
+		<h:head>
+			<f:facet name="first">
+				<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+				<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<title>Bus ticket - booking</title>
+				<style>
+					.ui-steps.custom {
+						margin-bottom: 30px;
+					}
+					.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+						height: 10px;
+						padding: 0 1em;
+					}
+					.ui-steps.custom .ui-steps-item .ui-steps-number {
+						background-color: #0081c2;
+						color: #FFFFFF;
+						display: inline-block;
+						width: 30px;
+						border-radius: 10px;
+						margin-top: -10px;
+						margin-bottom: 10px;
+						margin-bottom: 10px;
+					}
+					.ui-picklist .ui-picklist-list {
+						width: 580px !important;
+					}
+				</style>
+			</f:facet>
+		</h:head>
+		<h:body>
+			<h:form id="bookingConfirmation-form">
+				<p:menubar>
+					<p:menuitem outcome="/trip/tripList" icon="fa fa-home" value="Home" />
+					<p:menuitem outcome="/trip/seatSelection" icon="fa fa-chevron-left" value="Back" />
+				</p:menubar>
+				<p:panelGrid columns="2" layout="grid">
+					<f:facet name="header">
+						<p:outputPanel style="text-align: left">
+							<h:outputText value="#{TripAction.selectedEntity.busReg} #{TripAction.selectedEntity.tripSchedule.route} #{TripAction.selectedEntity.scheduledDepartureDate}"/>
+							<h:outputText value="Seats remaining: #{TripAction.selectedEntity.availableNumOfSeats}" style="float: right;" />
+						</p:outputPanel>
+					</f:facet>
+				</p:panelGrid>
+				<p:steps activeIndex="#{BookingAction.currentStep}"
+						 styleClass="custom"
+						 style="margin-top: 20px; margin-bottom: 20px;">
+		 			<p:menuitem value="Confirm trip details"/>
+		 			<p:menuitem value="Make payment" />
+		 		</p:steps>
+		 		
+		 		<!-- Step#1 Confirm trip details -->
+		 		
+		 		<p:panel id="step1"
+		 				 header="Confirm trip details"
+		 				 rendered="#{BookingAction.currentStep eq 0}"
+		 				 style="margin-top: 40px; border: none;">
+		 			<p:messages id="step1-msgs" showSummary="true" closable="true" />
+		 			<p:tabView id="booking-tabView"
+		 					   value="#{BookingAction.entityList}"
+		 					   var="booking"
+		 					   effect="fade"
+		 					   activeIndex="#{BookingAction.activeIndex}"
+		 					   style="border: none;">
+		 				<p:ajax event="tabChange" listener="#{BookingAction.onTabChange}" />
+		 				<p:ajax event="tabClose" listener="#{BookingAction.onTabClose}" />
+		 				<p:tab title="Seat ##{booking.seatNumber}">
+		 					<p:panelGrid columns="2" layout="grid">
+		 						<p:outputLabel value="Name: " for="customer-name"/>
+		 						<h:outputText id="customer-name" value="#{booking.customerName}" />
+		 						
+		 						<p:outputLabel value="Email: " for="customer-email"/>
+		 						<h:outputText value="#{booking.customerEmail}" />
+		 						
+		 						<p:outputLabel value="From: " for="booking-from"/>
+		 						<h:outputText id="booking-from" value="#{booking.from}" />
+		 						
+		 						<p:outputLabel value="To: " for="booking-to"/>
+		 						<h:outputText id="booking-to" value="#{booking.to}" />
+		 						
+		 						<p:outputLabel value="Seat no: " for="booking-seatNo"/>
+		 						<h:outputText id="booking-seatNo" value="#{booking.customerName}" />
+		 						
+		 						<p:outputLabel value="Fare: " for="booking-fare"/>
+		 						<h:outputText id="booking-fare" value="#{booking.payment.amount}">
+		 							<f:convertNumber currencySymbol="K" pattern="#,###.00" type="currency"/>
+		 						</h:outputText>
+		 					</p:panelGrid>
+		 				</p:tab>
+		 			</p:tabView>
+		 			<p:toolbar style="border: none; margin-top: 1px;">
+		 				<f:facet name="left">
+		 					<p:commandButton process="@this, step1"
+		 									 update="bookingConfirmation-form"
+		 									 value="Next"
+		 									 actionListener="#{BookingAction.step}"
+		 									 icon="fa fa-arrow-right"
+		 									 iconPos="right">
+				 			</p:commandButton>
+		 				</f:facet>
+		 			</p:toolbar>
+		 		</p:panel>
+		 		
+		 		<!-- Step#2 Make payment -->
+		 		
+		 		<p:panel id="step2"
+		 				 header="Make payment"
+		 				 rendered="#{BookingAction.currentStep eq 1}"
+		 				 style="margin-top: 40px; border: none;">
+		 				 
+		 			<p:messages id="step2-msgs" showSummary="true" closable="true" />
+		 			
+		 			<p:fieldset legend="Choose payment option">
+		 				<p:selectOneRadio id="payment-opts"
+		 								  value="#{BookingAction.selectedEntity.payment.paymentOption}"
+		 								  layout="responsive"
+		 								  columns="3">
+		 					<f:selectItems value="#{PaymentAction.paymentOptions}"
+		 								   var="p"
+		 								   itemLabel="#{p.display}"
+		 								   itemValue="#{p}" />
+					   		<p:ajax process="payment-opts" update="step2" />
+		 				</p:selectOneRadio>
+		 			</p:fieldset>
+		 		
+		 			<p:panelGrid columns="2"
+		 						 layout="grid"
+		 						 style="margin-top: 10px;"
+		 						 rendered="#{BookingAction.selectedEntity.payment.paymentOption eq 'VISA_CARD'}">
+		 				<f:facet name="header">
+		 					<div style="text-align: left">
+		 						<h:outputText value="Pay by visa card" />
+		 					</div>
+		 				</f:facet>
+		 				<p:outputLabel for="cardNumber-visa" value="Card number: " />
+		 				<h:outputText id="cardNumber-visa" value="#{CardAction.selectedEntity.cardNumberEncrypted}" />
+		 			</p:panelGrid>
+		 		
+		 			<p:toolbar style="border: none; margin-top: 10px;">
+		 				<f:facet name="left">
+		 					<p:commandButton process="@this"
+		 									 update="bookingConfirmation-form"
+		 									 value="Prev"
+		 									 actionListener="#{BookingAction.step}"
+		 									 icon="fa fa-arrow-left"
+		 									 iconPos="left">
+				 			</p:commandButton>
+		 				</f:facet>
+		 				<f:facet name="right">
+		 					<p:commandButton process="@this"
+		 									 update="bookingConfirmation-form"
+		 									 value="Finish"
+		 									 actionListener="#{BookingAction.finish}"
+		 									 icon="fa fa-check">
+				 			</p:commandButton>
+		 				</f:facet>
+		 			</p:toolbar>
+		 		</p:panel>
+			</h:form>
+			
+			<script>
+				function doSelect(index) {
+					PF('accordionPanel').select(index);
+				}
+				function doUnSelect(index) {
+					PF('accordionPanel').unselect(index);
+				}
+			</script>
+			
+		</h:body>
+	</f:view>
+</html>

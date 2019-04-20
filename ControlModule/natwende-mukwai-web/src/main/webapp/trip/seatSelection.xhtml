@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<f:view contentType="text/html">
+		<h:head>
+			<f:facet name="first">
+				<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+				<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<title>Bus ticket book</title>
+				<h:outputStylesheet library="seatCharts" name="css/jquery.seat-charts.css" />
+				<h:outputStylesheet library="seatCharts" name="css/bus.css" />
+			</f:facet>
+		</h:head>
+		<h:body onload="openConnection();" onunload="closeConnection();">
+			<p:growl widgetVar="growl" showDetail="true" life="1500" sticky="false" />
+			<p:panelGrid columns="2" layout="grid">
+				<f:facet name="header">
+					<div style="text-align: left;">
+						<p:button outcome=""
+								  icon="ui-icon-circle-triangle-w" />
+					  	<h:outputText value="#{TripAction.selectedEntity.busReg} #{TripAction.selectedEntity.from} - #{TripAction.selectedEntity.to} (#{TripAction.selectedEntity.scheduledDepartureDate} #{TripAction.selectedEntity.scheduledDepartureDate})" style="margin-left: 10px;" />
+					</div>
+				</f:facet>
+				<p:outputLabel value="From: " />
+				<p:outputText value="#{TripAction.selectedEntity.from}" />
+				<p:outputLabel value="To: " />
+				<p:outputText value="#{TripAction.selectedEntity.to}" />
+				<p:outputLabel value="Seats remaining: " />
+				<p:outputText value="#{TripAction.selectedEntity.availableNumOfSeats}" />
+			</p:panelGrid>
+			<div class="container">
+				<div id="seat-map">
+					<div class="front-indicator">Front</div>
+				</div>
+				<div class="booking-details">
+					<h2>Booking details</h2>
+					<h3>Selected seats (<span id="counter">0</span>):</h3>
+					<ul id="selected-seats" />
+					Total: <b>K<span id="total">0</span></b>
+					<p:button style="margin-left: 10px;"
+							  id="checkout"
+							  outcome="/trip/bookingConfirmation"
+							  styleClass="checkout-button"
+							  value="Checkout &raquo;" />
+			  		<div id="legend" />
+				</div>
+			</div>
+			<input type="hidden" value="#{TripAction.selectedEntity.id}" id="trip-id" />
+			<h:form>
+				<p:remoteCommand name="updateGrowl" update="@widgetVar(growl)" />
+			</h:form>
+			
+			<h:outputScript>#{TripAction.busTemplateScript}</h:outputScript>
+			<h:outputScript library="seatCharts" name="js/seat-updater.js"/>
+			<h:outputScript library="seatCharts" name="js/post-booking-data.js"/>
+			<h:outputScript>
+				$(document).ready(function () {
+					openConnection();
+					updateOccupiedSeats(#{TripAction.selectedEntity.occupiedSeatsToString});
+					this.data().price = #{TripAction.selectedEntity.priceStr}
+					setTripPrice(#{TripAction.selectedEntity.priceStr});
+					$("#checkout").click(function () {
+						postBookingData();
+					});
+				});
+				function handleMessage(facesMessage) {
+					// updateGrowl();
+					PF('growl').show([facesMessage]);
+				}
+			</h:outputScript>
+						
+		</h:body>
+	</f:view>
+      
+</html>
