@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/layout/templatePage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
+                
+	<ui:define name="content">
+
+		<p:dataTable id="tripSearchResult-table" 
+					 value="#{TripAction.searchResults}" 
+					 var="entity" 
+                     rowKey="#{entity.id}"
+                     paginator="true"
+                     rows="10"
+                     lazy="true"
+                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                     rowsPerPageTemplate="10,20,50"
+                     resizableColumns="true"
+                     style="margin-top: 10px;">
+                     
+   			<f:facet name="header">
+   				<h:outputText value="#{TripAction.searchVO.fromTown.display} - #{TripAction.searchVO.toTown.display}"
+   							  rendered="#{TripAction.searchVO.hasFilters()}" />
+        	</f:facet>
+        	
+	        <p:column headerText="Ticket" style="text-align: center;">
+	            <p:graphicImage name="images/icons/ticket.jpg" width="30" height="30" />
+	        </p:column>
+	        
+        </p:dataTable>
+        
+	</ui:define>
+	
+</ui:composition>

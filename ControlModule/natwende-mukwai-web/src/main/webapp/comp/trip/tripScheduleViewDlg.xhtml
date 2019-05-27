@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<p:dialog id="tripScheduleEdit-dlg" 
+			  widgetVar="var_TripScheduleEditDlg" 
+			  showEffect="fade"
+			  hideEffect="fade"
+			  maximizable="true" 
+			  closable="true" 
+			  header="#{TripScheduleAction.tripSchedule.route}" 
+			  modal="true" 
+			  width="800"
+			  onHide="PF('var_TripScheduleEditDlg').toggleMaximize();">
+			  
+		<h:form id="tripScheduleEdit-form">
+			<p:toolbar style="border: none; padding: 5px;">
+				<f:facet name="left">
+					<p:commandButton value="Close"
+									 icon="ui-icon-close" 
+									 process="@this"
+									 update="main-content" 
+									 oncomplete="PF('var_TripScheduleEditDlg').hide();" />
+				</f:facet>
+			</p:toolbar>
+			
+			<ui:include src="/admin/trip/tripScheduleViewPanel.xhtml" />
+		</h:form>			  
+			  
+ 	</p:dialog>
+ 	
+</ui:composition>
