@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<p:dialog id="tripSearchResult-dlg" 
+			  widgetVar="var_TripSearchResultDlg" 
+			  showEffect="fade"
+			  hideEffect="fade"
+			  maximizable="true" 
+			  closable="true"
+			  closeOnEscape="true" 
+			  header="Search for your trip" 
+			  modal="true"			  
+			  styleClass="disable-scroll">
+			  
+		<h:form id="tripSearchResult-form">
+		
+			<ui:include src="/comp/trip/tripSearchPanel.xhtml">
+				<ui:param name="tripSearchForm" value="tripSearchResult-form" />
+			</ui:include>
+		
+			<p:toolbar style="border: none; margin-top: 15px;">
+				<f:facet name="right">
+					<p:commandButton value="Search"
+									 process="@this"
+									 update="tripSearchResult-form, main-content"
+									 icon="fa fa-search"
+									 actionListener="#{TripAction.scanForTrips}"
+									 oncomplete="PF('var_TripSearchResultDlg').hide();" />
+				</f:facet>
+			</p:toolbar>
+			
+		</h:form>
+		
+		<style>
+			.disable-scroll .ui-dialog-content { overflow: hidden !important; }
+		</style>
+		
+	</p:dialog>
+	
+</ui:composition>
