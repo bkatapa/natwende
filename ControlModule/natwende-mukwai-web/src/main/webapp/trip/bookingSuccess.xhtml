@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<f:view contentType="text/html">
+		<h:head>
+			<f:facet name="first">
+				<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+				<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<title>Bus ticket booking - success</title>
+			</f:facet>
+		</h:head>
+		<h:body>
+			<p:panelGrid columns="1" layout="grid">
+			
+				<f:facet name="header">
+					<div style="text-align: left">
+						<p:button value="Home" outcome="/trip/tripList" icon="fa fa-home" />
+					</div>
+				</f:facet>
+				
+				<h:panelGrid columns="1" style="margin: auto; text-align: center;" cellspacing="10" cellpadding="10">
+					<p:outputPanel styleClass="ui-corner-all"
+								   style="font-size: x-large; color: whitesmoke; background: lightgreen; padding: 5px; margin-bottom: 20px;">
+						<h:outputText value="Thank you #{ReservationAction.selectedEntity.customer.firstname.toUpperCase()} for using NATWENDE. Your trip from #{TripAction.selectedSearchResult.stretch.from.town.display} to #{TripAction.selectedSearchResult.stretch.to.town.display} is now confirmed! " />
+						<h:outputText value="You will depart on #{TripAction.selectedSearchResult.estimatedJourneyStartDateAsString}. Enjoy your ride." />
+					</p:outputPanel>
+					<p:graphicImage name="images/icons/thumbs-up.png" width="200" height="200" />
+					<h:outputText value="Please click below to generate your receipt. A copy of this receipt has been sent to your email address #{ReservationAction.selectedEntity.customer.email} as well." />
+					<h:form>
+						<p:commandLink process="@this"
+									   action="/admin/adminPanel?faces-redirect=true&amp;i=2"
+									   title="Click to generate your receipt.">
+							<p:graphicImage name="images/icons/generate-gold.png" width="220" height="100" />
+						</p:commandLink>
+					</h:form>
+				</h:panelGrid>
+				
+			</p:panelGrid>
+		</h:body>
+	</f:view>
+	
+</html>
