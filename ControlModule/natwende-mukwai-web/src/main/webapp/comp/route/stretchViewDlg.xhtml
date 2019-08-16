@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<p:dialog id="stretchView-dlg"
+			  widgetVar="var_StretchViewDlg"
+			  showEffect="fade"
+			  closable="true"
+			  header="Warning"
+			  modal="true"
+			  width="600">
+			  
+	  	<p:ajax event="close" process="@this" listener="#{StretchAction.handleClose}" />
+	  	<p:messages closable="true" showDetail="true" severity="info,error" />
+			  
+		<h:form id="stretchView-form">
+			<p:panelGrid columns="2" layout="grid">
+				<f:facet name="header">
+					<h:outputText value="#{StretchAction.selectedEntity}" />
+				</f:facet>
+				
+				<h:outputText value="Trip fare (Kwacha)" />
+				<p:inputNumber value="#{StretchAction.selectedEntity.fareAmount}"
+							   decimalPlaces="2"
+							   minValue="0"/>
+							   
+		   		<h:outputText value="Distance (Kilometres)" />
+				<p:inputNumber value="#{StretchAction.selectedEntity.distanceKM}"
+							   decimalPlaces="0"
+							   minValue="0"/>
+			</p:panelGrid>
+			
+			<p:toolbar>
+				<f:facet name="left">
+					<p:commandButton value="Close"
+									 process="@this"
+									 icon="ui-icon-circle-close"
+									 oncomplete="PF('var_StretchViewDlg').hide();" />
+				</f:facet>
+				<f:facet name="right">
+					<p:commandButton value="Save"
+									 actionListener="#{StretchAction.saveEntity}"
+									 process="@this, stretchView-form"
+									 update="main-content"
+									 icon="fa fa-save" />
+				</f:facet>
+			</p:toolbar>
+		</h:form>
+	</p:dialog>
+	
+</ui:composition>
