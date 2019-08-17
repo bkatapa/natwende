@@ -1,9 +1,15 @@
 package com.mweka.natwende.trip.vo;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mweka.natwende.base.vo.BaseVO;
 import com.mweka.natwende.operator.vo.BusVO;
 import com.mweka.natwende.user.vo.UserVO;
 
+@XmlRootElement
+@JsonIgnoreProperties
 public class BusTripScheduleLinkVO extends BaseVO {
 
 	/**
@@ -11,8 +17,13 @@ public class BusTripScheduleLinkVO extends BaseVO {
 	 */
 	private static final long serialVersionUID = 2626951206490884463L;
 
+	@XmlTransient
 	private BusVO bus;
+	
+	@XmlTransient
 	private TripScheduleVO tripSchedule;
+	
+	@XmlTransient
 	private UserVO driver;
 	
 	public BusTripScheduleLinkVO() {		

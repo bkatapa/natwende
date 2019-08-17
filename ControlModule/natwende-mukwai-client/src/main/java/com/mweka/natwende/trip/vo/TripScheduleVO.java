@@ -23,11 +23,21 @@ public class TripScheduleVO extends BaseVO {
 	 */
 	private static final long serialVersionUID = -5191260519393654716L;
 
+	@XmlTransient
 	private Date startDate;
+	
+	@XmlTransient
 	private Date endDate;
+	
+	@XmlTransient
 	private Date scheduledDepartureTime;
+	
+	@XmlTransient
 	private OperatorVO operator;
+	
+	@XmlTransient
 	private RouteVO route;
+	
 	private List<DaysOfWeek> frequency;
 	
 	@XmlTransient

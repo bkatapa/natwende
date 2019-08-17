@@ -3,6 +3,9 @@ package com.mweka.natwende.operator.vo;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.base.vo.BaseVO;
 
 public class BusVO extends BaseVO {
@@ -16,7 +19,13 @@ public class BusVO extends BaseVO {
 	private String reg;
 	private String imgUrl;
 	private String seatsAsString;
+	
+	@XmlTransient
+	@JsonIgnore
 	private OperatorVO operator;
+	
+	@XmlTransient
+	@JsonIgnore
 	private List<SeatVO> seats;
 	
 	public int getCapacity() {
