@@ -8,7 +8,8 @@ public enum OperatorName implements Displayable {
     SHALOM("Shalom", "/bus/shalom-bus.png"),
     POWER_TOOLS("Power Tools", "/bus/powertools-bus.png"),
     EURO("Euro Africa Bus Services", "/bus/euro-bus.png"),
-    WADA_CHOVU("Wada Chovu", "/bus/wadachovu-bus.png");
+    WADA_CHOVU("Wada Chovu", "/bus/wadachovu-bus.png"),
+    NATWENDE_MUKWAI("Natwende Mukwai", "/bus/natwende-bus.png");
 	
     private final String display;
     private final String url;

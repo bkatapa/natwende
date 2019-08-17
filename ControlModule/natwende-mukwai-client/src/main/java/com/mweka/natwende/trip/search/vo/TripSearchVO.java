@@ -21,6 +21,12 @@ public class TripSearchVO extends BaseSearchVO {
 
 	public TripSearchVO() {
 	}
+	
+	public TripSearchVO(Town fromTown, Town toTown, Date travelDate) {
+		this.fromTown = fromTown;
+		this.toTown = toTown;
+		this.travelDate = travelDate;
+	}
 
 	public boolean hasFilters() {
 		if (fromTown != null && toTown != null) {

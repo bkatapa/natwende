@@ -2,14 +2,15 @@ package com.mweka.natwende.types;
 
 public enum BookingStatus implements Displayable {
 
-	PENDING(1, "Pending"),
-    CONFIRMED(2, "Confirmed"),
-    CANCELLED(3, "Cancelled"),	
+	RESERVED(1, "Reserved, pending payment"),
+    CONFIRMED(2, "Confirmed fully paid"),
+    CANCELLED(3, "Cancelled"),
+    FAILED(3, "Failed"),
 	UNKNOWN(4, "Unknown");
     
-    int id;
+    private final int id;
 
-    String display;
+    private final String display;
 
     private BookingStatus(int id, String display) {
         this.id = id;
@@ -20,6 +21,7 @@ public enum BookingStatus implements Displayable {
         return id;
     }
 
+    @Override
     public String getDisplay() {
         return display;
     }

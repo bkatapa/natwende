@@ -16,6 +16,7 @@ import com.mweka.natwende.location.facade.AddressDataFacade;
 import com.mweka.natwende.mail.MailerFacade;
 import com.mweka.natwende.media.facade.MediaDataFacade;
 import com.mweka.natwende.media.facade.MediaFacade;
+import com.mweka.natwende.notification.facade.MessageDataFacade;
 import com.mweka.natwende.notification.facade.NotificationDataFacade;
 import com.mweka.natwende.operator.facade.BusDataFacade;
 import com.mweka.natwende.operator.facade.BusFacade;
@@ -27,13 +28,13 @@ import com.mweka.natwende.operator.facade.OperatorSettingsDataFacade;
 import com.mweka.natwende.operator.facade.OperatorSettingsFacade;
 import com.mweka.natwende.operator.facade.SeatDataFacade;
 import com.mweka.natwende.operator.facade.SeatFacade;
+import com.mweka.natwende.payment.facade.CardDataFacade;
+import com.mweka.natwende.payment.facade.CardFacade;
 import com.mweka.natwende.payment.facade.PaymentDataFacade;
 import com.mweka.natwende.payment.facade.PaymentFacade;
 import com.mweka.natwende.report.ReportFacade;
 import com.mweka.natwende.route.facade.FareDataFacade;
 import com.mweka.natwende.route.facade.FareFacade;
-import com.mweka.natwende.route.facade.FareRouteLinkDataFacade;
-import com.mweka.natwende.route.facade.FareRouteLinkFacade;
 import com.mweka.natwende.route.facade.RouteDataFacade;
 import com.mweka.natwende.route.facade.RouteFacade;
 import com.mweka.natwende.route.facade.StretchDataFacade;
@@ -48,6 +49,7 @@ import com.mweka.natwende.trip.facade.BookingDataFacade;
 import com.mweka.natwende.trip.facade.BookingFacade;
 import com.mweka.natwende.trip.facade.BusTripScheduleLinkDataFacade;
 import com.mweka.natwende.trip.facade.BusTripScheduleLinkFacade;
+import com.mweka.natwende.trip.facade.ReservationDataFacade;
 import com.mweka.natwende.trip.facade.TripDataFacade;
 import com.mweka.natwende.trip.facade.TripFacade;
 import com.mweka.natwende.trip.facade.TripScheduleDataFacade;
@@ -119,12 +121,6 @@ public class ServiceLocator {
 	
 	@EJB
 	private FareDataFacade fareDataFacade;
-	
-	@EJB
-	private FareRouteLinkFacade fareRouteLinkFacade;
-	
-	@EJB
-	private FareRouteLinkDataFacade fareRouteLinkDataFacade;
 	
 	@EJB
 	private RouteStopLinkFacade routeStopLinkFacade;
@@ -218,6 +214,18 @@ public class ServiceLocator {
 	
 	@EJB
 	private BusTripScheduleLinkDataFacade busTripScheduleLinkDataFacade;
+	
+	@EJB
+	private CardFacade cardFacade;
+	
+	@EJB
+	private CardDataFacade cardDataFacade;
+	
+	@EJB
+	private ReservationDataFacade reservationDataFacade;
+	
+	@EJB
+	private MessageDataFacade messageDataFacade;
 	
 	@Inject
 	@StretchHelperInstance
@@ -400,14 +408,6 @@ public class ServiceLocator {
 		return fareDataFacade;
 	}
 	
-	public FareRouteLinkFacade getFareRouteLinkFacade() {
-		return fareRouteLinkFacade;
-	}
-	
-	public FareRouteLinkDataFacade getFareRouteLinkDataFacade() {
-		return fareRouteLinkDataFacade;
-	}
-	
 	public BookingFacade getBookingFacade() {
 		return bookingFacade;
 	}
@@ -456,4 +456,19 @@ public class ServiceLocator {
 		return busTripScheduleLinkDataFacade;
 	}
 	
+	public CardFacade getCardFacade() {
+		return cardFacade;
+	}
+	
+	public CardDataFacade getCardDataFacade() {
+		return cardDataFacade;
+	}
+	
+	public ReservationDataFacade getReservationDataFacade() {
+		return reservationDataFacade;
+	}
+	
+	public MessageDataFacade getMessageDataFacade() {
+		return messageDataFacade;
+	}
 }

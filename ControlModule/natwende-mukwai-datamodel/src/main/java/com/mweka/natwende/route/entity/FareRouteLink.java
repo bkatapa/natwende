@@ -1,5 +1,5 @@
 package com.mweka.natwende.route.entity;
-
+/*
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -9,9 +9,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
-
+*/
 import com.mweka.natwende.base.BaseEntity;
-
+/*
 @Entity
 @Table(name = "FareRouteLink", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"fare_id", "route_id"})
@@ -21,7 +21,7 @@ import com.mweka.natwende.base.BaseEntity;
 	@NamedQuery(name = FareRouteLink.QUERY_FIND_ALL, query = "SELECT frl FROM FareRouteLink frl"),
 	@NamedQuery(name = FareRouteLink.QUERY_FIND_ALL_BY_STATUS, query = "SELECT frl FROM FareRouteLink frl WHERE frl.status = :status"),
 	@NamedQuery(name = FareRouteLink.QUERY_FIND_LIST_BY_ROUTE_ID, query = "SELECT frl FROM FareRouteLink frl WHERE frl.route.id = :routeId")
-})
+})*/
 public class FareRouteLink extends BaseEntity {
 
 	/**
@@ -31,13 +31,15 @@ public class FareRouteLink extends BaseEntity {
 	/**
 	 * Named queries
 	 */
+	/*
 	public static final String QUERY_FIND_ALL = "FareRouteLink.findAll";
 	public static final String QUERY_FIND_ALL_BY_STATUS = "FareRouteLink.findAllByStatus";
 	public static final String QUERY_FIND_LIST_BY_ROUTE_ID = "FareRouteLink.findListByRouteId";
-	
+	*/
 	/**
 	 * Query parameters
 	 */
+	/*
 	public static transient final String PARAM_FARE_ROUTE_LINK_ID = "fareRouteLinkId";
 	
 	@JoinColumn(name = "fare_id", referencedColumnName = "id", nullable = false)
@@ -63,5 +65,5 @@ public class FareRouteLink extends BaseEntity {
 	public void setRoute(Route route) {
 		this.route = route;
 	}
-	
+	*/
 }

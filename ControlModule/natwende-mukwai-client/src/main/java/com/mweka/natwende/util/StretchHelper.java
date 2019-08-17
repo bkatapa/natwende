@@ -22,7 +22,11 @@ public class StretchHelper implements Serializable {
 		List<StretchVO> resultList = new ArrayList<>();
 		
 		for (StretchVO outer : allStretchList) {
-			if (outer.getId() > -1L || outer.getEstimatedTravelTime() == null) {
+			if (outer.getId() > -1L) {
+				resultList.add(outer);
+				continue;
+			}
+			if (outer.getEstimatedTravelTime() == null) {
 				outer.setEstimatedTravelTime(getZeroDate());
 			}
 			StopVO outerFrom = outer.getFrom();

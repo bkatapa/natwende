@@ -15,11 +15,11 @@
 			     paginator="true"
 			     paginatorPosition="bottom"
 			     rows="10"
-			     emptyMessage="No buses have been created."
+			     emptyMessage="No routes have been registered yet."
 			     styleClass="paginated">	
 		
-		<p:column headerText="Route Id">
-			<h:outputText value="#{entity.id}" />
+		<p:column headerText="" style="text-align: center; width: 80px;">
+			<p:graphicImage name="images/icons/route2.png" width="30" height="30" />
 		</p:column>
 		
 		<p:column headerText="Name">
@@ -31,18 +31,27 @@
 		</p:column>
 		
 		<p:column headerText="Final destination">
-			<h:outputText value="#{entity.route.lastStop.name} - #{entity.route.lastStop.town.display}, #{entity.route.lastStop.province.display}" />
+			<h:outputText value="#{entity.route.stop.name} - #{entity.route.stop.town.display}, #{entity.route.stop.province.display}" />
 		</p:column>
 		
-		<p:column headerText="Actions" style="text-align: center;" width="100">
-			<p:commandButton actionListener="#{OperatorRouteLinkAction.deleteEntity}"
+		<p:column headerText="Actions" style="text-align: center; width: 100px;">
+			<p:commandButton action="#{OperatorRouteLinkAction.viewEntity}"
 							 ajax="true"
+							 process="@this"
+							 icon="ui-icon-zoomin"
+							 title="View this route.">
+			 	<f:setPropertyActionListener value="#{entity}" target="#{OperatorRouteLinkAction.selectedEntity}" />
+			 	<f:actionListener binding="#{OperatorRouteLinkAction.populateTransitStationsForSelectedEntity()}"/>
+		 	</p:commandButton>
+		 	
+			<p:commandButton actionListener="#{OperatorRouteLinkAction.deleteEntity}"
+							 style="margin-left: 10px;"
 							 process="@this"
 							 update="routeList-dataTable"
 							 icon="ui-icon-trash"
 							 title="Remove this route.">
 			 	<f:setPropertyActionListener value="#{entity}" target="#{OperatorRouteLinkAction.selectedEntity}" />
-		 	</p:commandButton>				
+		 	</p:commandButton>									
 		</p:column>
 		
 	</p:dataTable>

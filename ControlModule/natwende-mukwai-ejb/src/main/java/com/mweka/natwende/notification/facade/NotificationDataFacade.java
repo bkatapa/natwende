@@ -16,35 +16,30 @@ public class NotificationDataFacade extends AbstractDataFacade<NotificationVO, N
 
 	@Override
 	protected void convertEntitytoVO(Notification entity, NotificationVO vo) {
-				
-//		vo.setSenderVO(serviceLocator.getParkingSiteDataFacade().getCachedVO(entity.getSender()));
+		super.convertBaseEntityToVO(entity, vo);
 		vo.setSubmitDate(entity.getSubmitDate());
 		vo.setNotitifcationStatus(entity.getNotitifcationStatus());
-		vo.setSubject(entity.getSubject());		
-		vo.setMessage(entity.getMessage());
+		vo.setSubject(entity.getSubject());
+		if (entity.getMessage() != null) {
+			vo.setMessage(serviceLocator.getMessageDataFacade().getCachedVO(entity.getMessage()));
+		}
 	}
 
 	@Override
 	protected Notification convertVOToEntity(NotificationVO vo,	Notification entity) {
-		convertBaseVOToEntity(vo, entity);
-		
-//		entity.setSender(serviceLocator.getParkingSiteDataFacade().findById(vo.getSenderVO().getId()));
+		super.convertBaseVOToEntity(vo, entity);
 		entity.setSubmitDate(vo.getSubmitDate());
 		entity.setNotitifcationStatus(vo.getNotitifcationStatus());
 		entity.setSubject(vo.getSubject());		
-		entity.setMessage(vo.getMessage());		
-		
+		if (vo.getMessage() != null) {
+			entity.setMessage(serviceLocator.getMessageDataFacade().findById(vo.getMessage().getId()));
+		}
 		return entity;
 	}
 
 	@Override
 	protected Notification updateEntity(NotificationVO vo) throws EntityNotFoundException {		
-		Notification entity;
-		if (vo.getId() > 0) {
-			entity = findById(vo.getId());
-		} else {
-			entity = new Notification();
-		}
+		Notification entity = vo.getId() > 0 ? findById(vo.getId()) : new Notification();
 		convertVOToEntity(vo, entity);
 		update(entity);
 		return entity;

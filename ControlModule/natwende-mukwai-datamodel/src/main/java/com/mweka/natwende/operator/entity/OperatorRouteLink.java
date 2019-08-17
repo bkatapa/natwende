@@ -22,6 +22,7 @@ import com.mweka.natwende.route.entity.Route;
 @NamedQueries({
     @NamedQuery(name = OperatorRouteLink.QUERY_FIND_ALL, query = "SELECT orl FROM OperatorRouteLink orl"),
     @NamedQuery(name = OperatorRouteLink.QUERY_FIND_LIST_BY_OPERATOR_ID, query = "SELECT orl FROM OperatorRouteLink orl WHERE orl.operator.id = :operatorId"),
+    @NamedQuery(name = OperatorRouteLink.QUERY_FIND_BY_OPERATOR_ID_AND_ROUTE_ID, query = "SELECT orl FROM OperatorRouteLink orl WHERE orl.operator.id = :operatorId AND orl.route.id = :routeId"),
 })
 public class OperatorRouteLink extends BaseEntity {
 
@@ -35,6 +36,7 @@ public class OperatorRouteLink extends BaseEntity {
 	 */
 	public static final transient String QUERY_FIND_ALL = "OperatorRouteLink.findAll";
 	public static final transient String QUERY_FIND_LIST_BY_OPERATOR_ID = "OperatorRouteLink.findListByOperatorId";
+	public static final transient String QUERY_FIND_BY_OPERATOR_ID_AND_ROUTE_ID = "OperatorRouteLink.findListByOperatorIdAndRouteId";
 	
 	/**
 	 * Query parameters

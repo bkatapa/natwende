@@ -1,73 +1,84 @@
 package com.mweka.natwende.base.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mweka.natwende.types.Status;
 import java.io.Serializable;
 import java.util.Date;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author
  *
  */
+@XmlRootElement
+@JsonIgnoreProperties
 public abstract class BaseVO implements Serializable {
 
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = -424530304670915375L;
+	private static final transient long serialVersionUID = -424530304670915375L;
 	/**
      * Length of the uniqueId field.
      */
-    static final int UID_LENGTH = 36;
+    static final transient int UID_LENGTH = 36;
     /**
      * Starting value used in calculating the object hash.
      */
-    static final int HASH_SEED = 5;
+    static final transient int HASH_SEED = 5;
     /**
      * Multiplier used in calculating the object hash.
      */
-    static final int HASH_MULIPLIER = 97;
+    static final transient int HASH_MULIPLIER = 97;
     /**
      * Right shift value used in calculating the object hash.
      */
-    static final int HASH_RIGHTSHIFT = 32;
+    static final transient int HASH_RIGHTSHIFT = 32;
 
     /**
      * Synthetic object Id for persistence.
      */
+    @XmlTransient
     private long id = -1L;
 
     /**
      * Date at which object was inserted to persistence layer.
      */
+    @XmlTransient
     private Date insertDate;
 
     /**
      * Date at which object was updated to persistence layer.
      */
+    @XmlTransient
     private Date updateDate;
 
     /**
      * Object UniqueId.
      */
+    @XmlTransient
     @Size(min = UID_LENGTH, max = UID_LENGTH, message = "GUID Required")
     private String uniqueId;
 
+    @XmlTransient
     private Status status = Status.ACTIVE;
 
     /**
      * Version field for object.
      */
+    @XmlTransient
     private long version;
 
+    @XmlTransient
     private Boolean selected;
 
     /**
      * Explicit no parameter constructor.
      */
     public BaseVO() {
-
     }
 
     /**

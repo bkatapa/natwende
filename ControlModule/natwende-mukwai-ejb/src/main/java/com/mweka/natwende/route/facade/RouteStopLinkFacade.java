@@ -5,6 +5,8 @@ import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 import com.mweka.natwende.facade.AbstractFacade;
 import com.mweka.natwende.route.vo.RouteStopLinkVO;
@@ -59,16 +61,6 @@ public class RouteStopLinkFacade extends AbstractFacade<RouteStopLinkVO> {
 		}
 	}
 	
-	public List<RouteStopLinkVO> obtainAllByRouteId(Long routeId) throws Exception {
-		try {
-			return serviceLocator.getRouteStopLinkDataFacade().getAllByRouteId(routeId);
-		}
-		catch (Exception ex) {
-			log.debug(ex);
-			throw new EJBException(ex);
-		}
-	}
-	
 	public RouteStopLinkVO obtainByRouteIdAndStopId(Long routeId, Long stopId) throws Exception {
 		try {
 			return serviceLocator.getRouteStopLinkDataFacade().getByRouteIdAndStopId(routeId, stopId);
@@ -77,5 +69,10 @@ public class RouteStopLinkFacade extends AbstractFacade<RouteStopLinkVO> {
 			log.debug(ex);
 			throw new EJBException(ex);
 		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public long deleteByRoute(RouteVO route) throws Exception {
+		return serviceLocator.getRouteStopLinkDataFacade().deleteByRoute(route);
 	}
 }

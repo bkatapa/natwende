@@ -16,6 +16,7 @@ import org.primefaces.context.RequestContext;
 import com.mweka.natwende.helper.Config;
 import com.mweka.natwende.helper.MessageHelper;
 import com.mweka.natwende.route.vo.StretchVO;
+import com.mweka.natwende.route.search.vo.StretchSearchVO;
 import com.mweka.natwende.route.vo.RouteStopLinkVO;
 import com.mweka.natwende.route.vo.RouteVO;
 import com.mweka.natwende.route.vo.StopVO;
@@ -33,6 +34,7 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	private List<StopVO> allRouteStationList;
 	private List<StretchVO> finalEntityList, allStretchList;
 	private Config config;
+	private StretchSearchVO searchVO;
 
 	@Inject
 	private RouteAction routeAction;
@@ -49,6 +51,9 @@ public class StretchAction extends MessageHelper<StretchVO> {
 		initialGraphLen = 0;
 		mirror = false;
 		config = new Config();
+		if (searchVO != null) {
+			searchVO.clearSearch();
+		}
 	}
 
 	@Override
@@ -84,6 +89,17 @@ public class StretchAction extends MessageHelper<StretchVO> {
 		return config;
 	}
 
+	public StretchSearchVO getSearchVO() {
+		if (searchVO == null) {
+			searchVO = new StretchSearchVO();
+		}
+		return searchVO;
+	}
+
+	public void setSearchVO(StretchSearchVO searchVO) {
+		this.searchVO = searchVO;
+	}
+
 	@Override
 	public String createEntity() {
 		init();
@@ -94,6 +110,7 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	public String saveEntity() {
 		try {
 			serviceLocator.getStretchFacade().saveStretch(getSelectedEntity());
+			RequestContext.getCurrentInstance().execute("PF('var_StretchViewDlg').hide();");
 		} catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
 		}
@@ -101,7 +118,18 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	}
 	
 	public void saveEntityList() throws Exception {
-		serviceLocator.getStretchFacade().saveStretchList(entityList);
+		try {
+			serviceLocator.getStretchFacade().saveStretchList(finalEntityList);
+			serviceLocator.getRouteStretchLinkFacade().createNewRouteStretchLinkList(routeAction.getSelectedEntity(), finalEntityList);
+			if (mirror) {
+				mirror = false;
+				RequestContext.getCurrentInstance().execute(SHOW_CONFIRM_MIRROR_DIALOG);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}
 	}
 
 	@Override
@@ -112,7 +140,7 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	@Override
 	public void deleteEntity() {
 		try {
-			serviceLocator.getRouteFacade().deleteRoute(getSelectedEntity().getId());
+			serviceLocator.getStretchFacade().deleteStretch(getSelectedEntity().getId());
 			onMessage(SEVERITY_INFO, "Record deleted successfully");
 		} catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
@@ -136,36 +164,38 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	}
 
 	public void loadEntityList() {
-		entityList = serviceLocator.getStretchFacade().obtainStretchListGivenRouteId(routeAction.getSelectedEntity().getId());
+		entityList = serviceLocator.getStretchDataFacade().findBySearchVO(getSearchVO());
 	}
 
 	public void onPageLoad() {
 		activateLast();
-		if (allRouteStationList.isEmpty()) {
-			allRouteStationList.add(routeAction.getSelectedEntity().getStart());
-			allRouteStationList.addAll(routeAction.getTransitStationList());
-			allRouteStationList.add(routeAction.getSelectedEntity().getStop());			
-			try {
-				allStretchList.clear();
-				Iterator<StopVO> it = allRouteStationList.iterator();
-				while (it.hasNext()) {
-					StopVO from = it.next();
-					for (int i = allRouteStationList.indexOf(from) + 1; i < allRouteStationList.size(); i++) {
-						StopVO to = allRouteStationList.get(i);
-						StretchVO result = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
-						allStretchList.add(result == null ? new StretchVO(from, to) : result);
+		allRouteStationList.clear();
+		allRouteStationList.add(routeAction.getSelectedEntity().getStart());
+		allRouteStationList.addAll(routeAction.getTransitStationList());
+		allRouteStationList.add(routeAction.getSelectedEntity().getStop());			
+		try {
+			allStretchList.clear();
+			Iterator<StopVO> it = allRouteStationList.iterator();
+			while (it.hasNext()) {
+				StopVO from = it.next();
+				for (int i = allRouteStationList.indexOf(from) + 1; i < allRouteStationList.size(); i++) {
+					StopVO to = allRouteStationList.get(i);
+					StretchVO result = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
+					result = result == null ? new StretchVO(from, to) : result;
+					if (!allStretchList.contains(result)) {
+						allStretchList.add(result);
 					}
 				}
-				StretchVO nextStretch = fetchNextStretch();
-				setSelectedEntity(nextStretch);
-				config.setStretchLen(allRouteStationList.size() - 1);
-				updateStep5();
 			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-				onMessage(SEVERITY_ERROR, ex.getMessage());
-			}
+			StretchVO nextStretch = fetchNextStretch();
+			setSelectedEntity(nextStretch);
+			config.setStretchLen(allRouteStationList.size() - 1);
+			updateStep5();
 		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+		}		
 	}	
 	
 	public void addToEntityList() {
@@ -199,41 +229,59 @@ public class StretchAction extends MessageHelper<StretchVO> {
 		}
 		currentIndex = entityList.size() - 1;
 		setSelectedEntity(entityList.get(currentIndex));
+		//allStretchList.clear();
 		updateStep5();
 	}
 	
 	//@Transactional
 	public String createMirror() {
-		try {
+		try {			
 			// 1. Reverse route name.
-			String[] splitRouteName = routeAction.getSelectedEntity().getName().split(" - ");
+			String[] splitRouteName = routeAction.getSelectedEntity().getName().split("-");
 			String reversedRouteName = splitRouteName.length == 2 ? splitRouteName[1] + " - " + splitRouteName[0].trim()
 					: new StringBuilder(routeAction.getSelectedEntity().getName()).reverse().toString();
 			
-			// 2. Reverse transit routes.
-			List<RouteStopLinkVO> transitStationList = new ArrayList<>(serviceLocator.getRouteStopLinkFacade().obtainAllByRouteId(routeAction.getSelectedEntity().getId()));
+			// 2. Check if a potential mirror exists. If so, stop processing and alert the user.
+			RouteVO duplicateRoute = serviceLocator.getRouteFacade().fetchByNameStartAndFinalStopStations(reversedRouteName, routeAction.getSelectedEntity().getStop().getId(), routeAction.getSelectedEntity().getStart().getId());
+			if (duplicateRoute != null) {
+				throw new Exception("Possible duplicate mirror route was detected [" + reversedRouteName + "]");
+			}
+			
+			// 3. Reverse transit routes.
+			List<RouteStopLinkVO> transitStationList = new ArrayList<>(serviceLocator.getRouteStopLinkDataFacade().getAllByRoute(routeAction.getSelectedEntity()));
 			Collections.sort(transitStationList, new ReverseTransitComparator());
 			for (RouteStopLinkVO link : transitStationList) {
 				link.setStationIndex(transitStationList.indexOf(link));
+				link.setId(-1L);
+				link.setUniqueId(link.getUniqueId() + "x");
 			}
 			
-			// 3. Save route.
-			RouteVO reversedRoute = new RouteVO(reversedRouteName, routeAction.getSelectedEntity().getStop(), routeAction.getSelectedEntity().getStart());
-			reversedRoute.setMirrorRoute(routeAction.getSelectedEntity());
-			reversedRoute = serviceLocator.getRouteFacade().saveRoute(reversedRoute);
+			// 4. Save route and mirrors.
+			StopVO from = routeAction.getSelectedEntity().getStop();
+			StopVO to = routeAction.getSelectedEntity().getStart();
+			RouteVO reversedRoute = new RouteVO(reversedRouteName, from, to);
+			reversedRoute.setMirrorRoute(routeAction.getSelectedEntity());			
+			reversedRoute = serviceLocator.getRouteFacade().saveRoute(reversedRoute);						
 			serviceLocator.getRouteStopLinkFacade().saveRouteStopLinkList(transitStationList, reversedRoute);
 			
-			// 4. Reverse route-stretch end-points.
+			routeAction.getSelectedEntity().setMirrorRoute(reversedRoute);
+			serviceLocator.getRouteFacade().updateRoute(routeAction.getSelectedEntity());
+			
+			// 5. Reverse route-stretch end-points.
 			List<StretchVO> stretchList = serviceLocator.getStretchFacade().obtainStretchListGivenRouteId(routeAction.getSelectedEntity().getId());
 			List<StretchVO> reverseStretchList = new ArrayList<>();
 			for (StretchVO s : stretchList) {
-				StopVO from = s.getTo();
-				StopVO to = s.getFrom();
-				reverseStretchList.add(new StretchVO(from, to, s.getEstimatedTravelTime()));
+				from = s.getTo();
+				to = s.getFrom();
+				StretchVO result = serviceLocator.getStretchFacade().getStretchByEndpoints(from.getId(), to.getId());
+				reverseStretchList.add(result == null ? new StretchVO(from, to, s.getEstimatedTravelTime()) : result);
 			}
-			serviceLocator.getStretchFacade().saveStretchList(reverseStretchList);
+			reverseStretchList = serviceLocator.getStretchFacade().saveStretchList(reverseStretchList);
+			serviceLocator.getRouteStretchLinkFacade().createNewRouteStretchLinkList(reversedRoute, reverseStretchList);
 			RequestContext.getCurrentInstance().execute(HIDE_CONFIRM_MIRROR_DIALOG);
-			return ROUTE_SUCCESS_PAGE;
+			//return ROUTE_SUCCESS_PAGE;
+			RequestContext.getCurrentInstance().update(SUCCESS_DIALOG_BOX);
+			RequestContext.getCurrentInstance().execute(SHOW_SUCCESS_DIALOG);
 		}
 		catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
@@ -252,6 +300,9 @@ public class StretchAction extends MessageHelper<StretchVO> {
 			graph.setSelected(true);
 		}
 		entityList.get(entityList.size() - 1).setSelected(false);
+	}
+	
+	public void handleClose() {		
 	}
 	
 	private StretchVO fetchNextStretch() {
@@ -277,5 +328,8 @@ public class StretchAction extends MessageHelper<StretchVO> {
 	
 	private static transient final String SHOW_CONFIRM_MIRROR_DIALOG = "PF('var_ConfirmMirrorDlg').show();";
 	private static transient final String HIDE_CONFIRM_MIRROR_DIALOG = SHOW_CONFIRM_MIRROR_DIALOG.replace("show", "hide");
+	private static transient final String SUCCESS_DIALOG_BOX = "@widgetVar(var_RouteCreateSuccessDlg)";
+	private static transient final String SHOW_SUCCESS_DIALOG = "PF('var_RouteCreateSuccessDlg').show();";
+	//private static transient final String HIDE_SUCCESS_DIALOG = SHOW_SUCCESS_DIALOG.replace("show", "hide");
 
 }

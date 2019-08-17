@@ -6,9 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Lob;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,21 +19,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mweka.natwende.base.BaseEntity;
 import com.mweka.natwende.types.NotificationStatus;
+import com.mweka.natwende.types.NotificationType;
 
 @Entity
 @Table(name="Notification")
 @XmlRootElement
 @NamedQueries({
-	@NamedQuery(name = "Notification.findById", query = "SELECT n from Notification n where n.id = :id")
-//	,
-//	@NamedQuery(name = "Notification.findBySenderId", query = "SELECT n from Notification n where n.sender.id = :senderId"),
-	//@NamedQuery(name = "Notification.findByTradingRelationship", query="SELECT n from Notification n ????")
+	@NamedQuery(name = "Notification.findById", query = " SELECT n FROM Notification n WHERE n.id = :id ")
 })
 public class Notification extends BaseEntity {	
-	private static final long serialVersionUID = 1L;
-		
-//	@ManyToOne @JoinColumn(name="sending_company_id")	
-//	private ParkingSite sender;	
+	private static final long serialVersionUID = 1L;	
 	
 	@Temporal(TemporalType.TIMESTAMP)	
 	private Date submitDate;
@@ -41,12 +37,17 @@ public class Notification extends BaseEntity {
 	@NotNull
 	private NotificationStatus notitifcationStatus;
 	
+	@Enumerated(EnumType.STRING) @Column(length=32, nullable=false)
+	@NotNull
+	private NotificationType notitifcationType;
+	
 	@Column(length=255)
 	@NotNull @Size(max=255)
 	private String subject;
 	
-	@Lob
-	private String message;
+	@OneToOne
+	@JoinColumn(name = "message_id")
+	private Message message;
 
 	public Date getSubmitDate() {
 		return submitDate;
@@ -72,12 +73,20 @@ public class Notification extends BaseEntity {
 		this.subject = subject;
 	}
 
-	public String getMessage() {
+	public Message getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(Message message) {
 		this.message = message;
+	}
+
+	public NotificationType getNotitifcationType() {
+		return notitifcationType;
+	}
+
+	public void setNotitifcationType(NotificationType notitifcationType) {
+		this.notitifcationType = notitifcationType;
 	}	
 	
 }

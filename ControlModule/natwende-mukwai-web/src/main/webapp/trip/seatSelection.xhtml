@@ -15,60 +15,65 @@
 				<title>Bus ticket book</title>
 				<h:outputStylesheet library="seatCharts" name="css/jquery.seat-charts.css" />
 				<h:outputStylesheet library="seatCharts" name="css/bus.css" />
+				<h:outputScript library="js" name="jquery-3.4.1.min.js" />
+				<h:outputScript library="seatCharts" name="js/jquery.seat-charts.min.js" />
 			</f:facet>
 		</h:head>
 		<h:body onload="openConnection();" onunload="closeConnection();">
 			<p:growl widgetVar="growl" showDetail="true" life="1500" sticky="false" />
-			<p:panelGrid columns="2" layout="grid">
-				<f:facet name="header">
-					<div style="text-align: left;">
-						<p:button outcome=""
-								  icon="ui-icon-circle-triangle-w" />
-					  	<h:outputText value="#{TripAction.selectedEntity.busReg} #{TripAction.selectedEntity.from} - #{TripAction.selectedEntity.to} (#{TripAction.selectedEntity.scheduledDepartureDate} #{TripAction.selectedEntity.scheduledDepartureDate})" style="margin-left: 10px;" />
+			<h:form id="selectSeat-form">
+				<p:panelGrid columns="2" layout="grid">
+					<f:facet name="header">
+						<div style="text-align: left;">
+							<p:commandButton action="/trip/tripList?faces-redirect=true&amp;i=2"
+											 process="@this"
+											 icon="ui-icon-circle-triangle-w" />
+						  	<h:outputText value="#{TripAction.selectedEntity.busReg} #{TripAction.selectedSearchResult.fromTown} - #{TripAction.selectedSearchResult.toTown} (#{TripAction.selectedSearchResult.estimatedJourneyStartDateAsString})" style="margin-left: 10px;" />
+						</div>
+					</f:facet>
+					<p:outputLabel value="From: " />
+					<h:outputText value="#{TripAction.selectedSearchResult.fromTown.display}" />
+					<p:outputLabel value="To: " />
+					<h:outputText value="#{TripAction.selectedSearchResult.toTown.display}" />
+					<p:outputLabel value="Seats remaining: " />
+					<h:outputText value="#{TripAction.selectedSearchResult.trip.availableNumOfSeats}" />
+				</p:panelGrid>
+				<div class="container">
+					<div id="seat-map">
+						<div class="front-indicator">Front</div>
 					</div>
-				</f:facet>
-				<p:outputLabel value="From: " />
-				<p:outputText value="#{TripAction.selectedEntity.from}" />
-				<p:outputLabel value="To: " />
-				<p:outputText value="#{TripAction.selectedEntity.to}" />
-				<p:outputLabel value="Seats remaining: " />
-				<p:outputText value="#{TripAction.selectedEntity.availableNumOfSeats}" />
-			</p:panelGrid>
-			<div class="container">
-				<div id="seat-map">
-					<div class="front-indicator">Front</div>
+					<div class="booking-details">
+						<h2>Booking details</h2>
+						<h3>Selected seats (<span id="counter">0</span>):</h3>
+						<ul id="selected-seats" />
+						Total: <b>K<span id="total">#{TripAction.selectedSearchResult.trip.priceStr}</span></b>
+						<p:commandButton style="margin-left: 10px;"
+								  		 id="checkout"
+								  		 action="/trip/bookingConfirmation?faces-redirect=true"
+								  		 styleClass="checkout-button"
+								  		 value="Checkout &raquo;" />
+				  		<div id="legend" />
+					</div>
 				</div>
-				<div class="booking-details">
-					<h2>Booking details</h2>
-					<h3>Selected seats (<span id="counter">0</span>):</h3>
-					<ul id="selected-seats" />
-					Total: <b>K<span id="total">0</span></b>
-					<p:button style="margin-left: 10px;"
-							  id="checkout"
-							  outcome="/trip/bookingConfirmation"
-							  styleClass="checkout-button"
-							  value="Checkout &raquo;" />
-			  		<div id="legend" />
-				</div>
-			</div>
-			<input type="hidden" value="#{TripAction.selectedEntity.id}" id="trip-id" />
-			<h:form>
+				<input type="hidden" value="#{TripAction.selectedEntity.id}" id="trip-id" />			
 				<p:remoteCommand name="updateGrowl" update="@widgetVar(growl)" />
 			</h:form>
 			
 			<h:outputScript>#{TripAction.busTemplateScript}</h:outputScript>
-			<h:outputScript library="seatCharts" name="js/seat-updater.js"/>
-			<h:outputScript library="seatCharts" name="js/post-booking-data.js"/>
+			<h:outputScript library="js" name="seat-updater.js"/>
+			<h:outputScript library="js" name="post-booking-data.js"/>
 			<h:outputScript>
+				/*
 				$(document).ready(function () {
 					openConnection();
-					updateOccupiedSeats(#{TripAction.selectedEntity.occupiedSeatsToString});
+					updateOccupiedSeats(#{TripAction.selectedEntity.occupiedSeats});
 					this.data().price = #{TripAction.selectedEntity.priceStr}
-					setTripPrice(#{TripAction.selectedEntity.priceStr});
+					setTripPrice(#{TripAction.selectedSearchResult.trip.priceStr});
 					$("#checkout").click(function () {
 						postBookingData();
 					});
 				});
+				*/
 				function handleMessage(facesMessage) {
 					// updateGrowl();
 					PF('growl').show([facesMessage]);

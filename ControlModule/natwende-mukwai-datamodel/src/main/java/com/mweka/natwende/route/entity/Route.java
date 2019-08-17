@@ -24,6 +24,9 @@ import com.mweka.natwende.base.BaseEntity;
     @NamedQuery(name = Route.QUERY_FIND_ALL, query="SELECT r FROM Route r"),
     @NamedQuery(name = Route.QUERY_FIND_ALL_BY_STATUS, query = "SELECT r FROM Route r where r.status = :status"),
     @NamedQuery(name = Route.QUERY_FIND_BY_NAME, query = "SELECT r FROM Route r where r.name = :routeName"),
+    @NamedQuery(name = Route.QUERY_FIND_BY_MIRROR_ID, query = "SELECT r FROM Route r where r.mirrorRoute.id = :routeId"),
+    @NamedQuery(name = Route.QUERY_FIND_NOT_YET_LINKED_TO_OPERATOR, query = " SELECT r FROM Route r WHERE r.id NOT IN (SELECT orl.route.id FROM OperatorRouteLink orl WHERE orl.operator.id = :operatorId) "),
+    @NamedQuery(name = Route.QUERY_FIND_ROUTES_LINKED_TO_OPERATOR, query = " SELECT orl.route FROM OperatorRouteLink orl WHERE orl.operator.id = :operatorId "),
     @NamedQuery(name = Route.QUERY_FIND_BY_NAME_START_AND_FINAL_STOP_STATION_IDs, query = "SELECT r FROM Route r where r.name = :routeName AND r.start.id = :startId AND r.stop.id = :finalStopId")
 })
 public class Route extends BaseEntity {
@@ -39,7 +42,10 @@ public class Route extends BaseEntity {
 	public static transient final String QUERY_FIND_ALL = "Route.findAll";
 	public static transient final String QUERY_FIND_ALL_BY_STATUS = "Route.findAllByStatus";
 	public static transient final String QUERY_FIND_BY_NAME = "Route.findByName";
+	public static transient final String QUERY_FIND_BY_MIRROR_ID = "Route.findByMirrorId";
 	public static transient final String QUERY_FIND_BY_NAME_START_AND_FINAL_STOP_STATION_IDs = "Route.findByNameStartAndFinalStopIds";
+	public static transient final String QUERY_FIND_NOT_YET_LINKED_TO_OPERATOR = "Route.findNotYetLinkedToOperator";
+	public static transient final String QUERY_FIND_ROUTES_LINKED_TO_OPERATOR = "Route.findRoutesLinkedToOperator";
 	
 	/**
 	 * Query parameters
@@ -57,7 +63,7 @@ public class Route extends BaseEntity {
 	@JoinColumn(name = "final_stop_id")
 	private Stop stop;
 	
-	@OneToOne(optional = true)
+	@OneToOne(optional = true, cascade = {CascadeType.ALL})
 	@JoinColumn(name = "mirror_route_id")
 	private Route mirrorRoute;
 	

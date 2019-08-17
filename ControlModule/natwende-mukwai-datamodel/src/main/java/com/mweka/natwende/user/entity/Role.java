@@ -46,7 +46,7 @@ public class Role extends BaseEntity {
     public static final transient String QUERY_FIND_FROM_USER_ROLE_LINK_BY_USER_ID_AND_STATUS = "Role.findFromUserRoleLinkByUserIdAndStatus";
     
     // Query Parameters
-    public static final transient String PARAM_ROLE_ID = "_id";
+    public static final transient String PARAM_ROLE_ID = "roleId";
     public static final transient String PARAM_USER_ID = "_userId";
     public static final transient String PARAM_ROLE_TYPE = "_roleType";
     public static final transient String PARAM_STATUS = "_status";

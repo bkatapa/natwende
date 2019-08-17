@@ -2,11 +2,15 @@ package com.mweka.natwende.trip.vo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.base.vo.BaseVO;
 import com.mweka.natwende.operator.vo.OperatorVO;
 import com.mweka.natwende.route.vo.RouteVO;
@@ -25,6 +29,9 @@ public class TripScheduleVO extends BaseVO {
 	private OperatorVO operator;
 	private RouteVO route;
 	private List<DaysOfWeek> frequency;
+	
+	@XmlTransient
+	@JsonIgnore
 	private List<BusTripScheduleLinkVO> busTripScheduleLinkList;
 	
 	public Date getStartDate() {
@@ -75,6 +82,14 @@ public class TripScheduleVO extends BaseVO {
 		this.frequency = frequency;
 	}
 	
+	public DaysOfWeek[] getDaysOfWeek() {
+		return frequency == null ? null : frequency.toArray(new DaysOfWeek[frequency.size()]);
+	}
+	
+	public void setDaysOfWeek(DaysOfWeek[] daysOfWeek) {
+		this.frequency = Arrays.asList(daysOfWeek);
+	}
+	
 	public List<BusTripScheduleLinkVO> getBusTripScheduleLinkList() {
 		if (busTripScheduleLinkList == null) {
 			busTripScheduleLinkList = new ArrayList<>();
@@ -103,8 +118,16 @@ public class TripScheduleVO extends BaseVO {
 			return StringUtils.EMPTY;
 		}
 		StringBuilder sb = new StringBuilder();
+		for (DaysOfWeek day : frequency) {
+			sb.append(day.getDisplay()).append(", ");
+		}
+		return sb.delete(sb.length() - 2, sb.length() - 1).toString();
+	}
+	
+	public String getAssignedDriverPerBus() {
+		StringBuilder sb = new StringBuilder();
 		for (BusTripScheduleLinkVO link : getBusTripScheduleLinkList()) {
-			sb.append(link.getBus().getReg()).append(" (").append(link.getDriver()).append("), ");
+			sb.append(link.getDriver() == null ? StringUtils.EMPTY : link.getDriver().getName()).append(", ");
 		}
 		if (sb.length() > 3) {
 			sb.delete(sb.length() - 2, sb.length() - 1);

@@ -12,8 +12,11 @@
 	<h:panelGrid columns="2" cellpadding="5">
 		<p:fieldset legend="Travelling from" style="border: none;">
 			<p:autoComplete id="searchTrip-fromTown"
+							style="width: 10;"
+							maxResults="10"
+							moreText="keep typing to narrow down"
 							dropdown="true"
-							value="#{TripAction.selectedEntity.from}"
+							value="#{TripAction.searchVO.fromTown}"
 							var="town"
 							completeMethod="#{TripAction.completeTown}"
 							itemLabel="#{town.display}"
@@ -21,34 +24,37 @@
 							required="true"
 							forceSelection="true"
 							requiredMessage="Please select the town you will be travelling from.">
-				<p:ajax event="itemSelect" listener="#{TripAction.onTownFromSelect}" update="#{searchTripPanel}" />
+				<p:ajax event="itemSelect" process="searchTrip-fromTown" />
 			</p:autoComplete>
-		</p:fieldset>
-		
+		</p:fieldset>		
 		<p:fieldset legend="Going to" style="border: none;">
 			<p:autoComplete id="searchTrip-toTown"
+							panelInputStyle="width: 10;"
+							maxResults="10"
+							moreText="keep typing to narrow down"
 							dropdown="true"
-							value="#{TripAction.selectedEntity.to}"
+							cache="true"
+							value="#{TripAction.searchVO.toTown}"
 							var="town"
 							completeMethod="#{TripAction.completeTown}"
 							itemLabel="#{town.display}"
 							itemValue="#{town}"
 							required="true"
-							forceSelection="true"
+							forceSelection="true"							
 							requiredMessage="Please select the town you will be travelling to.">
-				<p:ajax event="itemSelect" listener="#{TripAction.onTownToSelect}" update="#{searchTripPanel}" />
+				<p:ajax event="itemSelect" process="searchTrip-toTown" />
 			</p:autoComplete>
 		</p:fieldset>
 		
 		<p:fieldset legend="Departure date" style="border: none;">
-			<p:calendar mode="inline" value="#{TripAction.travelDate}">
-				<p:ajax event="dateSelect" process="@this" update="#{searchTripPanel}"/>
+			<p:calendar mode="inline" value="#{TripAction.searchVO.travelDate}">
+				<p:ajax event="dateSelect" process="@this" update="#{tripSearchForm}"/>
 			</p:calendar>
 		</p:fieldset>
 		
 		<p:fieldset legend="Return date" style="border: none;" rendered="#{TripAction.bookReturn}">
-			<p:calendar mode="inline" value="#{TripAction.returnDate}">
-				<p:ajax event="dateSelect" process="@this" update="#{searchTripPanel}"/>
+			<p:calendar mode="inline" value="#{TripAction.searchVO.returnDate}">
+				<p:ajax event="dateSelect" process="@this" update="#{tripSearchForm}"/>
 			</p:calendar>
 		</p:fieldset>
 		
@@ -56,15 +62,23 @@
 		
 		<p:fieldset style="border: none;">
 			<h:panelGrid colums="1" style="background: #fff176;">
-				<h:outputText value="Travelling on: #{TripAction.travelDateAsString}" rendered="#{not empty TripAction.travelDate}" />
-				<h:outputText value="Coming back on: #{TripAction.returnDateAsString}" rendered="#{TripAction.bookReturn}" />
+				<h:outputText value="Travelling on: #{TripAction.searchVO.travelDate}" 
+							  rendered="#{not empty TripAction.searchVO.travelDate}">
+		  			<f:convertDateTime dateStyle="long"/>
+		  		</h:outputText>
+				<h:outputText value="Coming back on: #{TripAction.searchVO.returnDate}" 
+							  rendered="#{TripAction.bookReturn}">
+					<f:convertDateTime dateStyle="long"/>  
+	  			</h:outputText>
 			</h:panelGrid>
 		</p:fieldset>
 		
 		<p:fieldset style="border: none;">
 			<p:selectBooleanCheckbox id="searchTrip-bookReturn"
 									 value="#{TripAction.bookReturn}">
-				<p:ajax process="@this, searchTrip-bookReturn" update="#{searchTripPanel}" listener="#{TripAction.toggleBookReturn}"/>
+				<p:ajax process="@this, searchTrip-bookReturn"
+						update="#{tripSearchForm}"
+						listener="#{TripAction.toggleBookReturn}"/>
 			</p:selectBooleanCheckbox>
 			<h:outputText value="Book a return ticket as well?" style="margin-left: 5px;"/>
 		</p:fieldset>

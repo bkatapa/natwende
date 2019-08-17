@@ -30,8 +30,7 @@ public abstract class MessageHelper<T extends BaseVO> implements Serializable {
 	
 	private Class<T> clazz;
 	
-	protected Log log = LogFactory.getLog(this.getClass());
-	
+	protected Log log = LogFactory.getLog(this.getClass());	
 	protected T selectedEntity;
 	
 	private void init() {
@@ -76,24 +75,25 @@ public abstract class MessageHelper<T extends BaseVO> implements Serializable {
                         : "Fatal"));
     }	
     
-	protected abstract String createEntity();
-	
-	protected abstract String saveEntity();
-	
-	protected abstract String viewEntity();
-	
+	protected abstract String createEntity();	
+	protected abstract String saveEntity();	
+	protected abstract String viewEntity();	
 	protected abstract void deleteEntity();	
 	
-	public static transient final String SEVERITY_INFO = "info";
-	
-	public static transient final String SEVERITY_WARN = "warn";
-	
-	public static transient final String SEVERITY_ERROR = "error";
-	
+	public static transient final String SEVERITY_INFO = "info";	
+	public static transient final String SEVERITY_WARN = "warn";	
+	public static transient final String SEVERITY_ERROR = "error";	
 	public static transient final String SEVERITY_FATAL = "fatal";
 	
 	public static transient final String FACES_REDIRECT = "?faces-redirect=true";
 	
 	/** Constants for RouteAction */
 	public static transient final String ROUTE_SUCCESS_PAGE = "/route/routeCreateSuccess" + FACES_REDIRECT;
+	
+	/** Constants for OperatorAction */
+	public static transient final String OPERATOR_VIEW_PAGE = "/admin/operator/operatorView" + FACES_REDIRECT + "&i=2";
+	
+	/** Constants for TripScheduleAction */
+	public static transient final String TRIPSCHEDULE_LIST_PAGE = OPERATOR_VIEW_PAGE;
+	public static transient final String TRIPSCHEDULE_VIEW_PAGE = "/admin/trip/tripScheduleView?faces-redirect=true&i=2";
 }

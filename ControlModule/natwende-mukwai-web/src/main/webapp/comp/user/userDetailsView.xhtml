@@ -21,11 +21,17 @@
 				
 				<h:outputText value="Phone: " styleClass="textLabel"/>
 				<h:outputText value="#{UserAction.selectedEntity.contactNumber}"/>
+				
+				<h:outputText value="NRC: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.nrc}"/>
 			</h:panelGrid>
 		</p:fieldset>
 		
 		<p:fieldset legend="Address" style="border: none;">
 			<h:panelGrid columns="2" columnClasses="label, value">
+				<h:outputText value="Premises: " styleClass="textLabel"/>
+				<h:outputText value="#{UserAction.selectedEntity.address.line1}"/>
+			
 				<h:outputText value="Street: " styleClass="textLabel"/>
 				<h:outputText value="#{UserAction.selectedEntity.address.street}"/>
 				
@@ -43,15 +49,17 @@
 		<p:fieldset legend="Permissions" style="border: none;">
 			<h:panelGrid columns="2" columnClasses="label, value">
 				<h:outputText value="Permissions allowed: " styleClass="textLabel"/>
-				<h:outputText value="#{UserAction.userRole}"/>
+				<h:outputText value="#{UserAction.userRole.roleType.description}"/>
 			</h:panelGrid>
 		</p:fieldset>
 		
-		<p:fieldset legend="Permissions" style="border: none;">
+		<p:fieldset legend="Profile pic" style="border: none;">
 			<p:outputPanel>
 				<p:graphicImage value="#{UserAction.previewImage}"
 								style="width: 70px; height: 73px;"
-								styleClass="ui-corner-all"/>
+								styleClass="ui-corner-all">
+					<f:param name="userId" value="#{UserAction.selectedEntity.id}" />	
+				</p:graphicImage>
 			</p:outputPanel>
 		</p:fieldset>
 	</p:panelGrid>			

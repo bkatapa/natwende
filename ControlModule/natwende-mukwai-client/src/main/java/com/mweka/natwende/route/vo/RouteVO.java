@@ -2,6 +2,8 @@ package com.mweka.natwende.route.vo;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.mweka.natwende.base.vo.BaseVO;
 
 public class RouteVO extends BaseVO {
@@ -16,6 +18,7 @@ public class RouteVO extends BaseVO {
 	private StopVO stop;
 	private RouteVO mirrorRoute;
 	private List<RouteStopLinkVO> routeStops;
+	private List<RouteStretchLinkVO> stretchLinks;
 	
 	public RouteVO() {
 	}
@@ -59,11 +62,27 @@ public class RouteVO extends BaseVO {
 	}
 
 	public List<RouteStopLinkVO> getRouteStops() {
+		if (routeStops == null) {
+			routeStops = new java.util.ArrayList<>();
+		}
 		return routeStops;
 	}
 	
 	public void setRouteStops(List<RouteStopLinkVO> routeStops) {
 		this.routeStops = routeStops;
+	}
+
+	public List<RouteStretchLinkVO> getStretchLinks() {
+		return stretchLinks;
+	}
+
+	public void setStretchLinks(List<RouteStretchLinkVO> stretchLinks) {
+		this.stretchLinks = stretchLinks;
+	}
+	
+	@Override
+	public String toString() {
+		return this.start == null || this.stop == null ? StringUtils.EMPTY : this.name + " (Start: " + this.start.getName() + ", Final stop: " + this.stop.getName() + ")";
 	}
 	
 }

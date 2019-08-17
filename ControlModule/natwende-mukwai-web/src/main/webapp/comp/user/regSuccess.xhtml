@@ -13,19 +13,19 @@
 				<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 				<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<title>User registration - Success</title>
-				<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
-				<script type="text/javascript" src="../js/count-down.js"></script>
+				<title>User registration - Success</title> 
+				<h:outputScript library="js" name="jquery-3.2.1.slim.min.js"/>
+				<h:outputScript library="js" name="count-down.js" />
 			</f:facet>
 		</h:head>
 		
-		<h:body>
+		<h:body styleClass="form-background">
 		
 			<p:panelGrid columns="1" layout="grid">
 				
 				<f:facet name="header">
 					<div align="left">
-						<p:button value="Home" outcome="/pages/trips" icon="ui-icon-home" />
+						<p:button value="Home" outcome="/home" icon="ui-icon-home" />
 					</div>
 				</f:facet>
 				
@@ -37,7 +37,7 @@
 				
 					<p:outputPanel id="countmsg">Count down here</p:outputPanel>				
 				
-					<p:graphicImage name="images/thumbs-up.png" width="200" height="200" />
+					<p:graphicImage name="images/Thumbs-Up-Green.jpg" width="200" height="200" />
 				</h:panelGrid>
 				
 			</p:panelGrid>

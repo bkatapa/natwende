@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -23,17 +24,20 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mweka.natwende.base.BaseEntity;
+import com.mweka.natwende.types.OperatorName;
 import com.mweka.natwende.types.Town;
 import com.mweka.natwende.types.TripStatus;
 
 @Entity
-@Table(name = "Trip", uniqueConstraints = {@UniqueConstraint(columnNames = {"busReg", "fromTown", "toTown", "scheduledDepartureDate"})})
+@Table(name = "Trip", uniqueConstraints = {@UniqueConstraint(columnNames = {"bus_reg", "from_town", "to_town", "scheduled_departure_date"})})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = Trip.QUERY_FIND_ALL, query=" SELECT t FROM Trip t "),
+    @NamedQuery(name = Trip.QUERY_FIND_ACTIVE, query = " SELECT t FROM Trip t WHERE t.scheduledDepartureDate > CURRENT_DATE "),
     @NamedQuery(name = Trip.QUERY_FIND_LIST_BY_ROUTE_NAME, query = " SELECT t FROM Trip t WHERE t.routeName = :routeName "),
     @NamedQuery(name = Trip.QUERY_FIND_ACTIVE_BY_STRETCH_AND_TRAVEL_DATE, query = " SELECT t FROM Trip t, RouteStretchLink rsl WHERE t.tripSchedule.route.id = rsl.route.id AND t.scheduledDepartureDate > CURRENT_DATE AND t.scheduledDepartureDate BETWEEN :date1 AND :date2 AND rsl.stretch.from.town = :fromTown AND rsl.stretch.to.town = :toTown "),
-    @NamedQuery(name = Trip.QUERY_FIND_BY_BUS_ID_AND_DEPARTURE_DATETIME, query = " SELECT t FROM Trip t WHERE t.busReg = :busReg AND t.scheduledDepartureDate = :departureDate AND t.tripSchedule.scheduledDepartureTime = :departureTime ")
+    @NamedQuery(name = Trip.QUERY_FIND_BY_BUS_ID_AND_DEPARTURE_DATETIME, query = " SELECT t FROM Trip t WHERE t.busReg = :busReg AND t.scheduledDepartureDate = :departureDate AND t.tripSchedule.scheduledDepartureTime = :departureTime "),
+    @NamedQuery(name = Trip.QUERY_FIND_BY_ROUTE_ID_AND_DEPARTURE_DATETIME, query = " SELECT t FROM Trip t WHERE t.tripSchedule.route.id = :routeId AND t.scheduledDepartureDate > CURRENT_DATE AND t.scheduledDepartureDate BETWEEN :date1 AND :date2 ")
 })
 public class Trip extends BaseEntity {
 
@@ -47,64 +51,81 @@ public class Trip extends BaseEntity {
 	 * Named queries
 	 */
 	public static transient final String QUERY_FIND_ALL = "Trip.findAll";
+	public static transient final String QUERY_FIND_ACTIVE = "Trip.findActive";
 	public static transient final String QUERY_FIND_LIST_BY_ROUTE_NAME = "Trip.findListByRouteName";
 	public static transient final String QUERY_FIND_ACTIVE_BY_STRETCH_AND_TRAVEL_DATE = "Trip.findActiveByStretchAndTravelDate";
 	public static transient final String QUERY_FIND_BY_BUS_ID_AND_DEPARTURE_DATETIME = "Trip.findByBusIdAndDepartureDateTime";
+	public static transient final String QUERY_FIND_BY_ROUTE_ID_AND_DEPARTURE_DATETIME = "Trip.findByRouteIdAndDepartureDateTime";
 	
 	/**
 	 * Query parameters
 	 */
 	public static transient final String PARAM_TRIP_ID = "tripId";
 	
+	@Column(name = "total_num_of_seats")
 	private int totalNumOfSeats;
+	
+	@Column(name = "avail_num_of_seats")
 	private int availableNumOfSeats;
+	
+	@Column(name = "booked_num_of_seats")
 	private int bookedNumOfSeats;
 	
 	@NotNull
-    @Column(name = "fromTown", length = 100)	
+    @Column(name = "from_town", length = 100)	
 	private Town from;
 	
 	@NotNull
-    @Column(name = "toTown", length = 100)
+    @Column(name = "to_town", length = 100)
 	private Town to;	
 	
-    @Column(length = 100)
+    @Column(name = "driver_name", length = 100)
 	private String driverName;	
 	
-	@Column(length = 32)
+	@Column(name = "bus_reg", length = 32)
 	private String busReg;
 	
 	@NotNull
-	@Column(length = 100)
+	@Column(name = "route_name", length = 100)
 	private String routeName;
 	
 	@Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "travel_duration_expected", length = 255)
 	private String travelDurationExpected; // HH:mm
 	
 	@Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "travel_duration_actual", length = 255)
 	private String travelDurationActual; // HH:mm
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "trip_status")
 	private TripStatus tripStatus;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "operator_name")
+	private OperatorName operatorName;
+	
 	@Temporal(TemporalType.DATE)
+	@Column(name = "scheduled_departure_date")
 	private Date scheduledDepartureDate;
 	
 	@Temporal(TemporalType.DATE)
+	@Column(name = "actual_departure_date")
 	private Date actualDepartureDate;
 	
 	@Temporal(TemporalType.DATE)
+	@Column(name = "scheduled_arrival_date")
 	private Date scheduledArrivalDate;
 	
 	@Temporal(TemporalType.DATE)
+	@Column(name = "actual_arrival_date")
 	private Date actualArrivalDate;		
 	
-	@OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "trip", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "trip", fetch = FetchType.LAZY)
 	private List<Booking> bookings;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.ALL})
+	@JoinColumn(name = "trip_schedule_id")
 	private TripSchedule tripSchedule;
 	
 	public String getBusReg() {
@@ -241,6 +262,14 @@ public class Trip extends BaseEntity {
 
 	public void setTripSchedule(TripSchedule tripSchedule) {
 		this.tripSchedule = tripSchedule;
+	}
+
+	public OperatorName getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(OperatorName operatorName) {
+		this.operatorName = operatorName;
 	}	
 	
 }

@@ -2,6 +2,7 @@ package com.mweka.natwende.resource.trip;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.mweka.natwende.resource.AbstractResourceBean;
 import com.mweka.natwende.trip.search.vo.TripSearchResultVO;
@@ -55,13 +56,23 @@ public class TripResource extends AbstractResourceBean<TripVO> {
 				errorMsg = "Parameter(s) parsing-related error occurred. [" + pex.getMessage() + "]";				
 			}
 			if (!error) {
-				TripSearchVO searchVO = new TripSearchVO(fromTown, toTown, travelDate);
-				List<TripSearchResultVO> resultList = null; // implement this
-				GenericEntity<List<TripSearchResultVO>> list = new GenericEntity<List<TripSearchResultVO>>(resultList) {};
+				try {
+					TripSearchVO searchVO = new TripSearchVO(fromTown, toTown, travelDate);
+					List<TripSearchResultVO> resultList = serviceLocator.getTripFacade().scanFetchTrips(
+							searchVO, 
+							new ArrayList<TripVO>(), 
+							new ArrayList<TripSearchResultVO>());
+					GenericEntity<List<TripSearchResultVO>> list = new GenericEntity<List<TripSearchResultVO>>(resultList) {};
 				
-				return Response.status(Response.Status.OK)
-						.entity(list)
-						.build();
+					return Response.status(Response.Status.OK)
+							.entity(list)
+							.build();
+				}
+				catch (Exception pex) {
+					log.debug(pex);
+					error = true;
+					errorMsg = "Parameter(s) parsing-related error occurred. [" + pex.getMessage() + "]";				
+				}
 			}
 		}
 		return Response.status(Response.Status.EXPECTATION_FAILED)

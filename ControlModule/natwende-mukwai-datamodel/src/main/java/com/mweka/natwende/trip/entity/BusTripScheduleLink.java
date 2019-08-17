@@ -53,7 +53,7 @@ public class BusTripScheduleLink extends BaseEntity {
 	@JoinColumn(name = "tripSchedule_id", referencedColumnName = "id", nullable = false)
 	private TripSchedule tripSchedule;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "driver_id", referencedColumnName = "id", nullable = true)
 	private User driver;
 

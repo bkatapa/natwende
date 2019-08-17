@@ -3,7 +3,9 @@ package com.mweka.natwende.user.facade;
 import com.mweka.natwende.exceptions.EntityNotFoundException;
 import com.mweka.natwende.exceptions.UserNotFoundException;
 import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.user.vo.RoleVO;
 import com.mweka.natwende.user.vo.UserRoleLinkVO;
+import com.mweka.natwende.user.vo.UserVO;
 import com.mweka.natwende.user.entity.Role;
 import com.mweka.natwende.user.entity.User;
 import com.mweka.natwende.user.entity.UserRoleLink;
@@ -77,6 +79,14 @@ public class UserRoleLinkDataFacade extends AbstractDataFacade<UserRoleLinkVO, U
     public List<UserRoleLinkVO> getUserRoleLinksByUserId(Long userId) {
         List<UserRoleLink> userRoleLinks = findUserRoleLinksByUserId(userId);
         return transformList(userRoleLinks);
-    }    
+    }
+    
+    public UserRoleLinkVO getByUserAndRole(UserVO user, RoleVO role) {
+        List<UserRoleLink> resultList = createNamedQuery(UserRoleLink.QUERY_FIND_BY_USER_ID_AND_ROLE_ID, getEntityClass())
+        		.setParameter(User.PARAM_USER_ID, user.getId())
+        		.setParameter(Role.PARAM_ROLE_ID, role.getId())
+        		.getResultList();        
+        return getVOFromList(resultList);
+    }
 
 }

@@ -14,6 +14,13 @@ public class RouteStopLinkVO extends BaseVO {
 	private RouteVO route;
 	private StopVO stop;
 	
+	public RouteStopLinkVO(int stationIndex, RouteVO route, StopVO stop) {
+		super();
+		this.stationIndex = stationIndex;
+		this.route = route;
+		this.stop = stop;
+	}
+	
 	public RouteStopLinkVO(RouteVO route, StopVO stop) {
 		super();
 		this.route = route;

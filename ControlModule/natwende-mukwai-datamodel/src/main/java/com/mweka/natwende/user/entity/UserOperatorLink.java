@@ -15,21 +15,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "UserOperatorLink")
 @XmlRootElement
-@NamedQueries({ @NamedQuery(name = "UserOperatorLink.findAll", query = "SELECT u FROM UserOperatorLink u"),
-		@NamedQuery(name = "UserOperatorLink.findById", query = "SELECT u FROM UserOperatorLink u WHERE u.id = :id"),
-		@NamedQuery(name = "UserOperatorLink.findByUserIdandTenantId", query = "SELECT u FROM UserOperatorLink u WHERE u.user.id = :userId and u.operator.id = :operatorId"),
-		@NamedQuery(name = "UserOperatorLink.findByTenantId", query = "SELECT u FROM UserOperatorLink u WHERE u.operator.id = :operatorId"),
-		@NamedQuery(name = "UserOperatorLink.findByUserId", query = "SELECT u FROM UserOperatorLink u WHERE u.user.id = :userId")// ,
-		// @NamedQuery(name = "UserTenantLink.findActiveByTenantId", query =
-		// "SELECT u FROM UserTenantLink u WHERE u.status = 'ACTIVE' and
-		// u.tenant.id = :tenantId"),
-		// @NamedQuery(name = "UserTenantLink.findActiveByUserId", query =
-		// "SELECT u FROM UserTenantLink u WHERE u.status = 'ACTIVE' and
-		// u.user.id = :userId")
+@NamedQueries({
+	@NamedQuery(name = UserOperatorLink.FIND_ALL, query = " SELECT uol FROM UserOperatorLink uol "),
+	@NamedQuery(name = UserOperatorLink.FIND_BY_USER_ID_AND_OPERATOR_ID, query = " SELECT uol FROM UserOperatorLink uol WHERE uol.user.id = :userId AND uol.operator.id = :operatorId ")
 })
 public class UserOperatorLink extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
+	
+	// Named queries
+	public transient static final String FIND_ALL = "UserOperatorLink.findAll";
+	public transient static final String FIND_BY_USER_ID_AND_OPERATOR_ID = "UserOperatorLink.findByUserIdAndOperatorId";
 
 	@JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)

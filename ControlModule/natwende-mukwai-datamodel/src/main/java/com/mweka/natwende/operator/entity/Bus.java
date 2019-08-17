@@ -3,6 +3,7 @@ package com.mweka.natwende.operator.entity;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -23,8 +24,10 @@ import com.mweka.natwende.base.BaseEntity;
 })
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = Bus.QUERY_FIND_ALL, query="SELECT b FROM Bus b"),
-    @NamedQuery(name = Bus.QUERY_FIND_ALL_BY_OPERATOR_ID_AND_STATUS, query = "SELECT b FROM Bus b WHERE b.operator.id = :operatorId AND b.status = :status")
+    @NamedQuery(name = Bus.QUERY_FIND_ALL, query=" SELECT b FROM Bus b "),
+    @NamedQuery(name = Bus.QUERY_FIND_BY_REG, query=" SELECT b FROM Bus b WHERE b.reg = :busReg "),
+    @NamedQuery(name = Bus.QUERY_FIND_ALL_BY_OPERATOR_ID_AND_STATUS, query = " SELECT b FROM Bus b WHERE b.operator.id = :operatorId AND b.status = :status "),
+    @NamedQuery(name = Bus.QUERY_FIND_UNSCHEDULED_BY_OPERATOR_ID, query = " SELECT b FROM Bus b WHERE b.operator.id = :operatorId AND b.id NOT IN (SELECT btsl.bus.id FROM BusTripScheduleLink btsl) ")
 })
 public class Bus extends BaseEntity {
 
@@ -37,7 +40,9 @@ public class Bus extends BaseEntity {
 	 * Named queries
 	 */
 	public static final String QUERY_FIND_ALL = "Bus.findAll";
+	public static final String QUERY_FIND_BY_REG = "Bus.findByNumberPlate";
 	public static final String QUERY_FIND_ALL_BY_OPERATOR_ID_AND_STATUS = "Bus.findAllByOperatorIdAndStatus";
+	public static final String QUERY_FIND_UNSCHEDULED_BY_OPERATOR_ID = "Bus.findUnScheduledByOperatorId";
 	
 	/**
 	 * Query parameters
@@ -52,6 +57,9 @@ public class Bus extends BaseEntity {
 	private String reg;
 	
 	private String imgUrl;
+	
+	@Column(name = "seats_as_string")
+	private String seatsAsString;
 	
 	@OneToMany(mappedBy = "bus", fetch = FetchType.LAZY)
 	private List<Seat> seats;
@@ -99,4 +107,13 @@ public class Bus extends BaseEntity {
 	public void setSeats(List<Seat> seats) {
 		this.seats = seats;
 	}
+
+	public String getSeatsAsString() {
+		return seatsAsString;
+	}
+
+	public void setSeatsAsString(String seatsAsString) {
+		this.seatsAsString = seatsAsString;
+	}
+	
 }

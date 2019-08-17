@@ -7,50 +7,67 @@
 				xmlns:h="http://java.sun.com/jsf/html"
 				xmlns:f="http://java.sun.com/jsf/core">
 				
-	<p:dataTable value="#{tripSchedule.busTripScheduleLinkList}"
+	<p:dataTable value="#{TripScheduleAction.selectedBusList}"
 				 var="entity"
 				 id="editBus-selectedBusTable">
 				 
 			<f:facet name="footer">
-				<p:outputPanel id="editBus-selectedBusMenu" layout="block">
+				<p:outputPanel id="editBus-selectedBusMenu" rendered="#{not empty TripScheduleAction.candidateBusList}">
 					<p:selectOneMenu id="editTripSchedule-selectBus"
-									 value="#{TripScheduleAction.selectedBusTripScheduleLink}"
+									 value="#{TripScheduleAction.selectedBus}"
+									 var="b"
 									 style="float: left;"
-									 converter="#{busTripScheduleLinkConveter}">
-						<f:selectItems value="#{TripScheduleAction.candidateBusTripScheduleLinkList}"
-									   var="link"
-									   itemValue="#{link}"
-									   itemLabel="#{link.bus.reg}" />
-						<p:ajax process="editBus-selectedBusMenu" update="editBus-selectedBusBtn" />
+									 converter="#{BusVOConverter}"
+									 filter="true" 
+									 filterMatchMode="contains">
+					 	<f:selectItem itemLabel="Select Bus" itemValue="" />
+						<f:selectItems value="#{TripScheduleAction.candidateBusList}"
+									   var="bus"
+									   itemValue="#{bus}"
+									   itemLabel="#{bus.reg}" />
+					   	<p:column>
+							<p:graphicImage name="/images/default-bus.png" width="30" height="20"/>
+						</p:column>
+						<p:column>
+							#{b.reg}
+						</p:column>
+						<p:ajax process="editBus-selectedBusMenu"
+								listener="#{TripScheduleAction.onBusSelect}"
+								event="itemSelect" 
+							   	update="editBus-selectedBusBtn"/>
 					</p:selectOneMenu>
 					<p:commandButton id="editBus-selectedBusBtn"
 									 icon="ui-icon-plusthick"
 									 process="@this, editBus-selectedBusMenu"
-									 update="editBus-selectedBusMenu, editBus-selectedBusTable"
-									 title="Click to add #{TripScheduleAction.selectedBusTripScheduleLink.bus.reg} to table">
-						<p:collector unique="true" value="#{TripScheduleAction.selectedBusTripScheduleLink}" addTo="#{tripSchedule.busTripScheduleLinkList}" />				 
+									 update="editBus-selectedBusMenu, editBus-selectedBusTable, tripScheduleEdit-form:editTripSchedule-accordion"
+									 title="Click to add #{TripScheduleAction.selectedBus.reg} to table">
+						<!-- 						
+						<p:collector unique="true" value="#{TripScheduleAction.selectedBus}" removeFrom="#{TripScheduleAction.candidateBusList}" />
+						-->
+						<p:collector unique="true" value="#{TripScheduleAction.selectedBus}" addTo="#{TripScheduleAction.selectedBusList}" />			 
 			 		</p:commandButton>
 				</p:outputPanel>
 			</f:facet>			 
 				
 			<p:column headerText="Bus reg">
-				<h:outputText value="#{entity.bus.reg}"/>
+				<h:outputText value="#{entity.reg}"/>
 			</p:column>
 			
 			<p:column headerText="Capacity">
-				<h:outputText value="#{entity.bus.capacity}"/>
+				<h:outputText value="#{entity.capacity}"/>
 			</p:column>
 			
 			<p:column headerText="Bus pic">
-				<p:graphicImage name="#{entity.bus.reg}" style="width: 35px; height: 30px;"/>
+				<p:graphicImage name="images/default-bus.png" style="width: 35px; height: 30px;"/>
 			</p:column>
 			
 			<p:column headerText="Actions" style="text-align: center;">
 				<p:commandButton icon="ui-icon-close"
 								 process="@this"
 								 update="editBus-selectedBusTable"
-								 title="Click to remove #{entity.bus.reg} from the table.">
-					<p:collector unique="true" value="#{entity}" removeFrom="#{tripSchedule.busTripScheduleLinkList}" />				 
+								 title="Click to remove #{entity.reg} from the table.">
+					<p:collector unique="true" value="#{entity}" removeFrom="#{TripScheduleAction.selectedBusList}" />
+					<p:collector unique="true" value="#{entity}" addTo="#{TripScheduleAction.candidateBusList}" />				 
 			 	</p:commandButton>
 			</p:column>
 	 </p:dataTable>		

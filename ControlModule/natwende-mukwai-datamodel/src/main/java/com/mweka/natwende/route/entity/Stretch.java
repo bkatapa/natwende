@@ -49,15 +49,17 @@ public class Stretch extends BaseEntity {
 	public static transient final String PARAM_STRETCH_ID = "stretchId";
 	
 	@Temporal(TemporalType.TIME)
+	@Column(name = "estimated_travel_time")
 	private Date estimatedTravelTime;
 	
 	@Temporal(TemporalType.TIME)
+	@Column(name = "observed_travel_time")
 	private Date observedTravelTime;
 	
-	@Column(scale = 15, precision = 1)
+	@Column(name = "distance_km")
 	private BigDecimal distanceKM;
 	
-	@Column(scale = 15, precision = 2)
+	@Column(name = "fare_amount")
 	private BigDecimal fareAmount;
 	
 	@ManyToOne(optional = false)

@@ -65,7 +65,14 @@ public class RouteStretchLinkDataFacade extends AbstractDataFacade<RouteStretchL
 				.setParameter(Stretch.PARAM_STRETCH_ID, stretchId)				
 				.getResultList();
 		return getVOFromList(resultList);
-	} 
+	}
+    
+    public List<RouteStretchLinkVO> getByRouteId(Long routeId) {
+		List<RouteStretchLink> resultList = createNamedQuery(RouteStretchLink.QUERY_FIND_BY_ROUTE_ID, getEntityClass())
+				.setParameter(Route.PARAM_ROUTE_ID, routeId)				
+				.getResultList();
+		return transformList(resultList);
+	}
     
     public List<RouteStretchLinkVO> getByStretchId(Long stretchId) {
 		List<RouteStretchLink> resultList = createNamedQuery(RouteStretchLink.QUERY_FIND_BY_STRETCH_ID, getEntityClass())
@@ -74,8 +81,16 @@ public class RouteStretchLinkDataFacade extends AbstractDataFacade<RouteStretchL
 		return transformList(resultList);
 	}
 	
-	public int deleteByRouteId(Long routeId) throws Exception {
-		return getEntityManager().createQuery(RouteStretchLink.QUERY_DELETE_BY_ROUTE_ID).setParameter(Route.PARAM_ROUTE_ID, routeId).executeUpdate();
+	public long deleteByRouteId(Long routeId) throws Exception {
+		long count = getEntityManager().createNamedQuery(RouteStretchLink.QUERY_COUNT_BY_ROUTE_ID, Long.class)
+				.setParameter(Route.PARAM_ROUTE_ID, routeId)
+				.getSingleResult();
+		if (count > 0l) {
+			for (RouteStretchLinkVO result : getByRouteId(routeId)) {
+				deleteById(result.getId());
+			}
+		}
+		return count;
 	}
 	
 	public int deleteByStretchId(Long stretchId) throws Exception {
@@ -83,7 +98,7 @@ public class RouteStretchLinkDataFacade extends AbstractDataFacade<RouteStretchL
 	}
 	
 	public int deleteByRouteIdAndStretchId(Long routeId, Long stretchId) throws Exception {
-		return getEntityManager().createQuery(RouteStretchLink.QUERY_DELETE_BY_ROUTE_ID_AND_STRETCH_ID)
+		return createNamedQuery(RouteStretchLink.QUERY_DELETE_BY_ROUTE_ID_AND_STRETCH_ID, getEntityClass())
 				.setParameter(Route.PARAM_ROUTE_ID, routeId)
 				.setParameter(Stretch.PARAM_STRETCH_ID, stretchId)
 				.executeUpdate();

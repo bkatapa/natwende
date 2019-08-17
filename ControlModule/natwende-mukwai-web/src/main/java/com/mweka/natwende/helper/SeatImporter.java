@@ -18,6 +18,7 @@ import com.mweka.natwende.types.SeatClass;
 
 @Named
 @ApplicationScoped
+@Deprecated
 public class SeatImporter implements Serializable {
 
     /**
@@ -64,7 +65,8 @@ public class SeatImporter implements Serializable {
                             seatNo = seatNo.split("\\s+")[1];
                         }
                         String seatCoordinates = rowCounter + "_" + columnCounter;
-                        SeatClass seatClass;
+                        @SuppressWarnings("unused")
+						SeatClass seatClass;
                         
                         switch (Character.toUpperCase(seatDetails[1].charAt(0))) {
                             case 'E':
@@ -80,7 +82,7 @@ public class SeatImporter implements Serializable {
                                 seatClass = SeatClass.STANDARD;
                         }
 
-                        seatRow.add(new SeatVO(seatNo, seatCoordinates, seatClass));
+                        seatRow.add(new SeatVO(null, seatNo, seatCoordinates));
                     }
                     seatMap.put(rowNum, seatRow);
                 }

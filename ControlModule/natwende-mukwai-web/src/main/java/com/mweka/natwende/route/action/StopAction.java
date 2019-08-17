@@ -5,18 +5,18 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.primefaces.component.accordionpanel.AccordionPanel;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.TabChangeEvent;
 
 import com.mweka.natwende.helper.MessageHelper;
 import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.types.Province;
 import com.mweka.natwende.types.Status;
 import com.mweka.natwende.types.Town;
-import com.mweka.natwende.util.ServiceLocator;
 
 @Named("StopAction")
 @SessionScoped
@@ -25,9 +25,7 @@ public class StopAction extends MessageHelper<StopVO> {
 	private static final long serialVersionUID = 1L;
 	
 	//private StopSearchVO searchVO;
-
-	@EJB
-	private ServiceLocator serviceLocator;	
+	private int activeIndex;
 
 	@PostConstruct
 	//@Override
@@ -80,6 +78,14 @@ public class StopAction extends MessageHelper<StopVO> {
 		return Arrays.asList(Town.values());
 	}
 	
+	public int getActiveIndex() {
+		return activeIndex;
+	}
+
+	public void setActiveIndex(int activeIndex) {
+		this.activeIndex = activeIndex;
+	}
+
 	public List<Province> getProvinceList() {
 		if (getSelectedEntity().getTown() == null) {
 			getSelectedEntity().setProvince(null);
@@ -98,8 +104,13 @@ public class StopAction extends MessageHelper<StopVO> {
 		return LIST_PAGE;
 	}
 	
-	private static final String LIST_PAGE = "/admin/adminPanel?faces-redirect=true";
-	private static final String VIEW_PAGE = "/admin/route/stopView?faces-redirect=true";
+	public void onTabChange(TabChangeEvent event) {
+		AccordionPanel accordion = (AccordionPanel) event.getTab().getParent();
+		activeIndex = Integer.valueOf(accordion.getActiveIndex());
+	}
+	
+	private static final String LIST_PAGE = "/admin/adminPanel?faces-redirect=true&i=2";
+	private static final String VIEW_PAGE = "/admin/route/stopView?faces-redirect=true&i=2";
 	private static final String SUCCESS_PAGE = "/admin/route/stopSuccess?faces-redirect=true";
 	private static transient final String SHOW_SUCCESS_DIALOG = "PF('var_SuccessDlg').show();";
 	private static transient final String HIDE_SUCCESS_DIALOG = "PF('var_SuccessDlg').hide();";

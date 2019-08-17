@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,11 +18,14 @@ import com.mweka.natwende.base.BaseEntity;
 import com.mweka.natwende.types.SeatClass;
 
 @Entity
-@Table(name = "seat")
+@Table(name = "seat", uniqueConstraints = {
+	@UniqueConstraint(columnNames = { "bus_id", "seat_no", "coordinates" })
+})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = Seat.QUERY_FIND_ALL, query="SELECT s FROM Seat s"),
     @NamedQuery(name = Seat.QUERY_FIND_ALL_BY_BUS_ID, query = "SELECT s FROM Seat s WHERE s.bus.id = :busId"),
+    @NamedQuery(name = Seat.QUERY_FIND_BY_SEATNO_AND_BUS_ID, query = "SELECT s FROM Seat s WHERE s.seatNo = :seatNo AND s.bus.id = :busId"),
     @NamedQuery(name = Seat.QUERY_FIND_BY_SEATNO_COORDINATES_AND_BUS_ID, query = "SELECT s FROM Seat s WHERE s.seatNo = :seatNo AND s.coordinates = :coordinates AND s.bus.id = :busId")
 })
 public class Seat extends BaseEntity {
@@ -34,25 +38,27 @@ public class Seat extends BaseEntity {
 	/**
 	 * Named queries
 	 */
-	public static final String QUERY_FIND_ALL = "Seat.findAll";
-	public static final String QUERY_FIND_ALL_BY_BUS_ID = "Seat.findAllByBusId";
+	public static transient final String QUERY_FIND_ALL = "Seat.findAll";
+	public static transient final String QUERY_FIND_ALL_BY_BUS_ID = "Seat.findAllByBusId";
+	public static transient final String QUERY_FIND_BY_SEATNO_AND_BUS_ID = "Seat.findBySeatNoAndBusId";
 	public static transient final String QUERY_FIND_BY_SEATNO_COORDINATES_AND_BUS_ID = "Seat.findBySeatNoCoordinatesAndBusId";
 	
 	/**
 	 * Query parameters
 	 */
-	public static final String PARAM_SEAT_ID = "seatId";
-	public static final String PARAM_SEAT_NO = "seatNo";
-	public static final String PARAM_CO_ORDINATES = "coordinates";
+	public static transient final String PARAM_SEAT_ID = "seatId";
+	public static transient final String PARAM_SEAT_NO = "seatNo";
+	public static transient final String PARAM_CO_ORDINATES = "coordinates";
 	
 	@NotNull
 	private String coordinates;
 	
 	@NotNull
+	@Column(name = "seat_no", length = 32)
 	private String seatNo;
 	
 	@Enumerated(EnumType.STRING)
-    @Column(length = 32)
+    @Column(name = "seat_class", length = 32)
 	private SeatClass seatClass;
 	
 	@JoinColumn(name = "bus_id", referencedColumnName = "id", nullable = false)

@@ -5,7 +5,17 @@
 				xmlns:p="http://primefaces.org/ui"
 				xmlns:h="http://java.sun.com/jsf/html"
 				xmlns:f="http://java.sun.com/jsf/core">
-	<p:dialog id="stationSuccess-dlg" widgetVar="var_SuccessDlg" showEffect="fade" closable="true" header="Success" modal="true" width="600">
+				
+	<p:dialog id="stationSuccess-dlg" 
+			  widgetVar="var_SuccessDlg" 
+			  showEffect="fade" 
+			  closable="true" 
+			  header="Success" 
+			  modal="true" 
+			  width="600">
+		
+		<p:ajax event="close" listener="#{StopAction.onDialogClose}" />
+			  
 		<h:form>
 			<div align="center" style="text-align: center;">				
 				<p:graphicImage name="images/Thumbs-Up-Green.jpg" width="150" height="150" style="margin: auto;"/>
@@ -22,6 +32,7 @@
 				</f:facet>
 			</p:toolbar>
 		</h:form>
+		
 	</p:dialog>
 				
 </ui:composition>

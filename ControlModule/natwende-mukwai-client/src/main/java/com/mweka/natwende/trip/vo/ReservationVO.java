@@ -27,6 +27,9 @@ public class ReservationVO extends BaseVO {
 	}
 	
 	public PaymentVO getPayment() {
+		if (payment == null) {
+			payment = new PaymentVO();
+		}
 		return payment;
 	}
 	
@@ -48,6 +51,13 @@ public class ReservationVO extends BaseVO {
 	
 	public void setBookingList(List<BookingVO> bookingList) {
 		this.bookingList = bookingList;
-	}	
+	}
+	
+	public String getReference() {
+		if (payment != null && payment.getRef() != null && !payment.getRef().trim().isEmpty()) {
+			return payment.getRef();
+		}
+		return "";
+	}
 	
 }

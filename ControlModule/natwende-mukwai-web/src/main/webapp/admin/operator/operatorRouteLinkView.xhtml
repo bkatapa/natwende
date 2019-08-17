@@ -19,11 +19,11 @@
 			
 				<c:set value="#{OperatorRouteLinkAction.selectedEntity.route}" var="selectedRoute" scope="session" />
 				
-				<p:panel header="#{selectedRoute.name}">
+				<p:panel header="#{OperatorRouteLinkAction.selectedEntity.route.name}">
 				
 					<p:toolbar style="border: none;">
 						<p:toolbarGroup align="left">
-							<p:commandButton name="Back"
+							<p:commandButton value="Back"
 											 process="@this"
 											 icon="ui-icon-arrowthick-1-w"
 											 action="#{OperatorRouteLinkAction.cancel}"/>
@@ -33,16 +33,17 @@
 					<p:accordionPanel style="margin-top: 10px;">
 						<p:tab title="Summary">
 							<p:panelGrid columns="2" layout="grid">
-								<p:outputLabel value="Depart from:" />
-								<h:outputText value="#{selectedRoute.start.name}"/>
+								<p:outputLabel value="Depart from:" style="font-weight: bold;"/>
+								<h:outputText value="#{OperatorRouteLinkAction.selectedEntity.route.start.name}"/>
 								
-								<p:outputLabel value="Final destination:" />
-								<h:outputText value="#{selectedRoute.stop.name}"/>
+								<p:outputLabel value="Final destination:" style="font-weight: bold;"/>
+								<h:outputText value="#{OperatorRouteLinkAction.selectedEntity.route.stop.name}"/>
 								
-								<p:outputLabel value="Transit stations:" />
+								<p:outputLabel value="Transit stations:" style="font-weight: bold;"/>
 								<p:outputPanel>
-									<ui:repeat value="#{selectedRoute.stops}" var="transitStation" varStatus="counter">
+									<ui:repeat value="#{OperatorRouteLinkAction.selectedEntity.route.routeStops}" var="transitStation" varStatus="counter">
 										<h:outputText value="#{counter.index + 1}) #{transitStation.stop.name}"/>
+										<br />
 									</ui:repeat>
 								</p:outputPanel>								
 							</p:panelGrid>
@@ -73,11 +74,11 @@
 								</p:column>
 								
 								<p:column headerText="From">
-									<h:outputText value="#{entity.stretch.from}"/>
+									<h:outputText value="#{entity.stretch.from.asString}"/>
 								</p:column>
 								
 								<p:column headerText="To">
-									<h:outputText value="#{entity.stretch.to}"/>
+									<h:outputText value="#{entity.stretch.to.asString}"/>
 								</p:column>
 								
 								<p:column headerText="Distance (Km)">

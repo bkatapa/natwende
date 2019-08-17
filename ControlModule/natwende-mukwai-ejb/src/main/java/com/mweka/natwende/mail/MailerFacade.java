@@ -405,9 +405,9 @@ public class MailerFacade {
 			msg.setRecipients(recipients);
 			msg.setBcc(bcc);
 			msg.setCc(cc);
-			msg.setFromAddress(bookingVO.getOperatorName().getDisplay().replaceAll("[^A-Za-z0-9()\\\\[\\\\]]", "")+"@adaptris.com");
+			msg.setFromAddress(bookingVO.getPassengerEmail().replaceAll("[^A-Za-z0-9()\\\\[\\\\]]", "")+"@adaptris.com");
 			msg.addMediaHeader("BookingVoucher.pdf", byteArrayOutputStream.toByteArray());
-			msg.setSubject(bookingVO.getOperatorName() + " - Parking Voucher for " + DateConverter.convertDateToString(bookingVO.getUpdateDate()));
+			msg.setSubject(bookingVO.getPassengerFirstName() + " - Parking Voucher for " + DateConverter.convertDateToString(bookingVO.getUpdateDate()));
 			sendHtmlEmail(msg);
 		}
 	}    
@@ -439,7 +439,7 @@ public class MailerFacade {
 		sb.append("<body>");
 		sb.append("Attention: "+bookingVO+" "+bookingVO+"</br>" +
 			"</br>" +
-			"Please find below a Parking Booking made for you by "+bookingVO.getOperatorName()+" as follows:</br>" +
+			"Please find below a Parking Booking made for you by "+bookingVO.getPassengerEmail()+" as follows:</br>" +
 			"</br>" +
 			"Valid From:	"+DateConverter.convertDateTimeToString(bookingVO.getUpdateDate())+"</br>" +
 			"Valid Until: 	"+DateConverter.convertDateTimeToString(bookingVO.getUpdateDate())+" </br>" +
@@ -447,11 +447,11 @@ public class MailerFacade {
 			"Vehicle Make:	"+(bookingVO.getTrip() == null ? "" : bookingVO.getTo())+"</br>" +
 			"Vehicle Reg:	"+(bookingVO.getTrip().getBusReg() == null ? "" : bookingVO.getFrom())+"</br>" +
 			"</br>" +
-			"Address: "+bookingVO.getOperatorName()+"</br>" +
+			"Address: "+bookingVO.getPassengerEmail()+"</br>" +
 			"Comments: "+bookingVO.getTrip()+"</br>" +
 			"</br>Kind Regards</br>" +
-			"</br>"+bookingVO.getOperatorName()+"</br>" +
-			"</br>"+bookingVO.getOperatorName()+"</br>");
+			"</br>"+bookingVO.getPassengerEmail()+"</br>" +
+			"</br>"+bookingVO.getPassengerEmail()+"</br>");
 		sb.append("");
 		sb.append("</body>");
 		sb.append("</html>");
@@ -478,7 +478,7 @@ public class MailerFacade {
 			msg.setCc(cc);
 			msg.setFromAddress(bookingVO.toString().replaceAll("[^A-Za-z0-9()\\\\[\\\\]]", "")+"@adaptris.com");
 			msg.addMediaHeader("BookingVoucher.pdf", byteArrayOutputStream.toByteArray());
-			msg.setSubject(bookingVO.getOperatorName() + " - Parking Voucher for " + DateConverter.convertDateToString(bookingVO.getUpdateDate()));
+			msg.setSubject(bookingVO.getPassengerEmail() + " - Parking Voucher for " + DateConverter.convertDateToString(bookingVO.getUpdateDate()));
 			sendHtmlEmail(msg);
 		}
 	}

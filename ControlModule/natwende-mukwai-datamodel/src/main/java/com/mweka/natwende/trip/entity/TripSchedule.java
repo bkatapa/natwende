@@ -76,7 +76,7 @@ public class TripSchedule extends BaseEntity {
 	@JoinColumn(name = "route_id")
 	private Route route;
 	
-	@ElementCollection(targetClass = DaysOfWeek.class)
+	@ElementCollection(fetch = FetchType.EAGER, targetClass = DaysOfWeek.class)
 	@CollectionTable(name = "DaysOfWeek", joinColumns = @JoinColumn(name = "tripSchedule_id"))
 	@Column(name = "dayOfWeek", nullable = false)
 	@Enumerated(EnumType.STRING)

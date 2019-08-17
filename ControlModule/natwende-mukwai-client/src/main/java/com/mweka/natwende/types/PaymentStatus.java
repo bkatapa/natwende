@@ -7,7 +7,8 @@ public enum PaymentStatus implements Displayable {
     PENDING("Pending"),
     FAILED("Failed"),
     UNKNOWN("Unknown"),
-    ABORTED("Aborted");
+    ABORTED("Aborted"),
+    DECLINED("Declined");
 	
     private final String display;
 

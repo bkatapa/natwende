@@ -10,6 +10,8 @@ import javax.inject.Named;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
+import com.mweka.natwende.types.Town;
+
 @Named("MenuAction")
 @SessionScoped
 public class MenuAction implements Serializable {
@@ -37,6 +39,14 @@ public class MenuAction implements Serializable {
 	
 	public String[] getSlideList() {
 		return new String[] {"01.jpg", "02.jpg", "03.jpg", "04.png", "05.jpeg", "06.jpg", "07.jpg", "08.jpg", "09.jpg", "10.jpg", "11.jpg"};
+	}
+	
+	public Town[] getTowns() {
+		return Town.values();
+	}
+	
+	public String homePage() {
+		return "/home?faces-redirect=true";
 	}
 
 	private static transient final Logger LOGGER = Logger.getLogger(MenuAction.class.getName()); 

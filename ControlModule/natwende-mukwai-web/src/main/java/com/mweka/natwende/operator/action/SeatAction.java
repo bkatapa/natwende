@@ -7,6 +7,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -31,10 +32,9 @@ private static final long serialVersionUID = 1L;
 	@Inject
 	private SeatImporter seatImporter;
 
-	@PostConstruct
-	//@Override
+	@PostConstruct	
 	public void init() {		
-		setSelectedEntity(new SeatVO());
+		selectedEntity = new SeatVO();
 	}	
 	
 	public UploadedFile getFile() {
@@ -69,14 +69,15 @@ private static final long serialVersionUID = 1L;
 	@Override
 	public String saveEntity() {
 		try {
-			getSelectedEntity().setBus(busAction.getSelectedEntity());
-			serviceLocator.getSeatFacade().saveSeat(getSelectedEntity());
+			selectedEntity.setBus(busAction.getSelectedEntity());
+			selectedEntity = serviceLocator.getSeatFacade().saveSeat(selectedEntity);
 			RequestContext.getCurrentInstance().execute(HIDE_SEAT_ENTRY_DLG);
+			return SUCCESS_PAGE;
 		}
 		catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
 		}
-		return SUCCESS_PAGE;
+		return null;
 	}
 	
 	@Override
@@ -87,7 +88,7 @@ private static final long serialVersionUID = 1L;
 	@Override
 	public void deleteEntity() {
 		try {
-			serviceLocator.getSeatFacade().deleteSeat(getSelectedEntity().getId());
+			serviceLocator.getSeatFacade().deleteSeat(selectedEntity.getId());
 			onMessage(SEVERITY_INFO, "Record deleted successfully");
 		}
 		catch (Exception ex) {
@@ -95,6 +96,19 @@ private static final long serialVersionUID = 1L;
 		}
 	}
 	
+	public void updateEntity() {
+		if (StringUtils.isNotBlank(busAction.getSelectedEntity().getSeatsAsString())) {
+			//log.debug(busAction.getSelectedEntity().getSeatsAsString());
+			try {serviceLocator.getBusDataFacade().update(busAction.getSelectedEntity());
+				serviceLocator.getSeatFacade().calibrateSeatCoordinates(busAction.getSelectedEntity());
+			}
+			catch (Exception ex) {
+				onMessage(SEVERITY_ERROR, ex.getMessage());
+			}
+		}
+	}
+	
+	@Deprecated
 	public void importSeats() {
 		if (file == null) {
 			onMessage(SEVERITY_ERROR, "No file selected. Please specify file to upload.");
@@ -116,13 +130,14 @@ private static final long serialVersionUID = 1L;
 	
 	private void loadEntityList() {
 		try {
-			entityList = serviceLocator.getSeatFacade().obtainSeatListByBus(busAction.getSelectedEntity().getId());
+			entityList = serviceLocator.getSeatDataFacade().getAllByBusId(busAction.getSelectedEntity().getId());
 		}
 		catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
 		}
 	}
 	
+	@Deprecated
 	private void checkDuplicate(SeatVO seat) throws Exception {
 		boolean result = serviceLocator.getSeatFacade().doesSeatExist(
 				seat.getSeatNo(), 

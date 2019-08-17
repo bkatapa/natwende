@@ -22,6 +22,7 @@ import com.mweka.natwende.base.BaseEntity;
 	@NamedQuery(name = RouteStopLink.QUERY_FIND_ALL, query = " SELECT rsl FROM RouteStopLink rsl "),
 	@NamedQuery(name = RouteStopLink.QUERY_FIND_ALL_BY_STATUS, query = " SELECT rsl FROM RouteStopLink rsl WHERE rsl.status = :status "),
 	@NamedQuery(name = RouteStopLink.QUERY_FIND_ALL_BY_ROUTE_ID, query = " SELECT rsl FROM RouteStopLink rsl WHERE rsl.route.id = :routeId "),
+	@NamedQuery(name = RouteStopLink.QUERY_COUNT_BY_ROUTE_ID, query = " SELECT COUNT(rsl) FROM RouteStopLink rsl WHERE rsl.route.id = :routeId "),
 	@NamedQuery(name = RouteStopLink.QUERY_FIND_BY_ROUTE_ID_AND_STOP_ID, query = " SELECT rsl FROM RouteStopLink rsl WHERE rsl.route.id = :routeId AND rsl.stop.id = :stopId ")
 })
 public class RouteStopLink extends BaseEntity {
@@ -38,6 +39,7 @@ public class RouteStopLink extends BaseEntity {
 	public static final String QUERY_FIND_ALL_BY_STATUS = "RouteStopLink.findAllByStatus";
 	public static final String QUERY_FIND_ALL_BY_ROUTE_ID = "RouteStopLink.findAllByRouteId";
 	public static transient final String QUERY_FIND_BY_ROUTE_ID_AND_STOP_ID = "RouteStopLink.findByRouteIdAndStopId";
+	public static transient final String QUERY_COUNT_BY_ROUTE_ID = "RouteStopLink.countByRouteId";
 	
 	/**
 	 * Query parameters

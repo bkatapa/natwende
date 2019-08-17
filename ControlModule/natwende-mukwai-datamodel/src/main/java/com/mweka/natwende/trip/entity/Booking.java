@@ -1,5 +1,7 @@
 package com.mweka.natwende.trip.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,21 +12,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mweka.natwende.base.BaseEntity;
-import com.mweka.natwende.payment.entity.Payment;
 import com.mweka.natwende.types.BookingStatus;
-import com.mweka.natwende.types.OperatorName;
+import com.mweka.natwende.types.Title;
 
 @Entity
-@Table(name = "booking", uniqueConstraints = {@UniqueConstraint(columnNames = {"fromTown", "toTown"})})
+@Table(name = "booking")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = Booking.QUERY_FIND_ALL, query=" SELECT b FROM Booking b "),
-    @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_TRIP_ID, query = " SELECT b FROM Booking b WHERE b.trip.id = :tripId ")
+    @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_TRIP_ID, query = " SELECT b FROM Booking b WHERE b.trip.id = :tripId "),
+    @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_RESERVATION_ID, query = " SELECT b FROM Booking b WHERE b.reservation.id = :reservationId "),
+    @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_OPERATOR_NAME, query = " SELECT b FROM Booking b WHERE b.trip.operatorName = :operatorName "),
+    @NamedQuery(name = Booking.QUERY_FIND_BY_TRIP_ID_AND_SEAT_NUMBER, query = " SELECT b FROM Booking b WHERE b.trip.id = :tripId AND b.seatNumber = :seatNo ")
 })
 public class Booking extends BaseEntity {
 	/**
@@ -37,6 +40,9 @@ public class Booking extends BaseEntity {
 	 */
 	public static transient final String QUERY_FIND_ALL = "Booking.findAll";
 	public static transient final String QUERY_FIND_LIST_BY_TRIP_ID = "Booking.findListByTripId";
+	public static transient final String QUERY_FIND_LIST_BY_RESERVATION_ID = "Booking.findListByReservationId";
+	public static transient final String QUERY_FIND_LIST_BY_OPERATOR_NAME = "Booking.findListByOperatorName";
+	public static transient final String QUERY_FIND_BY_TRIP_ID_AND_SEAT_NUMBER = "Booking.findByTripIdAndSeatNumber";
 	
 	/**
 	 * Query parameters
@@ -44,46 +50,53 @@ public class Booking extends BaseEntity {
 	public static transient final String PARAM_BOOKING_ID = "bookingId";
 	
 	@NotNull
-	@Column(name = "fromTown", length = 32)
+	@Column(name = "from_town", length = 32)
 	private String from;
 	
 	@NotNull
-	@Column(name = "toTown", length = 32)
+	@Column(name = "to_town", length = 32)
 	private String to;
 	
 	@NotNull
-	@Column(length = 10)
+	@Column(name = "seat_no", length = 10)
 	private String seatNumber;
 	
 	@NotNull
-	@Column(length = 50)
-	private String accountUser;
+	@Column(name = "passenger_first_name", length = 100)
+	private String passengerFirstName;
 	
-	@NotNull
-	@Column(length = 100)
-	private String accountUserEmail;
+	@Column(name = "passenger_last_name", length = 100)
+	private String passengerLastName;
 	
-	@NotNull
-	@Column(length = 50)
-	private String customerName;
+	@Column(name = "passenger_email", length = 100)
+	private String passengerEmail;
 	
-	@NotNull
-	@Column(length = 100)
-	private String customerEmail;
+	@Column(name = "passenger_phone_number", length = 100)
+	private String passengerPhoneNumber;
+	
+	@Column(name = "passenger_address", length = 100)
+	private String passengerAddress;
+	
+	@Column(name = "passenger_nrc", length = 50)
+	private String passengerNrc;
+	
+	@Column(name = "bus_fare")
+	private BigDecimal fare;
 	
 	@Enumerated(EnumType.STRING)
-	private OperatorName operatorName;
+	@Column(name = "passenger_title", length = 50)
+	private Title passengerTitle;
 	
 	@Enumerated(EnumType.STRING)
 	private BookingStatus bookingStatus;
 	
-	@JoinColumn(name = "payment_id", referencedColumnName = "id", nullable = true)
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-	private Payment payment;
-	
 	@JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Trip trip;
+	
+	@JoinColumn(name = "reservation_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private Reservation reservation;
 	
 	public String getFrom() {
 		return from;
@@ -109,60 +122,12 @@ public class Booking extends BaseEntity {
 		this.seatNumber = seatNumber;
 	}
 
-	public String getAccountUser() {
-		return accountUser;
-	}
-
-	public void setAccountUser(String accountUser) {
-		this.accountUser = accountUser;
-	}
-
-	public String getAccountUserEmail() {
-		return accountUserEmail;
-	}
-
-	public void setAccountUserEmail(String accountUserEmail) {
-		this.accountUserEmail = accountUserEmail;
-	}
-
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
-
-	public String getCustomerEmail() {
-		return customerEmail;
-	}
-
-	public void setCustomerEmail(String customerEmail) {
-		this.customerEmail = customerEmail;
-	}
-
 	public BookingStatus getBookingStatus() {
 		return bookingStatus;
 	}
 
 	public void setBookingStatus(BookingStatus bookingStatus) {
 		this.bookingStatus = bookingStatus;
-	}
-
-	public Payment getPayment() {
-		return payment;
-	}
-	
-	public void setPayment(Payment payment) {
-		this.payment = payment;
-	}
-	
-	public OperatorName getOperatorName() {
-		return operatorName;
-	}
-	
-	public void setOperatorName(OperatorName operatorName) {
-		this.operatorName = operatorName;
 	}
 	
 	public Trip getTrip() {
@@ -172,4 +137,77 @@ public class Booking extends BaseEntity {
 	public void setTrip(Trip trip) {
 		this.trip = trip;
 	}
+
+	public String getPassengerFirstName() {
+		return passengerFirstName;
+	}
+
+	public void setPassengerFirstName(String passengerFirstName) {
+		this.passengerFirstName = passengerFirstName;
+	}
+
+	public String getPassengerLastName() {
+		return passengerLastName;
+	}
+
+	public void setPassengerLastName(String passengerLastName) {
+		this.passengerLastName = passengerLastName;
+	}
+
+	public String getPassengerEmail() {
+		return passengerEmail;
+	}
+
+	public void setPassengerEmail(String passengerEmail) {
+		this.passengerEmail = passengerEmail;
+	}
+
+	public String getPassengerPhoneNumber() {
+		return passengerPhoneNumber;
+	}
+
+	public void setPassengerPhoneNumber(String passengerPhoneNumber) {
+		this.passengerPhoneNumber = passengerPhoneNumber;
+	}
+
+	public String getPassengerAddress() {
+		return passengerAddress;
+	}
+
+	public void setPassengerAddress(String passengerAddress) {
+		this.passengerAddress = passengerAddress;
+	}
+
+	public String getPassengerNrc() {
+		return passengerNrc;
+	}
+
+	public void setPassengerNrc(String passengerNrc) {
+		this.passengerNrc = passengerNrc;
+	}
+
+	public BigDecimal getFare() {
+		return fare;
+	}
+
+	public void setFare(BigDecimal fare) {
+		this.fare = fare;
+	}
+
+	public Title getPassengerTitle() {
+		return passengerTitle;
+	}
+
+	public void setPassengerTitle(Title passengerTitle) {
+		this.passengerTitle = passengerTitle;
+	}
+
+	public Reservation getReservation() {
+		return reservation;
+	}
+
+	public void setReservation(Reservation reservation) {
+		this.reservation = reservation;
+	}
+	
 }

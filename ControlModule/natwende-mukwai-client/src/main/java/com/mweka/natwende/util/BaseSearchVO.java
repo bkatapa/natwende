@@ -2,15 +2,31 @@ package com.mweka.natwende.util;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
 public class BaseSearchVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlTransient
     private int startPosition = 0;
+    
+    @XmlTransient
     private int maxNumberOfResultsToRetrieve = 1000;
+    
+    @XmlTransient
     private boolean matchExact = false;
+    
+    @XmlTransient
     private String sortField;
+    
+    @XmlTransient
     private Boolean sortAscending = null;
+    
+    @XmlTransient
     private boolean forExport = false;
 
     public int getStartPosition() {

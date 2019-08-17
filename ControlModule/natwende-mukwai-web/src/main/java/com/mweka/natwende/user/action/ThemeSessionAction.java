@@ -29,7 +29,7 @@ public class ThemeSessionAction implements Serializable {
 		    case "euro":
 			return "pepper-grinder";
 		    default:
-			return "omega";//"home";//"bootstrap";   
+			return /*"paradise-blue";*//*"omega";*//*"home";*/"bootstrap";   
 	    }
     }
     

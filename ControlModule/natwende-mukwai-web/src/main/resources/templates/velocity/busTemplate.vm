@@ -80,7 +80,7 @@ function displaySeats(bookedSeats) {
 			else if (this.status() === 'selected') {
 				//update the counter
 				if (bookingMode === 1) { // If in single booking mode
-					$counter.text.text(0);
+					$counter.text(0);
 					$total.text(0);
 				}
 				else {
@@ -93,7 +93,7 @@ function displaySeats(bookedSeats) {
 
 				//seat has been vacated
 				// postBookingData();
-				sendData('unselected_seat:' + this.setting.label);
+				sendData('unselected_seat:' + this.settings.label);
 				return 'available';
 			} 
 			else if (this.status() == 'unavailable') {
@@ -116,7 +116,7 @@ function displaySeats(bookedSeats) {
 	//let's pretend some seats have already been booked
 	//sc.get(['1_2', '4_1', '7_1', '7_2']).status('unavailable');
 
-	// updateOccupiedSeats(sc, bookedSeats);
+	//updateOccupiedSeats(sc, bookedSeats);
 }
 
 // Code that needs oldJQuery and newJQuery can go here

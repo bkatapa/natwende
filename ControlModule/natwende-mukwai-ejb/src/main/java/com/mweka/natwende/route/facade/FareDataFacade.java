@@ -8,8 +8,10 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.logging.LogFactory;
 
 import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.operator.entity.Operator;
 import com.mweka.natwende.route.entity.Fare;
 import com.mweka.natwende.route.entity.Route;
+import com.mweka.natwende.route.entity.Stretch;
 import com.mweka.natwende.route.vo.FareVO;
 
 @Stateless
@@ -33,11 +35,11 @@ public class FareDataFacade extends AbstractDataFacade<FareVO, Fare> {
     	convertBaseEntityToVO(entity, vo);    	
     	vo.setAmount(entity.getAmount());
     	
-    	if (entity.getFrom() != null) {
-    		vo.setFrom(serviceLocator.getStopDataFacade().getCachedVO(entity.getFrom()));
+    	if (entity.getStretch() != null) {
+    		vo.setStretch(serviceLocator.getStretchDataFacade().getCachedVO(entity.getStretch()));
     	}    	
-    	if (entity.getTo() != null) {
-    		vo.setTo(serviceLocator.getStopDataFacade().getCachedVO(entity.getTo()));
+    	if (entity.getOperator() != null) {
+    		vo.setOperator(serviceLocator.getOperatorDataFacade().getCachedVO(entity.getOperator()));
     	}
     }
 
@@ -46,11 +48,11 @@ public class FareDataFacade extends AbstractDataFacade<FareVO, Fare> {
         convertBaseVOToEntity(vo, entity);
         entity.setAmount(vo.getAmount());
     	
-    	if (vo.getFrom() != null) {
-    		entity.setFrom(serviceLocator.getStopDataFacade().findById(vo.getFrom().getId()));
+    	if (vo.getStretch() != null) {
+    		entity.setStretch(serviceLocator.getStretchDataFacade().findById(vo.getStretch().getId()));
     	}    	
-    	if (vo.getTo() != null) {
-    		entity.setTo(serviceLocator.getStopDataFacade().findById(vo.getTo().getId()));
+    	if (vo.getOperator() != null) {
+    		entity.setOperator(serviceLocator.getOperatorDataFacade().findById(vo.getOperator().getId()));
     	}
         return entity;
     }
@@ -61,9 +63,32 @@ public class FareDataFacade extends AbstractDataFacade<FareVO, Fare> {
         return getCachedVO(entity);
     }
     
+    public FareVO getByOperatorIdAndStretchId(Long operatorId, Long stretchId) {
+		List<Fare> resultList = createNamedQuery(Fare.QUERY_FIND_BY_OPERATOR_ID_AND_STRETCH_ID, getEntityClass())				
+				.setParameter(Operator.PARAM_OPERATOR_ID, operatorId)
+				.setParameter(Stretch.PARAM_STRETCH_ID, stretchId)
+				.getResultList();
+		return getVOFromList(resultList);
+	}
+    
+    public List<FareVO> getListByRouteIdAndOperatorId(Long routeId, Long operatorId) {
+		List<Fare> resultList = createNamedQuery(Fare.QUERY_FIND_BY_ROUTE_ID_AND_OPERATOR_ID, getEntityClass())
+				.setParameter(Route.PARAM_ROUTE_ID, routeId)
+				.setParameter(Operator.PARAM_OPERATOR_ID, operatorId)
+				.getResultList();
+		return transformList(resultList);
+	}
+    
     public List<FareVO> getListByRouteId(Long routeId) {
 		return transformList(findListByRouteId(routeId));
 	}
+    
+    public List<FareVO> getFareListByStretchId(long stretchId) {
+    	List<Fare> resultList = createNamedQuery(Fare.QUERY_FIND_BY_STRETCH_ID, getEntityClass())
+				.setParameter(Stretch.PARAM_STRETCH_ID, stretchId)
+				.getResultList();
+		return transformList(resultList);
+    }
 	
 	private List<Fare> findListByRouteId(Long routeId) {
 		final TypedQuery<Fare> query = createNamedQuery(Fare.QUERY_FIND_BY_ROUTE, getEntityClass())

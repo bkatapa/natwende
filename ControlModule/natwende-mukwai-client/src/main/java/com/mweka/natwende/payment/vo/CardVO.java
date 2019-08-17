@@ -15,6 +15,7 @@ public class CardVO extends BaseVO {
 	private String cvv2;
 	private UserVO owner;
 	private String nameOnCard;
+	private boolean primary;
 	
 	public CardVO(String cardNumberEncrypted, String expiryDate, String cvv2, String nameOnCard) {
 		super();
@@ -78,6 +79,14 @@ public class CardVO extends BaseVO {
 
 	public void setNameOnCard(String nameOnCard) {
 		this.nameOnCard = nameOnCard;
+	}
+
+	public boolean isPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
 	}
 
 }

@@ -6,7 +6,7 @@ public enum Town implements Displayable {
 	KITWE("Kitwe", Province.COPPERBELT),
     NDOLA("Ndola", Province.COPPERBELT),
     LUANSHYA("Luanshya", Province.COPPERBELT),
-    CHINGOLA("Chigola", Province.COPPERBELT),
+    CHINGOLA("Chingola", Province.COPPERBELT),
     MUFULIRA("Mufulira", Province.COPPERBELT),
     CHILILABOMBWE("Chililabombwe", Province.COPPERBELT),
     KALULUSHI("Kalulushi", Province.COPPERBELT),
@@ -73,7 +73,7 @@ public enum Town implements Displayable {
     MONGU("Mongu", Province.WESTERN),
 	SENANGA("Senanga", Province.WESTERN),
 	KALABO("Kalabo", Province.WESTERN),
-	KAOMA("Mansa", Province.WESTERN),
+	KAOMA("Kaoma", Province.WESTERN),
 	LUKULU("Lukulu", Province.WESTERN);
 	
     private final String display;
@@ -91,5 +91,14 @@ public enum Town implements Displayable {
 	
 	public Province getProvince() {		
 		return province;
+	}
+	
+	@Override
+	public String toString() {
+		return display 
+				+ " " 
+				+ province.getDisplay() 
+				+ ", " 
+				+ province.getCountry().getDisplay(); 
 	}
 }

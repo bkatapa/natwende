@@ -15,10 +15,14 @@ public class SeatVO extends BaseVO {
 	private String seatNo;
 	private SeatClass seatClass;
 	
-	public SeatVO(String seatNo, String coordinates, SeatClass seatClass) {
+	public SeatVO(BusVO bus, String seatNo, String coordinates) {
 		this.seatNo = seatNo;
 		this.coordinates = coordinates;
-		this.seatClass = seatClass;
+		this.bus = bus;
+	}
+	
+	public SeatVO(String seatNo) {
+		this.seatNo = seatNo;
 	}
 	
 	public SeatVO(BusVO bus) {

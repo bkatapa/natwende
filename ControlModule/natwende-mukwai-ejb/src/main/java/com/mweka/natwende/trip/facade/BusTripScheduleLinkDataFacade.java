@@ -32,14 +32,22 @@ public class BusTripScheduleLinkDataFacade extends AbstractDataFacade<BusTripSch
 		}
 		if (entity.getTripSchedule() != null) {
 			vo.setTripSchedule(serviceLocator.getTripScheduleDataFacade().getCachedVO(entity.getTripSchedule()));
-		}
-		
+		}		
 	}
 
 	@Override
 	protected BusTripScheduleLink convertVOToEntity(BusTripScheduleLinkVO vo, BusTripScheduleLink entity) {
 		super.convertBaseVOToEntity(vo, entity);
-		return null;
+		if (vo.getBus() != null) {
+			entity.setBus(serviceLocator.getBusDataFacade().findById(vo.getBus().getId()));
+		}
+		if (vo.getDriver() != null) {
+			entity.setDriver(serviceLocator.getUserDataFacade().findById(vo.getDriver().getId()));
+		}
+		if (vo.getTripSchedule() != null) {
+			entity.setTripSchedule(serviceLocator.getTripScheduleDataFacade().findById(vo.getTripSchedule().getId()));
+		}
+		return entity;
 	}
 
 	@Override
@@ -59,7 +67,7 @@ public class BusTripScheduleLinkDataFacade extends AbstractDataFacade<BusTripSch
 	}
 	
 	public List<BusTripScheduleLinkVO> getListByScheduleId(Long tripScheduleId) {
-		List<BusTripScheduleLink> resultList = createNamedQuery(BusTripScheduleLink.QUERY_FIND_BY_BUS_ID_AND_TRIPSCHEDULE_ID, getEntityClass())
+		List<BusTripScheduleLink> resultList = createNamedQuery(BusTripScheduleLink.QUERY_FIND_BY_TRIPSCHEDULE_ID, getEntityClass())
 				.setParameter(TripSchedule.PARAM_TRIPSCHEDULE_ID, tripScheduleId)
 				.getResultList();
 		

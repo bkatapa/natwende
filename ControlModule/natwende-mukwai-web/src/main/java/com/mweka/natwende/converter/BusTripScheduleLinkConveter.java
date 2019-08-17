@@ -1,6 +1,7 @@
 package com.mweka.natwende.converter;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -30,8 +31,11 @@ public class BusTripScheduleLinkConveter implements Converter {
 		Object resultList = cache.get("BTSL");
 		List<BusTripScheduleLinkVO> list = null;
 		if (resultList instanceof List) {
-			list = (List<BusTripScheduleLinkVO>) resultList;
+			list = new CopyOnWriteArrayList<>((List<BusTripScheduleLinkVO>) resultList);
 			for (BusTripScheduleLinkVO result : list) {
+				if (result == null) {
+					return new BusTripScheduleLinkVO();
+				}
 				if (result.getId() == Integer.valueOf(value)) {
 					list.add(result);
 				}

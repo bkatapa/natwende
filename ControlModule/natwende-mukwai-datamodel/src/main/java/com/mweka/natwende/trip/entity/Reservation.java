@@ -22,7 +22,7 @@ import com.mweka.natwende.user.entity.User;
 @NamedQueries({
     @NamedQuery(name = Reservation.QUERY_FIND_ALL, query=" SELECT r FROM Reservation r "),
     @NamedQuery(name = Reservation.QUERY_FIND_BY_PAYMENT_REF, query = " SELECT r FROM Reservation r WHERE r.payment.ref = :paymentRef "),
-    @NamedQuery(name = Reservation.QUERY_FIND_BY_CUSTOMER_ID, query = " SELECT r FROM Reservation r WHERE r.customer.id = :customerId ")
+    @NamedQuery(name = Reservation.QUERY_FIND_BY_CUSTOMER_ID, query = " SELECT r FROM Reservation r WHERE r.customer.id = :userId ")
 })
 public class Reservation extends BaseEntity {
 	/**

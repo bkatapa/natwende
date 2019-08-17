@@ -19,7 +19,9 @@
   		<p:outputPanel>
   			<p:graphicImage value="#{UserAction.previewImage}"
   							style="width: 50px; height: 50px;"
-  							styleClass="ui-corner-all" />
+  							styleClass="ui-corner-all">
+				<f:param name="userId" value="#{UserAction.selectedEntity.id}"/>
+			</p:graphicImage>
   		</p:outputPanel>
 	</h:panelGrid>
 	

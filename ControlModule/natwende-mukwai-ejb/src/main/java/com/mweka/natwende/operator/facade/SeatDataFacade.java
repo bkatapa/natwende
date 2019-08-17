@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -17,6 +16,7 @@ import com.mweka.natwende.operator.entity.Bus;
 import com.mweka.natwende.operator.entity.Seat;
 import com.mweka.natwende.operator.entity.Seat_;
 import com.mweka.natwende.operator.search.vo.SeatSearchVO;
+import com.mweka.natwende.operator.vo.BusVO;
 import com.mweka.natwende.operator.vo.SeatVO;
 
 @Stateless
@@ -69,27 +69,39 @@ public class SeatDataFacade extends AbstractDataFacade<SeatVO, Seat> {
     }
     
     public List<SeatVO> getAllByBusId(Long busId) {
-		return transformList(findAllByBusId(busId));
+    	final List<Seat> resultList = createNamedQuery(Seat.QUERY_FIND_ALL_BY_BUS_ID, getEntityClass())
+				.setParameter(Bus.PARAM_BUS_ID, busId)
+				.getResultList();
+		return transformList(resultList);
 	}
-	
-	private List<Seat> findAllByBusId(Long busId) {
-		final TypedQuery<Seat> query = createNamedQuery(Seat.QUERY_FIND_ALL_BY_BUS_ID, getEntityClass())
-				.setParameter(Bus.PARAM_BUS_ID, busId);
-		return query.getResultList();
+    
+    public SeatVO getBySeatNoAndBusId(String seatNo, Long busId) {
+		List<Seat> resultList = createNamedQuery(Seat.QUERY_FIND_BY_SEATNO_AND_BUS_ID, getEntityClass())
+				.setParameter(Seat.PARAM_SEAT_NO, seatNo)
+				.setParameter(Bus.PARAM_BUS_ID, busId)
+				.getResultList();
+		return getVOFromList(resultList);
 	}
 	
 	public SeatVO getBySeatNoCoordinatesAndBusId(String seatNo, String coordinates, Long busId) {
-		Seat entity = findBySeatNoCoordinatesAndBusId(seatNo, coordinates, busId);
-		return entity == null ? null : convertEntityToVO(entity);
-	}
-	
-	private Seat findBySeatNoCoordinatesAndBusId(String seatNo, String coordinates, Long busId) {
-		final TypedQuery<Seat> query = createNamedQuery(Seat.QUERY_FIND_BY_SEATNO_COORDINATES_AND_BUS_ID, getEntityClass())
+		List<Seat> resultList = createNamedQuery(Seat.QUERY_FIND_BY_SEATNO_COORDINATES_AND_BUS_ID, getEntityClass())
 				.setParameter(Seat.PARAM_SEAT_NO, seatNo)
 				.setParameter(Seat.PARAM_CO_ORDINATES, coordinates)
-				.setParameter(Bus.PARAM_BUS_ID, busId);
-		List<Seat> resultList = query.getResultList();
-		return resultList.isEmpty() ? null : resultList.get(0);
+				.setParameter(Bus.PARAM_BUS_ID, busId)
+				.getResultList();
+		return getVOFromList(resultList);
+	}
+	
+	public int deleteByBus(BusVO bus) {
+    	return getEntityManager().createQuery(" DELETE FROM Seat s WHERE s.bus.id = :busId ", Integer.class)
+				.setParameter(Bus.PARAM_BUS_ID, bus.getId())
+				.executeUpdate();
+	}
+	
+	public int deleteByIdList(List<Long> seatIdList) {
+    	return getEntityManager().createQuery(" DELETE FROM Seat s WHERE s.id IN :seatIdList ", Integer.class)
+				.setParameter("seatIdList", seatIdList)
+				.executeUpdate();
 	}
 
 	public List<Seat> findBySearchVO(SeatSearchVO searchVO) {

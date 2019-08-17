@@ -31,11 +31,12 @@ public class BusDataFacade extends AbstractDataFacade<BusVO, Bus> {
 
     @Override
     public void convertEntitytoVO(Bus entity, BusVO vo) {
-    	convertBaseEntityToVO(entity, vo);
+    	super.convertBaseEntityToVO(entity, vo);
     	
     	vo.setCapacity(entity.getCapacity());
     	vo.setReg(entity.getReg());
     	vo.setImgUrl(entity.getImgUrl());
+    	vo.setSeatsAsString(entity.getSeatsAsString());
 
     	if (entity.getOperator() != null) {
     		vo.setOperator(serviceLocator.getOperatorDataFacade().getCachedVO(entity.getOperator()));
@@ -44,11 +45,12 @@ public class BusDataFacade extends AbstractDataFacade<BusVO, Bus> {
 
     @Override
     public Bus convertVOToEntity(BusVO vo, Bus entity) {
-        convertBaseVOToEntity(vo, entity);
+        super.convertBaseVOToEntity(vo, entity);
         
         entity.setCapacity(vo.getCapacity());
         entity.setReg(vo.getReg());
         entity.setImgUrl(vo.getImgUrl());
+        entity.setSeatsAsString(vo.getSeatsAsString());
         
         if (vo.getOperator() != null) {
     		entity.setOperator(serviceLocator.getOperatorDataFacade().findById(vo.getOperator().getId()));
@@ -71,6 +73,20 @@ public class BusDataFacade extends AbstractDataFacade<BusVO, Bus> {
 				.setParameter(Operator.PARAM_OPERATOR_ID, operatorId)
 				.setParameter(Bus.PARAM_STATUS, status);
 		return query.getResultList();
+	}
+	
+	public List<BusVO> getUnScheduled(long operatorId) {
+		List<Bus> resultList = createNamedQuery(Bus.QUERY_FIND_UNSCHEDULED_BY_OPERATOR_ID, getEntityClass())
+				.setParameter(Operator.PARAM_OPERATOR_ID, operatorId)
+				.getResultList();
+		return transformList(resultList);
+	}
+	
+	public BusVO getByReg(String busReg) {
+		List<Bus> resultList = createNamedQuery(Bus.QUERY_FIND_BY_REG, getEntityClass())
+				.setParameter(Bus.PARAM_BUS_REG, busReg.trim())
+				.getResultList();
+		return getVOFromList(resultList);
 	}
 
 }

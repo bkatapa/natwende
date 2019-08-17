@@ -1,5 +1,6 @@
 package com.mweka.natwende.trip.entity;
 
+import com.mweka.natwende.types.OperatorName;
 import com.mweka.natwende.types.Town;
 import com.mweka.natwende.types.TripStatus;
 import java.util.Date;
@@ -16,6 +17,7 @@ public abstract class Trip_ extends com.mweka.natwende.base.BaseEntity_ {
 	public static volatile SingularAttribute<Trip, Date> actualArrivalDate;
 	public static volatile SingularAttribute<Trip, Integer> availableNumOfSeats;
 	public static volatile SingularAttribute<Trip, String> travelDurationActual;
+	public static volatile SingularAttribute<Trip, OperatorName> operatorName;
 	public static volatile SingularAttribute<Trip, Integer> bookedNumOfSeats;
 	public static volatile SingularAttribute<Trip, String> routeName;
 	public static volatile SingularAttribute<Trip, Date> scheduledDepartureDate;

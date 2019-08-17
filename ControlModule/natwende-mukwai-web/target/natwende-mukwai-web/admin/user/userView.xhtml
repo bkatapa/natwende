@@ -13,24 +13,24 @@
 	<ui:define name="content">
 	
 		<h:form>
-			<p:panel header="#{UserAction.newUserMode ? 'Create new user' : 'Editing '.concat(UserAction.selectedEntity.fullname)}">
+			<p:panel header="#{UserAction.selectedEntity.id lt 0 ? 'Create new user' : 'Editing '.concat(UserAction.selectedEntity.fullname)}">
 				<p:panelGrid columns="4" layout="grid">
 					<p:outputLabel value="First name: "/>
-					<h:outputText value="#{UserAction.selectedUser.firstName}"/>
+					<h:outputText value="#{UserAction.selectedEntity.firstname}"/>
 					
 					<p:outputLabel value="Last name: "/>
-					<h:outputText value="#{UserAction.selectedUser.lastName}"/>
+					<h:outputText value="#{UserAction.selectedEntity.lastname}"/>
 					
 					<p:outputLabel value="Email: "/>
-					<h:outputText value="#{UserAction.selectedUser.email}"/>
+					<h:outputText value="#{UserAction.selectedEntity.email}"/>
 					
 					<p:outputLabel value="Phone number: "/>
-					<h:outputText value="#{UserAction.selectedUser.contactNumber}"/>
+					<h:outputText value="#{UserAction.selectedEntity.contactNumber}"/>
 				</p:panelGrid>
 				
 				<p:panel style="border: none;">
 					<f:facet name="header">
-						<p:button outcome="/admin/adminPanel" value="Back" icon="ui-icon-arrowthick-1-w" />
+						<p:button outcome="/admin/adminPanel?i=2" value="Back" icon="ui-icon-arrowthick-1-w" />
 					</f:facet>
 				</p:panel>
 				
@@ -38,22 +38,22 @@
 					<p:tab>
 						<p:panelGrid columns="4" layout="grid">
 							<p:outputLabel value="Line 1:"/>
-							<h:outputText value="#{UserAction.selectedEntity.address.line1}"/>
+							<h:outputText value="{UserAction.selectedEntity.address.line1}"/>
 							
 							<p:outputLabel value="Street:"/>
-							<h:outputText value="#{UserAction.selectedEntity.address.street}"/>
+							<h:outputText value="{UserAction.selectedEntity.address.street}"/>
 							
 							<p:outputLabel value="Surbab:"/>
-							<h:outputText value="#{UserAction.selectedEntity.address.surbab}"/>
+							<h:outputText value="{UserAction.selectedEntity.address.surbab}"/>
 							
 							<p:outputLabel value="City:"/>
-							<h:outputText value="#{UserAction.selectedEntity.address.city}"/>
+							<h:outputText value="{UserAction.selectedEntity.address.city}"/>
 							
 							<p:outputLabel value="Province:"/>
-							<h:outputText value="#{UserAction.selectedEntity.address.province}"/>
+							<h:outputText value="{UserAction.selectedEntity.address.province}"/>
 							
 							<p:outputLabel value="Country:"/>
-							<h:outputText value="#{UserAction.selectedEntity.address.country}"/>
+							<h:outputText value="{UserAction.selectedEntity.address.country}"/>
 						</p:panelGrid>
 						
 						<p:panel style="border: none;">

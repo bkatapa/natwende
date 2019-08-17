@@ -33,7 +33,8 @@ public class UserResource extends AbstractResourceBean<UserVO> {
 					.build();
 		}
 		try {
-			UserVO vo = serviceLocator.getUserDataFacade().getUserByNrc(nrc);
+			UserVO vo = serviceLocator.getUserDataFacade().getByNrc(nrc);
+			vo.setProfilePic(null);
 			return Response.status(Status.OK)
 					.entity(vo)
 					.build();

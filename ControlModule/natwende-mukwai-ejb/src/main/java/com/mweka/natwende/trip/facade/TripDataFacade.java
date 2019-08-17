@@ -13,6 +13,7 @@ import com.mweka.natwende.facade.AbstractDataFacade;
 import com.mweka.natwende.operator.entity.Bus;
 import com.mweka.natwende.route.entity.Route;
 import com.mweka.natwende.route.entity.Stop;
+import com.mweka.natwende.route.vo.RouteVO;
 import com.mweka.natwende.route.vo.StretchVO;
 import com.mweka.natwende.trip.entity.Trip;
 import com.mweka.natwende.trip.vo.TripVO;
@@ -46,10 +47,13 @@ public class TripDataFacade extends AbstractDataFacade<TripVO, Trip> {
     	vo.setFrom(entity.getFrom());
     	vo.setTotalNumOfSeats(entity.getTotalNumOfSeats());
     	vo.setDriverName(entity.getDriverName());
+    	vo.setScheduledDepartureDate(entity.getScheduledDepartureDate());
     	vo.setScheduledArrivalDate(entity.getScheduledArrivalDate());
     	vo.setTripStatus(entity.getTripStatus());
     	vo.setTravelDurationActual(entity.getTravelDurationActual());
     	vo.setTravelDurationExpected(entity.getTravelDurationExpected());
+        vo.setOperatorName(entity.getOperatorName());
+        vo.setRouteName(entity.getRouteName());
     	
     	if (entity.getTripSchedule() != null) {
     		vo.setTripSchedule(serviceLocator.getTripScheduleDataFacade().getCachedVO(entity.getTripSchedule()));
@@ -69,10 +73,13 @@ public class TripDataFacade extends AbstractDataFacade<TripVO, Trip> {
     	entity.setFrom(vo.getFrom());
     	entity.setTotalNumOfSeats(vo.getTotalNumOfSeats());
     	entity.setDriverName(vo.getDriverName());
+    	entity.setScheduledDepartureDate(vo.getScheduledDepartureDate());
     	entity.setScheduledArrivalDate(vo.getScheduledArrivalDate());
     	entity.setTripStatus(vo.getTripStatus());
     	entity.setTravelDurationActual(vo.getTravelDurationActual());
     	entity.setTravelDurationExpected(vo.getTravelDurationExpected());
+        entity.setOperatorName(vo.getOperatorName());
+        entity.setRouteName(vo.getRouteName());
     	
     	if (vo.getTripSchedule() != null) {
     		entity.setTripSchedule(serviceLocator.getTripScheduleDataFacade().findById(vo.getTripSchedule().getId()));
@@ -98,15 +105,13 @@ public class TripDataFacade extends AbstractDataFacade<TripVO, Trip> {
     }
     
     public List<TripVO> searchActiveByStretchAndTravelDate(StretchVO stretch, Date travelDate) {
-    	DateTime dt = new DateTime(travelDate);
-    	
+    	DateTime dt = new DateTime(travelDate);    	
     	List<Trip> resultList = createNamedQuery(Trip.QUERY_FIND_ACTIVE_BY_STRETCH_AND_TRAVEL_DATE, getEntityClass())
     			.setParameter(Stop.PARAM_FROM_TOWN, stretch.getFrom().getTown())
     			.setParameter(Stop.PARAM_TO_TOWN, stretch.getTo().getTown())
     			.setParameter("date1", dt.minusDays(1).toDate())
     			.setParameter("date2", dt.plusDays(1).toDate())
-    			.getResultList();
-    	
+    			.getResultList();    	
     	return transformList(resultList);
     }
 
@@ -117,5 +122,21 @@ public class TripDataFacade extends AbstractDataFacade<TripVO, Trip> {
     			.getResultList();
     	
     	return getVOFromList(resultList);
+    }
+    
+    public List<TripVO> getByRouteAndDepartureDate(RouteVO route, Date departureDate) {
+    	DateTime dt = new DateTime(departureDate);
+    	List<Trip> resultList = createNamedQuery(Trip.QUERY_FIND_BY_ROUTE_ID_AND_DEPARTURE_DATETIME, getEntityClass())
+    			.setParameter(Route.PARAM_ROUTE_ID, route.getId())
+    			.setParameter("date1", dt.minusDays(1).toDate())
+    			.setParameter("date2", dt.plusDays(1).toDate())
+    			.getResultList();    	
+    	return transformList(resultList);
+    }
+    
+    public List<TripVO> getActiveTrips() {
+    	List<Trip> resultList = createNamedQuery(Trip.QUERY_FIND_ACTIVE, getEntityClass())
+    			.getResultList();    	
+    	return transformList(resultList);
     }
 }

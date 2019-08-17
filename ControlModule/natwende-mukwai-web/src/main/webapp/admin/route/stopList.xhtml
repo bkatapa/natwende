@@ -15,7 +15,9 @@
 							 process="@this"							 
 							 action="#{StopAction.createEntity}"							 
 							 icon="ui-icon-plusthick"
-							 title="Click to add station." />
+							 title="Click to add station.">
+		 		<f:setPropertyActionListener value="1" target="#{StopAction.activeIndex}" />
+	 		</p:commandButton>
 		</p:toolbarGroup>
 	</p:toolbar>
 		
@@ -28,8 +30,8 @@
 				 emptyMessage="No stations have been added yet."
 				 styleClass="paginated">
 				 
-	 	<p:column headerText="Station Id">
-	 		<h:outputText value="#{entity.id}"/>
+	 	<p:column headerText="" width="50">
+	 		<p:graphicImage name="/images/natwende/location8.png" width="30" height="30" />
 	 	</p:column>
 	 	
 	 	<p:column headerText="Name">
@@ -47,17 +49,16 @@
 	 	<p:column headerText="Actions" style="text-align: center;" width="120">
 	 		<p:toolbar style="border: none;">
 	 			<p:toolbarGroup align="left">
-					<p:commandButton ajax="true"
-							 		 process="@this"
+					<p:commandButton process="@this"
 							 		 update="stop-dataTable"
 							 		 icon="ui-icon-zoomin"
 							 		 title="View details of this station.">
 				 		 <f:setPropertyActionListener value="#{entity}" target="#{StopAction.selectedEntity}" />
+				 		 <f:setPropertyActionListener value="1" target="#{StopAction.activeIndex}" />
 			 		 </p:commandButton>
 				</p:toolbarGroup>
 				<p:toolbarGroup align="right">
-					<p:commandButton ajax="true"
-							 		 process="@this"
+					<p:commandButton process="@this"
 						 			 update="stop-dataTable"
 						 			 action="#{StopAction.deleteEntity}"
 						 			 icon="ui-icon-trash"

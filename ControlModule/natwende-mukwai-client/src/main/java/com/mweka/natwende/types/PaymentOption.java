@@ -6,7 +6,7 @@ public enum PaymentOption implements Displayable {
 	CASH("Cash"),
 	MOBILE_MONEY("Mobile money"),
 	SWIPE_MACHINE("Swipe machine"),
-	VIA_CARD("Visa card"),
+	VISA_CARD("Visa card"),
 	ZOONA("Zoona");
 
 	private final String display;

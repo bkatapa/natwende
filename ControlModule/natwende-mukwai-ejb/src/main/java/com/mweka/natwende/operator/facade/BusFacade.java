@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 
 import com.mweka.natwende.facade.AbstractFacade;
 import com.mweka.natwende.operator.vo.BusVO;
+import com.mweka.natwende.operator.vo.OperatorVO;
 import com.mweka.natwende.types.Status;
 
 @Stateless
@@ -46,6 +47,15 @@ public class BusFacade extends AbstractFacade<BusVO> {
 			log.debug(ex);
 			throw new EJBException(ex);
 		}
+	}
+	
+	public List<BusVO> getByOperator(OperatorVO operator) throws Exception {
+		return serviceLocator.getBusDataFacade().getAllByOperatorIdAndStatus(operator.getId(), Status.ACTIVE);
+	}
+	
+	public List<BusVO> getUnScheduled(OperatorVO operator) {
+		List<BusVO> resultList = serviceLocator.getBusDataFacade().getUnScheduled(operator.getId());
+		return resultList;
 	}
 	
 }

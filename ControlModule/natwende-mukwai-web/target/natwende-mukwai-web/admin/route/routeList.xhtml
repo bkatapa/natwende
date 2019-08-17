@@ -9,8 +9,7 @@
 				xmlns:pe="http://primefaces.org/ui/extensions"
 				xmlns:o="http://omnifaces.org/ui">
 				
-	<p:accordionPanel>
-				
+	<p:accordionPanel activeIndex="#{StopAction.activeIndex}">
 		<p:tab title="Routes">
 			<p:toolbar style="margin-bottom: 5px; border: none;">
 				<p:toolbarGroup align="right">
@@ -18,7 +17,9 @@
 									 process="@this"
 									 action="#{RouteAction.createEntity}"
 									 icon="ui-icon-plusthick"
-									 title="Click to add route." />
+									 title="Click to add route.">
+			 			<f:setPropertyActionListener value="0" target="#{StopAction.activeIndex}" />
+			 		</p:commandButton>
 				</p:toolbarGroup>
 			</p:toolbar>
 			
@@ -30,11 +31,11 @@
 						 rows="10"
 						 emptyMessage="No routes have been added yet."
 						 styleClass="paginated">
-				<!-- 
-			 	<p:column headerText="Route Id">
-			 		<h:outputText value="#{entity.id}"/>
+						 
+			 	<p:column headerText="" width="50">
+			 		<p:graphicImage name="/images/natwende/route2.png" width="30" height="30" />
 			 	</p:column> 
-			 	-->
+			 	
 			 	<p:column headerText="Name">
 			 		<h:outputText value="#{entity.name}"/>
 			 	</p:column>
@@ -56,16 +57,19 @@
 									 		 icon="ui-icon-zoomin"
 									 		 title="View details of this route.">
 					 		 	<f:setPropertyActionListener value="#{entity}" target="#{RouteAction.selectedEntity}" />
+					 		 	<f:setPropertyActionListener value="0" target="#{StopAction.activeIndex}" />
 					 		 </p:commandButton>
 						</p:toolbarGroup>
 						<p:toolbarGroup align="right">
 							<p:commandButton ajax="true"
 									 		 process="@this"
 								 			 update="route-dataTable"
-								 			 actionListener="#{RouteAction.deleteEntity}"
+								 			 actionListener="#{RouteAction.deleteEntity(entity)}"
 								 			 icon="ui-icon-trash"
 								 			 title="Delete this route.">
-								<f:setPropertyActionListener value="#{entity}" target="#{RouteAction.selectedEntity}" />	 			 
+								<p:confirm header="Delete route #{entity.name}?"
+												   message="Are you sure you want to delete route #{entity.name}? Please that this action will also purge all route/stretch links!"
+												   icon="ui-icon-alert" />	 			 
 				 			 </p:commandButton>
 						</p:toolbarGroup>
 					</p:toolbar>

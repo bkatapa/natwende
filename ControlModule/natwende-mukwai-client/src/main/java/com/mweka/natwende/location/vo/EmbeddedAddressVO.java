@@ -3,34 +3,39 @@ package com.mweka.natwende.location.vo;
 import java.io.Serializable;
 
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.mweka.natwende.types.Town;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class EmbeddedAddressVO implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Size(max = 45)
-		private String name;
+		private String premises;
 
 		@Size(max = 255)
 		private String line1;
 
 		@Size(max = 255)
-		private String city;
+		private String street;
 
 		@Size(max = 255)
-		private String province;
+		private String surbab;
+		
+		private Town town;
 
-		@Size(max = 255)
-		private String postalCode;
-
-		@Size(max = 255)
-		private String country;
-
-		public String getName() {
-			return name;
+		public String getPremises() {
+			return premises;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setPremises(String premises) {
+			this.premises = premises;
 		}
 
 		public String getLine1() {
@@ -41,35 +46,53 @@ public class EmbeddedAddressVO implements Serializable {
 			this.line1 = line1;
 		}
 
-		public String getCity() {
-			return city;
+		public String getSurbab() {
+			return surbab;
 		}
 
-		public void setCity(String city) {
-			this.city = city;
+		public void setSurbab(String surbab) {
+			this.surbab = surbab;
 		}
 
-		public String getProvince() {
-			return province;
+		public String getStreet() {
+			return street;
 		}
 
-		public void setProvince(String province) {
-			this.province = province;
+		public void setStreet(String street) {
+			this.street = street;
 		}
 
-		public String getPostalCode() {
-			return postalCode;
+		public Town getTown() {
+			return town;
 		}
 
-		public void setPostalCode(String postalCode) {
-			this.postalCode = postalCode;
+		public void setTown(Town town) {
+			this.town = town;
 		}
 
-		public String getCountry() {
-			return country;
+		@Override
+		public String toString() {
+			StringBuilder address = new StringBuilder();
+			if (StringUtils.isNotEmpty(premises)) {
+				address.append(premises).append(SINGLE_SPACE);
+			}
+			if (StringUtils.isNotEmpty(line1)) {
+				address.append(line1).append(SINGLE_SPACE);
+			}
+			if (StringUtils.isNotEmpty(street)) {
+				address.append(street).append(SINGLE_SPACE);
+			}
+			if (StringUtils.isNotEmpty(surbab)) {
+				address.append(surbab).append(", ");
+			}
+			if (town != null) {
+				address.append(town);
+			}
+			if (StringUtils.isEmpty(address)) {
+				return super.toString();
+			}
+			return address.toString();
 		}
-
-		public void setCountry(String country) {
-			this.country = country;
-		}
+		
+		private static final transient String SINGLE_SPACE = " ";
 	}

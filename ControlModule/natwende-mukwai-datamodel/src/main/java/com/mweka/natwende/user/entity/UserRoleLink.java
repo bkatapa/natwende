@@ -15,13 +15,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "UserRoleLink")
 @XmlRootElement
 @NamedQueries({
-@NamedQuery(name = "UserRoleLink.findAll", query = "SELECT u FROM UserRoleLink u"),
-@NamedQuery(name = "UserRoleLink.findById", query = "SELECT u FROM UserRoleLink u WHERE u.id = :id"),
-@NamedQuery(name = "UserRoleLink.findByUserId", query = "SELECT u FROM UserRoleLink u WHERE u.user.id = :userId")})
+@NamedQuery(name = UserRoleLink.QUERY_FIND_ALL, query = "SELECT u FROM UserRoleLink u"),
+@NamedQuery(name = UserRoleLink.QUERY_FIND_BY_ID, query = "SELECT u FROM UserRoleLink u WHERE u.id = :id"),
+@NamedQuery(name = UserRoleLink.QUERY_FIND_BY_USER_ID, query = "SELECT u FROM UserRoleLink u WHERE u.user.id = :userId"),
+@NamedQuery(name = UserRoleLink.QUERY_FIND_BY_USER_ID_AND_ROLE_ID, query = " SELECT url FROM UserRoleLink url WHERE url.user.id = :userId AND url.role.id = :roleId ")})
 public class UserRoleLink extends BaseEntity {
 
 	@Transient
     private static final long serialVersionUID = 1L;
+	
+	// Named Queries
+	public static transient final String QUERY_FIND_ALL = "UserRoleLink.findAll";
+	public static transient final String QUERY_FIND_BY_ID = "UserRoleLink.findById";
+	public static transient final String QUERY_FIND_BY_USER_ID = "UserRoleLink.findByUserId";
+	public static transient final String QUERY_FIND_BY_USER_ID_AND_ROLE_ID = "UserRoleLink.findByUserIdAndRoleId";
 
     @JoinColumn(name = "User_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

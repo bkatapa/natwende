@@ -8,9 +8,10 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.primefaces.context.RequestContext;
+//import org.primefaces.context.RequestContext;
 
 import com.mweka.natwende.helper.MessageHelper;
+import com.mweka.natwende.helper.VelocityGen;
 import com.mweka.natwende.operator.vo.BusVO;
 import com.mweka.natwende.types.Status;
 import com.mweka.natwende.util.ServiceLocator;
@@ -22,29 +23,31 @@ public class BusAction extends MessageHelper<BusVO> {
 private static final long serialVersionUID = 1L;
 	
 	//private BusSearchVO searchVO;
-	private boolean enableNewBusPanel;
+	private boolean editSeats;
 
 	@EJB
 	private ServiceLocator serviceLocator;
 	
 	@Inject
 	private OperatorAction operatorAction;
+	
+	@Inject
+	private VelocityGen velocityGen;
 
 	@PostConstruct
-	//@Override
 	public void init() {		
-		setSelectedEntity(new BusVO());
-		enableNewBusPanel = false;
+		selectedEntity = new BusVO();
+		editSeats = false;
+	}	
+
+	public boolean isEditSeats() {
+		return editSeats;
 	}
-	
-	public boolean isEnableNewBusPanel() {
-		return enableNewBusPanel;
+
+	public void setEditSeats(boolean editSeats) {
+		this.editSeats = editSeats;
 	}
-	
-	public void setEnableNewBusPanel(boolean enableNewBusPanel) {
-		this.enableNewBusPanel = enableNewBusPanel;
-	}
-	
+
 	@Override
 	public List<BusVO> getEntityList() {		
 		loadEntityList();
@@ -53,24 +56,21 @@ private static final long serialVersionUID = 1L;
 
 	@Override
 	public String createEntity() {
-		init();
-		enableNewBusPanel = true;
+		init();		
 		return viewEntity();
 	}
 	
 	@Override
 	public String saveEntity() {
 		try {
-			getSelectedEntity().setOperator(operatorAction.getSelectedEntity());
-			getSelectedEntity().setImgUrl(operatorAction.getSelectedEntity().getName().getUrl());
-			serviceLocator.getBusFacade().saveBus(getSelectedEntity());			
+			if (selectedEntity.getOperator() == null) {
+				selectedEntity.setOperator(operatorAction.getSelectedEntity());
+			}
+			serviceLocator.getBusFacade().saveBus(selectedEntity);
+			onMessage(SEVERITY_INFO, "Bus [" + selectedEntity.getReg() + "] saved successfully.");
 		}
 		catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
-		}
-		finally {
-			enableNewBusPanel = false;
-			RequestContext.getCurrentInstance().execute(HIDE_NEW_BUS_PANEL);
 		}
 		return SUCCESS_PAGE;
 	}
@@ -83,12 +83,20 @@ private static final long serialVersionUID = 1L;
 	@Override
 	public void deleteEntity() {
 		try {
-			serviceLocator.getBusFacade().deleteBus(getSelectedEntity().getId());
-			onMessage(SEVERITY_INFO, "Record deleted successfully");
+			serviceLocator.getBusFacade().deleteBus(selectedEntity.getId());
+			onMessage(SEVERITY_INFO, "Bus record deleted successfully");
 		}
 		catch (Exception ex) {
 			onMessage(SEVERITY_ERROR, ex.getMessage());
 		}
+	}
+	
+	public List<BusVO> getUnscheduledBuses() {
+		return serviceLocator.getBusFacade().getUnScheduled(operatorAction.getSelectedEntity());
+	}
+	
+	public String getBusTemplateScript() {
+		return velocityGen.busTemplate(selectedEntity.getSeatsAsString(), null);
 	}
 	
 	private void loadEntityList() {
@@ -100,9 +108,9 @@ private static final long serialVersionUID = 1L;
 		}
 	}
 	
-	private static final String VIEW_PAGE = "/admin/operator/busView?faces-redirect=true";
+	private static final String VIEW_PAGE = "/admin/operator/busView?faces-redirect=true&i=2";
 	private static final String SUCCESS_PAGE = "/admin/operator/busSuccess?faces-redirect=true";
-	private static final String HIDE_NEW_BUS_PANEL = "PF('var_NewBus').hide()";
+	//private static final String HIDE_NEW_BUS_PANEL = "PF('var_NewBus').hide()";
 
 	
 }

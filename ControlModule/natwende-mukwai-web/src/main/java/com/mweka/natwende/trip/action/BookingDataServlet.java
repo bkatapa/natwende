@@ -1,26 +1,28 @@
-package com.mweka.natwende.booking.action;
+package com.mweka.natwende.trip.action;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import javax.faces.validator.LengthValidator;
+//import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.mweka.natwende.operator.vo.SeatVO;
-import com.mweka.natwende.payment.vo.PaymentVO;
+import org.apache.commons.lang.StringUtils;
+
+//import com.google.gson.JsonArray;
+//import com.google.gson.JsonElement;
+//import com.google.gson.JsonObject;
+//import com.google.gson.JsonParser;
 import com.mweka.natwende.trip.vo.BookingVO;
-import com.mweka.natwende.types.SeatClass;
-import com.mweka.natwende.user.vo.UserVO;
 
 /**
  * Servlet implementation class BookingDataServlet
  */
-@WebServlet("/BookingDataServlet")
+@WebServlet("/bookingData")
 public class BookingDataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -47,6 +49,10 @@ public class BookingDataServlet extends HttpServlet {
 	}
 	
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		/*
+		if (request.getUserPrincipal() == null) {
+			response.sendRedirect("/" + request.getServletContext() + "/login");
+		}*/
 		response.setContentType("application/json; charset=UTF-8");
 		StringBuffer buffer = new StringBuffer();
 		String line;
@@ -55,14 +61,10 @@ public class BookingDataServlet extends HttpServlet {
 			while ((line = reader.readLine()) != null && !line.trim().isEmpty()) {
 				buffer.append(line);
 			}
-			if (buffer.length() > 0 && request.getSession(false) != null) {
-				BookingAction bookingAction = (BookingAction) request.getSession().getAttribute("BookingAction");
-				if (bookingAction == null) {
-					bookingAction = new BookingAction();
-					bookingAction.init();
-					request.getSession().setAttribute("BookingAction", bookingAction);
+			if (buffer.length() > 0) {
+				if (extractDataFromJson(buffer.toString())) {
+					processBookingData(buffer);
 				}
-				processBookingData(buffer, bookingAction);
 			}
 			else {
 				response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED);
@@ -73,43 +75,41 @@ public class BookingDataServlet extends HttpServlet {
 		}
 	}
 	
-	private synchronized void processBookingData(final StringBuffer data, BookingAction bookingAction) {
+	private synchronized void processBookingData(final StringBuffer data) {
 		int totalIndex = data.indexOf("total");
 		data.delete(--totalIndex, totalIndex + 12);
 		int bookedSeatsIndex = data.indexOf("bookedSeats");
-		String bookedSeatsLine = data.substring(bookedSeatsIndex) + 14, data.length() - 3);
+		String bookedSeatsLine = data.substring(bookedSeatsIndex + 14, data.length() - 3);
 		String[] bookingList = bookedSeatsLine.split(",");
-		bookingAction.getEntityList().clear();
+		//bookingAction.getEntityList().clear();
 		
 		if (bookingList.length == 1) {
-			breakDownBookingData(bookedSeatsLine, bookingAction);
+			breakDownBookingData(bookedSeatsLine);
 		}
 		else {
 			for (String bookingEntry : bookingList) {
-				breakDownBookingData(bookingEntry, bookingAction);
+				breakDownBookingData(bookingEntry);
 			}
-		}
-		if (bookingAction.getEntityList().size() == 1) {
-			bookingAction.setSelectedEntity(bookingAction.getEntityList().get(0));
 		}
 	}
 	
-	private void breakDownBookingData(String data, BookingAction bookingAction) {
+	private void breakDownBookingData(String data) {
 		String[] comps = data.split(":");
 		int idx = comps[0].indexOf("Seat");
 		String seatNo = comps[0].substring(idx + 7);
-		String seatClass = comps[0].substring(1, idx - 1);
-		String seatFare = comps[1].replaceAll("K", "").replace("[cancel]\"", "").trim();
-		SeatVO seat = new SeatVO(seatNo);
-		
-		if (seatClass.contains("Economy")) {
-			seat.setSeatClass(SeatClass.ECONOMY);
-		}
-		
-		UserVO user = new UserVO("Chanda", "Chikokoshi", "cc@mweka.com");
-		BookingVO booking = new BookingVO(seat.getSeatNo(), user);
-		booking.setPayment(new PaymentVO(new BigDecimal(seatFare)));
-		bookingAction.getEntityList().add(booking);		
+		String seatFare = comps[1].replaceAll("\\D+", StringUtils.EMPTY);		
+		BookingVO booking = new BookingVO(seatNo);
+		BigDecimal busFare = BigDecimal.valueOf(Double.parseDouble(seatFare));
+		booking.setFare(busFare);
+		//bookingAction.getEntityList().add(booking);		
+	}
+	
+	private boolean extractDataFromJson(String jsonLine) { // json: { "bookedSeats" : [""], "total" : "0" }
+		//JsonElement jelement = new JsonParser().parse(jsonLine);
+		//JsonObject jobject = jelement.getAsJsonObject();
+		//JsonArray jarray = jobject.getAsJsonArray("bookedSeats");
+		//return jarray.size() > 0 && !jarray.get(0).getAsString().isEmpty();
+		return true;
 	}
 
 }

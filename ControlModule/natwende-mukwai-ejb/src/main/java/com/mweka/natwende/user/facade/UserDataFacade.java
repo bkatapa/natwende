@@ -3,18 +3,22 @@ package com.mweka.natwende.user.facade;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.LogFactory;
 
 import com.mweka.natwende.exceptions.EntityNotFoundException;
 import com.mweka.natwende.exceptions.UserNotFoundException;
 import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.interceptor.UserPermissionsInterceptor;
 import com.mweka.natwende.operator.entity.Operator;
+import com.mweka.natwende.payment.entity.Payment;
 import com.mweka.natwende.types.OperatorName;
 import com.mweka.natwende.types.RoleType;
 import com.mweka.natwende.types.Status;
@@ -33,12 +37,7 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
 
     @Override
     public User updateEntity(UserVO vo) {
-        User entity;
-        if (vo.getId() > 0) {
-            entity = findById(vo.getId());
-        } else {
-            entity = new User();
-        }
+        User entity = vo.getId() > 0 ? findById(vo.getId()) : new User();
         convertVOToEntity(vo, entity);
         update(entity);
         return entity;
@@ -68,6 +67,7 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
 
     @Override
     public void convertEntitytoVO(User entity, UserVO vo) {
+    	super.convertBaseEntityToVO(entity, vo);
         vo.setUsername(entity.getUsername());
         vo.setEmail(entity.getEmail());
         vo.setFirstname(entity.getFirstname());
@@ -75,6 +75,15 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
         vo.setPasswd(entity.getPasswd());
         vo.setStatus(entity.getStatus());
         vo.setContactNumber(entity.getContactNumber());
+        vo.setNrc(entity.getNrc());
+        vo.setProfilePic(entity.getProfilePic());
+        if (entity.getAddress() != null) {
+        	vo.getAddress().setLine1(entity.getAddress().getLine1());
+        	//vo.getAddress().setPremises(entity.getAddress().getPremises());
+        	vo.getAddress().setStreet(entity.getAddress().getStreet());
+        	vo.getAddress().setSurbab(entity.getAddress().getSurbab());
+        	vo.getAddress().setTown(entity.getAddress().getTown());        	
+        }
         if (entity.getOperator() != null) {
             vo.setOperator(serviceLocator.getOperatorDataFacade().getCachedVO(entity.getOperator()));
         }
@@ -82,7 +91,7 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
 
     @Override
     public User convertVOToEntity(UserVO vo, User entity) {
-        convertBaseVOToEntity(vo, entity);
+        super.convertBaseVOToEntity(vo, entity);
         entity.setUsername(vo.getUsername());
         entity.setEmail(vo.getEmail());
         entity.setFirstname(vo.getFirstname());
@@ -90,6 +99,15 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
         entity.setPasswd(vo.getPasswd());
         entity.setStatus(vo.getStatus());
         entity.setContactNumber(vo.getContactNumber());
+        entity.setProfilePic(vo.getProfilePic());
+        entity.setNrc(vo.getNrc());
+        if (vo.getAddress() != null) {
+        	entity.getAddress().setLine1(vo.getAddress().getLine1());
+        	//entity.getAddress().setPremises(vo.getAddress().getPremises());
+        	entity.getAddress().setStreet(vo.getAddress().getStreet());
+        	entity.getAddress().setSurbab(vo.getAddress().getSurbab());
+        	entity.getAddress().setTown(vo.getAddress().getTown());
+        }
         if (vo.getOperator() != null) {
             entity.setOperator(serviceLocator.getOperatorDataFacade().findById(vo.getOperator().getId()));
         }
@@ -138,33 +156,23 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
             Root<User> root = cq.from(User.class);
             cq.select(root).where(cb.equal(root.get(User_.email), email)).orderBy(cb.desc(root.get(User_.updateDate)));
 	    
-	    List<User> resultList = createTypedQuery(cq).getResultList();
-	    if (resultList.isEmpty()){
-		throw new UserNotFoundException("User not found with email address: "+email);
-	    } else if (resultList.size() > 1){
-		log.warn("More than 1 user found with email address: "+email);
-	    }
-	    return resultList.get(0);
-        } catch (NoResultException nre) {
+            List<User> resultList = createTypedQuery(cq).getResultList();
+            if (resultList.isEmpty()) {
+            	throw new UserNotFoundException("User not found with email address: " + email);
+            } 
+            if (resultList.size() > 1) {
+            	log.warn("More than 1 user found with email address: " + email);
+            }
+            return resultList.get(0);
+    	} 
+        catch (NoResultException nre) {
             throw new UserNotFoundException(nre);
         }
-    }
-
-    public List<User> findUsersByOperatorId(Long operatorId) {
-        TypedQuery<User> query = getEntityManager().createNamedQuery("User.findByOperatorId", getEntityClass()).setParameter("operatorId", operatorId);
-        return query.getResultList();
     }
 
     public UserVO getUserByPrincipalName(String principalName) throws UserNotFoundException {
         User user = findByUserName(principalName);
         return getCachedVO(user);
-    }
-    
-    private List<User> findUsersByPermissions(List<RoleType> roleTypes) {
-        TypedQuery<User> query = getEntityManager().createNamedQuery(User.NAMED_QUERY_FIND_USERS_BY_PERMISSIONS, getEntityClass())
-        		.setParameter(User.NAMED_QUERY_PARAM_ROLE_TYPES, roleTypes);
-        List<User> users = query.getResultList();
-        return users;
     }
     
     public List<String> getAllUserNames() {
@@ -179,14 +187,11 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
         return emails;
     }
 
-    public List<UserVO> getUsersByOperatorId(Long id) {
-        List<User> userList = findUsersByOperatorId(id);
-        return transformList(userList);
-    }         
-
-    public UserVO getUserById(int id) throws UserNotFoundException {
-        User user = findById(id);
-        return getCachedVO(user);
+    public List<UserVO> getByOperatorId(Long operatorId) {
+    	List<User> resultList = createNamedQuery("User.findByOperatorId", getEntityClass())
+    			.setParameter("operatorId", operatorId)
+    			.getResultList();
+        return transformList(resultList);
     }
 
     public UserVO getUserByEmail(String email) throws UserNotFoundException {
@@ -201,33 +206,34 @@ public class UserDataFacade extends AbstractDataFacade<UserVO, User> {
     }
 
     public UserVO getUserByUsername(String username) throws UserNotFoundException {
-        if (username == null || username.equalsIgnoreCase("")) {
+        if (StringUtils.isBlank(username)) {
             throw new UserNotFoundException("Blank/Null Username");
         }
         User user = findByUserName(username);
         UserVO userVO = getCachedVO(user);
         return userVO;
-    }
-
-    public List<UserVO> getNonRegisteredBuyers(long supplierId) {        
-    	TypedQuery<User> query = createNamedQuery(User.NAMED_QUERY_FIND_NON_REGISTERED_USERS, User.class);
-    	query.setParameter(User.NAMED_QUERY_PARAM_SUPPLIER_ID, supplierId);	
-    	return transformList(query.getResultList());
-    }
-
-    public List<UserVO> getUsersByPermissions(List<RoleType> roleTypes) {
-    	return transformList(findUsersByPermissions(roleTypes));
+    }    
+    
+    @Interceptors(UserPermissionsInterceptor.class)
+    public UserVO getByPaymentRef(String paymentRef) {
+    	List<User> resultList = createNamedQuery(User.NAMED_QUERY_FIND_BY_PAYMENT_REF, getEntityClass())
+    			.setParameter(Payment.PARAM_REF, paymentRef)
+    			.getResultList();
+    	return getVOFromList(resultList);
     }
     
-    public List<UserVO> getListByRoleTypeAndOperatorName(RoleType roleType, OperatorName operatorName) {
-    	return transformList(findListByRoleTypeAndOperatorName(roleType, operatorName));
-    }
-    
-    private List<User> findListByRoleTypeAndOperatorName(RoleType roleType, OperatorName operatorName) {
-    	List<User> resultList = createNamedQuery(User.NAMED_QUERY_FIND_LIST_BY_ROLETYPE_AND_OPERATOR_NAME, getEntityClass())
+    public List<UserVO> getByRoleTypeAndOperatorName(RoleType roleType, OperatorName operatorName) {
+    	List<User> resultList = createNamedQuery(User.NAMED_QUERY_FIND_BY_ROLETYPE_AND_OPERATOR_NAME, getEntityClass())
     			.setParameter(Role.PARAM_ROLE_TYPE, roleType)
     			.setParameter(Operator.PARAM_OPERATOR_NAME, operatorName)
     			.getResultList();
-    	return resultList;
+    	return transformList(resultList);
+    }
+    
+    public UserVO getByNrc(String nrc) {
+    	List<User> resultList = createNamedQuery(User.NAMED_QUERY_FIND_BY_NRC,getEntityClass())        		
+    			.setParameter(User.PARAM_NRC, nrc + "%")
+    			.getResultList();
+        return getVOFromList(resultList);
     }
 }

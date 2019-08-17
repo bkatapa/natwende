@@ -1,5 +1,7 @@
 package com.mweka.natwende.trip.facade;
 
+import java.util.List;
+
 import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -39,6 +41,43 @@ public class BusTripScheduleLinkFacade extends AbstractFacade<BusTripScheduleLin
 				log.debug(ex);
 				throw new EJBException(ex);
 			}
+		}
+	}
+	
+	public void updateBusTripScheduleLinkList(List<BusTripScheduleLinkVO> list) throws Exception {
+		for (BusTripScheduleLinkVO link : list) {
+			if (link.getDriver() == null) {
+				try {
+					serviceLocator.getBusTripScheduleLinkDataFacade().deleteById(link.getId());
+				}
+				catch (Exception e) {
+					log.debug(e);
+					throw e;
+				}
+				continue;
+			}
+			long busId = link.getBus().getId();
+			final long tripScheduleId = link.getTripSchedule().getId();
+			BusTripScheduleLinkVO result = serviceLocator.getBusTripScheduleLinkDataFacade().getByBusIdAndTripScheduleId(busId, tripScheduleId);
+			if (result == null) {
+				try {
+					serviceLocator.getBusTripScheduleLinkDataFacade().update(link);
+				}
+				catch (Exception e) {
+					log.debug(e);
+					throw e;
+				}
+			}
+		}
+	}
+	
+	public List<BusTripScheduleLinkVO> fetchByTripSchedule(TripScheduleVO tripSchedule) throws Exception {
+		try {
+			return serviceLocator.getBusTripScheduleLinkDataFacade().getListByScheduleId(tripSchedule.getId());
+		}
+		catch (Exception ex) {
+			log.debug(ex);
+			throw new EJBException(ex);
 		}
 	}
  }

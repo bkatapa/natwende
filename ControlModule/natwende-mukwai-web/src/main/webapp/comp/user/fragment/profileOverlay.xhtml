@@ -38,10 +38,11 @@
 			<f:facet name="left">
 				<p:commandButton value="Manage"
 								 process="@this"
-								 update="@widgetVar(var_UserEditPanel)"
+								 update="@all"
 								 oncomplete="PF('var_UserEditDlg').show();"
 								 icon="ui-icon-person">
 					<f:setPropertyActionListener value="#{UserAction.loggedInUser}" target="#{UserAction.selectedEntity}" />	 
+		 			<f:actionListener binding="#{UserAction.onSelectEntity()}" />
 		 		</p:commandButton>
 			</f:facet>
 			<f:facet name="right">

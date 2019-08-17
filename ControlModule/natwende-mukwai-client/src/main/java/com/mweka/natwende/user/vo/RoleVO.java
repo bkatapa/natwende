@@ -30,4 +30,11 @@ public class RoleVO extends BaseVO {
         this.roleType = roleType;
     }
 
+    @Override
+    public String toString() {
+    	if (roleType == null) {
+    		return "";
+    	}
+    	return roleType.getDescription();
+    }
 }

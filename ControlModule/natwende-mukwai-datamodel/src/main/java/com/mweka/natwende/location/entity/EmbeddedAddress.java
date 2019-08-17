@@ -4,63 +4,73 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Size;
+
+import com.mweka.natwende.types.Town;
 
 @Embeddable
 public class EmbeddedAddress implements Serializable {
  	private static final long serialVersionUID = 1L;
+ 	
 	@Size(max = 45)
     @Column(length = 45)
-    private String name;
+    private String premises;
+	
     @Size(max = 255)
     @Column(length = 255)
     private String line1;
+    
     @Size(max = 255)
     @Column(length = 255)
-    private String city;
+    private String street;
+    
     @Size(max = 255)
     @Column(length = 255)
-    private String province;
-    @Size(max = 255)
-    @Column(length = 255)
-    private String postalCode;
-    @Size(max = 255)
-    @Column(length = 255)
-    private String country;
-	public String getName() {
-		return name;
+    private String surbab;
+    
+    @Enumerated(EnumType.STRING)
+    private Town town;
+    
+	public String getPremises() {
+		return premises;
 	}
-	public void setName(String name) {
-		this.name = name;
+	
+	public void setPremises(String premises) {
+		this.premises = premises;
 	}
+	
 	public String getLine1() {
 		return line1;
 	}
+	
 	public void setLine1(String line1) {
 		this.line1 = line1;
 	}
-	public String getCity() {
-		return city;
+	
+	public String getStreet() {
+		return street;
 	}
-	public void setCity(String city) {
-		this.city = city;
+
+	public void setStreet(String street) {
+		this.street = street;
 	}
-	public String getProvince() {
-		return province;
+
+	public String getSurbab() {
+		return surbab;
 	}
-	public void setProvince(String province) {
-		this.province = province;
+
+	public void setSurbab(String surbab) {
+		this.surbab = surbab;
 	}
-	public String getPostalCode() {
-		return postalCode;
+
+	public Town getTown() {
+		return town;
 	}
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
+	
+	public void setTown(Town town) {
+		this.town = town;
 	}
-	public String getCountry() {
-		return country;
-	}
-	public void setCountry(String country) {
-		this.country = country;
-	}
+	
 }

@@ -1,5 +1,6 @@
 package com.mweka.natwende.location.entity;
 
+import com.mweka.natwende.types.Town;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
@@ -8,11 +9,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(EmbeddedAddress.class)
 public abstract class EmbeddedAddress_ {
 
-	public static volatile SingularAttribute<EmbeddedAddress, String> country;
-	public static volatile SingularAttribute<EmbeddedAddress, String> province;
-	public static volatile SingularAttribute<EmbeddedAddress, String> city;
-	public static volatile SingularAttribute<EmbeddedAddress, String> postalCode;
-	public static volatile SingularAttribute<EmbeddedAddress, String> name;
+	public static volatile SingularAttribute<EmbeddedAddress, String> surbab;
+	public static volatile SingularAttribute<EmbeddedAddress, Town> town;
+	public static volatile SingularAttribute<EmbeddedAddress, String> premises;
+	public static volatile SingularAttribute<EmbeddedAddress, String> street;
 	public static volatile SingularAttribute<EmbeddedAddress, String> line1;
 
 }

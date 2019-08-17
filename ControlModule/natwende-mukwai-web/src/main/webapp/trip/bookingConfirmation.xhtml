@@ -60,45 +60,66 @@
 		 		
 		 		<!-- Step#1 Confirm trip details -->
 		 		
-		 		<p:panel id="step1"
-		 				 header="Confirm trip details"
+		 		<p:panel id="step1"		 				 
 		 				 rendered="#{BookingAction.currentStep eq 0}"
 		 				 style="margin-top: 40px; border: none;">
+		 				 
+				 	<f:facet name="header">
+				 		<h:outputText value="Complete passenger details" />
+				 	</f:facet>
+		 				 
 		 			<p:messages id="step1-msgs" showSummary="true" closable="true" />
+		 			
 		 			<p:tabView id="booking-tabView"
 		 					   value="#{BookingAction.entityList}"
 		 					   var="booking"
 		 					   effect="fade"
 		 					   activeIndex="#{BookingAction.activeIndex}"
 		 					   style="border: none;">
+		 					   
 		 				<p:ajax event="tabChange" listener="#{BookingAction.onTabChange}" />
 		 				<p:ajax event="tabClose" listener="#{BookingAction.onTabClose}" />
+		 				
 		 				<p:tab title="Seat ##{booking.seatNumber}">
 		 					<p:panelGrid columns="2" layout="grid">
-		 						<p:outputLabel value="Name: " for="customer-name"/>
-		 						<h:outputText id="customer-name" value="#{booking.customerName}" />
+		 						<p:outputLabel value="Passenger first name: " for="passenger-firstName"/>
+		 						<p:inputText id="passenger-firstName" value="#{booking.passengerFirstName}" />
 		 						
-		 						<p:outputLabel value="Email: " for="customer-email"/>
-		 						<h:outputText value="#{booking.customerEmail}" />
+		 						<p:outputLabel value="Passenger last name: " for="passenger-lastName"/>
+		 						<p:inputText id="passenger-lastName" value="#{booking.passengerLastName}" />
 		 						
-		 						<p:outputLabel value="From: " for="booking-from"/>
-		 						<h:outputText id="booking-from" value="#{booking.from}" />
+		 						<p:outputLabel value="Passenger email: " for="passenger-email"/>
+		 						<p:inputText id="passenger-email" value="#{booking.passengerEmail}" />
 		 						
-		 						<p:outputLabel value="To: " for="booking-to"/>
-		 						<h:outputText id="booking-to" value="#{booking.to}" />
+		 						<p:outputLabel value="Passenger contact number: " for="passenger-contactNumber"/>
+		 						<p:inputText id="passenger-contactNumber" value="#{booking.passengerPhoneNumber}" />
 		 						
-		 						<p:outputLabel value="Seat no: " for="booking-seatNo"/>
-		 						<h:outputText id="booking-seatNo" value="#{booking.customerName}" />
+		 						<p:outputLabel value="Seat no: " for="passenger-seatNo"/>
+		 						<p:inputText id="passenger-seatNo" value="#{booking.seatNumber}" readonly="true" style="text-align: right;"/>
 		 						
 		 						<p:outputLabel value="Fare: " for="booking-fare"/>
-		 						<h:outputText id="booking-fare" value="#{booking.payment.amount}">
-		 							<f:convertNumber currencySymbol="K" pattern="#,###.00" type="currency"/>
-		 						</h:outputText>
+		 						<p:inputNumber id="booking-fare"
+		 									   value="#{booking.fare}"
+											   inputStyle="text-align: right;"
+											   decimalPlaces="2"
+											   thousandSeparator=","
+											   symbol="K"
+											   readonly="true" />
 		 					</p:panelGrid>
 		 				</p:tab>
+		 				
 		 			</p:tabView>
+		 			
 		 			<p:toolbar style="border: none; margin-top: 1px;">
 		 				<f:facet name="left">
+		 					<p:commandButton process="@this"
+		 									 value="Cancel"
+		 									 action="/trip/seatSelection?faces-redirect=true"
+		 									 icon="ui-icon-close">
+				 			</p:commandButton>
+		 				</f:facet>
+		 				
+		 				<f:facet name="right">
 		 					<p:commandButton process="@this, step1"
 		 									 update="bookingConfirmation-form"
 		 									 value="Next"
@@ -119,9 +140,9 @@
 		 				 
 		 			<p:messages id="step2-msgs" showSummary="true" closable="true" />
 		 			
-		 			<p:fieldset legend="Choose payment option">
+		 			<p:fieldset legend="Choose payment option">		 				
 		 				<p:selectOneRadio id="payment-opts"
-		 								  value="#{BookingAction.selectedEntity.payment.paymentOption}"
+		 								  value="#{ReservationAction.selectedEntity.payment.paymentOption}"
 		 								  layout="responsive"
 		 								  columns="3">
 		 					<f:selectItems value="#{PaymentAction.paymentOptions}"
@@ -135,31 +156,41 @@
 		 			<p:panelGrid columns="2"
 		 						 layout="grid"
 		 						 style="margin-top: 10px;"
-		 						 rendered="#{BookingAction.selectedEntity.payment.paymentOption eq 'VISA_CARD'}">
+		 						 rendered="#{ReservationAction.selectedEntity.payment.paymentOption eq 'VISA_CARD'}">
+		 						 
 		 				<f:facet name="header">
 		 					<div style="text-align: left">
 		 						<h:outputText value="Pay by visa card" />
 		 					</div>
 		 				</f:facet>
-		 				<p:outputLabel for="cardNumber-visa" value="Card number: " />
-		 				<h:outputText id="cardNumber-visa" value="#{CardAction.selectedEntity.cardNumberEncrypted}" />
+		 				
+		 				<p:outputLabel for="customer-card" value="Card number: " />
+		 				<h:outputText id="customer-card" value="#{CardAction.selectedEntity.cardNumberEncrypted}" />
+		 				
+		 				<p:outputLabel for="customer-email" value="Customer email: " />
+		 				<h:outputText id="customer-email" value="#{ReservationAction.selectedEntity.customer.email}" />
+		 				
+		 				<p:outputLabel for="customer-phone" value="Customer phone number: " />
+		 				<h:outputText id="customer-phone" value="#{ReservationAction.selectedEntity.customer.contactNumber}" />
+		 				
 		 			</p:panelGrid>
 		 		
 		 			<p:toolbar style="border: none; margin-top: 10px;">
 		 				<f:facet name="left">
 		 					<p:commandButton process="@this"
-		 									 update="bookingConfirmation-form"
+		 									 update="booking-tabView, bookingConfirmation-form"
 		 									 value="Prev"
 		 									 actionListener="#{BookingAction.step}"
 		 									 icon="fa fa-arrow-left"
 		 									 iconPos="left">
 				 			</p:commandButton>
 		 				</f:facet>
+		 				
 		 				<f:facet name="right">
 		 					<p:commandButton process="@this"
 		 									 update="bookingConfirmation-form"
 		 									 value="Finish"
-		 									 actionListener="#{BookingAction.finish}"
+		 									 action="#{BookingAction.generatePayment}"
 		 									 icon="fa fa-check">
 				 			</p:commandButton>
 		 				</f:facet>

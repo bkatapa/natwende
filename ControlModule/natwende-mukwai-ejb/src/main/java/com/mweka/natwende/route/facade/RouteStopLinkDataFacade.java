@@ -13,6 +13,7 @@ import com.mweka.natwende.route.entity.Route;
 import com.mweka.natwende.route.entity.RouteStopLink;
 import com.mweka.natwende.route.entity.Stop;
 import com.mweka.natwende.route.vo.RouteStopLinkVO;
+import com.mweka.natwende.route.vo.RouteVO;
 import com.mweka.natwende.types.Status;
 
 @Stateless
@@ -75,14 +76,11 @@ public class RouteStopLinkDataFacade extends AbstractDataFacade<RouteStopLinkVO,
 		return query.getResultList();
 	}
 	
-	public List<RouteStopLinkVO> getAllByRouteId(Long routeId) {
-		return transformList(findAllByRouteId(routeId));
-	}
-	
-	private List<RouteStopLink> findAllByRouteId(Long routeId) {
-		final TypedQuery<RouteStopLink> query = createNamedQuery(RouteStopLink.QUERY_FIND_ALL_BY_ROUTE_ID, getEntityClass())
-				.setParameter(Route.PARAM_ROUTE_ID, routeId);
-		return query.getResultList();
+	public List<RouteStopLinkVO> getAllByRoute(RouteVO route) {
+		List<RouteStopLink> resultList = createNamedQuery(RouteStopLink.QUERY_FIND_ALL_BY_ROUTE_ID, getEntityClass())
+				.setParameter(Route.PARAM_ROUTE_ID, route.getId())
+				.getResultList();
+		return transformList(resultList);
 	}
 	
 	public RouteStopLinkVO getByRouteIdAndStopId(Long routeId, Long stopId) {
@@ -91,6 +89,18 @@ public class RouteStopLinkDataFacade extends AbstractDataFacade<RouteStopLinkVO,
 				.setParameter(Stop.PARAM_STOP_ID, stopId)
 				.getResultList();
 		return getVOFromList(resultList);
+	}
+	
+	public long deleteByRoute(RouteVO route) throws Exception {
+		long count = getEntityManager().createNamedQuery(RouteStopLink.QUERY_COUNT_BY_ROUTE_ID, Long.class)
+				.setParameter(Route.PARAM_ROUTE_ID, route.getId())
+				.getSingleResult();
+		if (count > 0l) {
+			for (RouteStopLinkVO result : getAllByRoute(route)) {
+				deleteById(result.getId());
+			}
+		}
+		return count;
 	}
 
 }

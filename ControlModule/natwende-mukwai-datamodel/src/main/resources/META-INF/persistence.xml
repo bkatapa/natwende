@@ -20,7 +20,7 @@
       <property name="hibernate.show_sql" value="false"/>
       <property name="hibernate.format_sql" value="false"/>
       <property name="hibernate.use_sql_comments" value="true"/>
-      <property name="javax.persistence.schema-generation-action" value="create"/>
+      <property name="javax.persistence.schema-generation-action" value="update"/>
       <property name="javax.persistence.schema-generation-target" value="database"/>
       <!--property name="org.hibernate.cacheable" value="true" /-->
       <property name="hibernate.cache.use_second_level_cache" value="true"/>

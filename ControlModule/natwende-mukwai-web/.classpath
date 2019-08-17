@@ -15,6 +15,7 @@
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
@@ -22,52 +23,14 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Bell/.m2/repository/javax/javaee-api/7.0/javaee-api-7.0.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="javax"/>
-			<attribute name="maven.artifactId" value="javaee-api"/>
-			<attribute name="maven.version" value="7.0"/>
-			<attribute name="maven.scope" value="provided"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="/natwende-mukwai-client"/>
 	<classpathentry kind="lib" path="C:/Users/Bell/.m2/repository/org/primefaces/primefaces/6.1/primefaces-6.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Bell/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="commons-logging"/>
-			<attribute name="maven.artifactId" value="commons-logging"/>
-			<attribute name="maven.version" value="1.1.3"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Bell/.m2/repository/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" sourcepath="C:/Users/Bell/.m2/repository/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="org.apache.commons"/>
-			<attribute name="maven.artifactId" value="commons-lang3"/>
-			<attribute name="maven.version" value="3.4"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="/natwende-mukwai-ejb"/>
-	<classpathentry kind="lib" path="C:/Users/Bell/.m2/repository/uk/com/robust-it/cloning/1.9.3/cloning-1.9.3.jar">
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="uk.com.robust-it"/>
-			<attribute name="maven.artifactId" value="cloning"/>
-			<attribute name="maven.version" value="1.9.3"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Bell/.m2/repository/joda-time/joda-time/2.9.4/joda-time-2.9.4.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="joda-time"/>
-			<attribute name="maven.artifactId" value="joda-time"/>
-			<attribute name="maven.version" value="2.9.4"/>
-			<attribute name="maven.scope" value="compile"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+			<attribute name="owner.project.facets" value="jboss.m2"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>

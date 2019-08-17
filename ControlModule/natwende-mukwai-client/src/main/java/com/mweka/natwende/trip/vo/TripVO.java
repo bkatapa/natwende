@@ -1,10 +1,17 @@
 package com.mweka.natwende.trip.vo;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.base.vo.BaseVO;
+import com.mweka.natwende.route.vo.StretchVO;
+import com.mweka.natwende.types.OperatorName;
 import com.mweka.natwende.types.Town;
 import com.mweka.natwende.types.TripStatus;
 
@@ -31,9 +38,18 @@ public class TripVO extends BaseVO {
 	private String travelDurationExpected; // HH:mm
 	private String travelDurationActual; // HH:mm
 	private TripStatus tripStatus;
+	private OperatorName operatorName;
 	private Set<String> occupiedSeats;
+	
+	@XmlTransient
+	@JsonIgnore
 	private List<BookingVO> bookings;
+	
 	private TripScheduleVO tripSchedule;
+	
+	// No need to persist these
+	private transient String priceStr;
+	private transient List<StretchVO> stretchList;
 	
 	public String getBusReg() {
 		return busReg;
@@ -76,6 +92,15 @@ public class TripVO extends BaseVO {
 	}
 	
 	public Date getScheduledDepartureDate() {
+		if (scheduledDepartureDate != null && tripSchedule != null && tripSchedule.getScheduledDepartureTime() != null) {
+			Calendar cTime = Calendar.getInstance(TimeZone.getDefault());
+			Calendar cDate = Calendar.getInstance(TimeZone.getDefault());
+			cTime.setTime(tripSchedule.getScheduledDepartureTime());
+			cDate.setTime(scheduledDepartureDate);
+			cDate.set(Calendar.HOUR_OF_DAY, cTime.get(Calendar.HOUR_OF_DAY));
+			cDate.set(Calendar.MINUTE, cTime.get(Calendar.MINUTE));
+			scheduledDepartureDate = cDate.getTime();
+		}
 		return scheduledDepartureDate;
 	}
 	
@@ -185,6 +210,34 @@ public class TripVO extends BaseVO {
 
 	public void setTripSchedule(TripScheduleVO tripSchedule) {
 		this.tripSchedule = tripSchedule;
-	}	
+	}
+
+	public String getPriceStr() {
+		return priceStr;
+	}
+
+	public void setPriceStr(String priceStr) {
+		this.priceStr = priceStr;
+	}
+
+	public List<StretchVO> getStretchList() {
+		return stretchList;
+	}
+
+	public void setStretchList(List<StretchVO> stretchList) {
+		this.stretchList = stretchList;
+	}
+
+	public OperatorName getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(OperatorName operatorName) {
+		this.operatorName = operatorName;
+	}
+	
+	public String getScheduledDepartureDateAsString() {
+		return new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy, HH:mm").format(scheduledDepartureDate);
+	}
 	
 }

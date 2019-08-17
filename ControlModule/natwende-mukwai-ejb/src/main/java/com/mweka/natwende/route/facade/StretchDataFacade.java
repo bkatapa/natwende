@@ -1,14 +1,21 @@
 package com.mweka.natwende.route.facade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.logging.LogFactory;
 import com.mweka.natwende.facade.AbstractDataFacade;
 import com.mweka.natwende.route.entity.Route;
 import com.mweka.natwende.route.entity.RouteStretchLink;
 import com.mweka.natwende.route.entity.Stretch;
+import com.mweka.natwende.route.entity.Stretch_;
+import com.mweka.natwende.route.search.vo.StretchSearchVO;
 import com.mweka.natwende.route.entity.Stop;
 import com.mweka.natwende.route.vo.StretchVO;
 
@@ -79,14 +86,40 @@ public class StretchDataFacade extends AbstractDataFacade<StretchVO, Stretch> {
 		return getEntityManager().createQuery(Stretch.QUERY_DELETE_BY_ROUTE_ID).setParameter(Route.PARAM_ROUTE_ID, routeId).executeUpdate();
 	}
 	
-	public List<StretchVO> getListByRouteId(Long routeId) {
-		return transformList(findListByRouteId(routeId));
+	public List<StretchVO> getAll() {
+		return transformList(findAll());
 	}
 	
-	private List<Stretch> findListByRouteId(Long routeId) {
+	public List<StretchVO> getListByRouteId(Long routeId) {
 		List<Stretch> resultList = createNamedQuery(RouteStretchLink.QUERY_FIND_STRETCHLIST_BY_ROUTE_ID, getEntityClass())
 				.setParameter(Route.PARAM_ROUTE_ID, routeId)
 				.getResultList();
-		return resultList;
+		return transformList(resultList);
+	}
+	
+	public List<StretchVO> findBySearchVO(StretchSearchVO searchVO) {		
+		CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Stretch> cq = cb.createQuery(getEntityClass());
+
+		Root<Stretch> root = cq.from(getEntityClass());
+		List<Predicate> filters = new ArrayList<>();
+		
+		if (searchVO.hasFilters()) {			
+			if (searchVO.getRoute() != null) {
+				//filters.add(cb.equal(root.get(Stretch_.ro), searchVO.getTenantId()));
+			}
+			if (searchVO.getFrom() != null ) {
+				filters.add(cb.equal(root.get(Stretch_.from), searchVO.getFrom().getId()));
+			}
+			if (searchVO.getTo() != null ) {
+				filters.add(cb.equal(root.get(Stretch_.to), searchVO.getTo().getId()));
+			}			
+			cq.select(root).where(filters.toArray(new Predicate[filters.size()])).orderBy(cb.asc(root.get(Stretch_.distanceKM)));
+		}
+		else {
+			cq.select(root).orderBy(cb.asc(root.get(Stretch_.distanceKM)));
+		}
+		List<Stretch> results = getEntityManager().createQuery(cq).getResultList();
+		return transformList(results);
 	}
 }

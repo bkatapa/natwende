@@ -6,16 +6,21 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.mweka.natwende.base.vo.BaseVO;
+import com.mweka.natwende.message.MessageVO;
 import com.mweka.natwende.operator.vo.OperatorVO;
 import com.mweka.natwende.types.NotificationStatus;
+import com.mweka.natwende.types.NotificationType;
 
 public class NotificationVO extends BaseVO {	
 	private static final long serialVersionUID = 1L;
 			
-	private OperatorVO operator;	
+	private OperatorVO operator;
+	
+	@NotNull
+	private NotificationType notificationType;
 		
 	@NotNull
-	private Date submitDate;
+	private Date submitDate = new Date();
 		
 	@NotNull
 	private NotificationStatus notitifcationStatus = NotificationStatus.SAVED;
@@ -23,8 +28,15 @@ public class NotificationVO extends BaseVO {
 	@NotNull @Size(min=1,max=255, message="Notification subject is required") 
 	private String subject;
 	
-	private String message;
+	private MessageVO message;
+	
+	public NotificationVO() {		
+	}
 
+	public NotificationVO(NotificationType notificationType) {
+		this.notificationType = notificationType;
+	}
+	
 	public OperatorVO getOperator() {
 		return operator;
 	}
@@ -57,12 +69,20 @@ public class NotificationVO extends BaseVO {
 		this.subject = subject;
 	}
 
-	public String getMessage() {
+	public MessageVO getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(MessageVO message) {
 		this.message = message;
+	}
+
+	public NotificationType getNotificationType() {
+		return notificationType;
+	}
+
+	public void setNotificationType(NotificationType notificationType) {
+		this.notificationType = notificationType;
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.websocket.OnClose;
@@ -19,7 +20,11 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.commons.lang.StringEscapeUtils;
+//import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang.StringUtils;
+
+//import org.apache.commons.lang.StringEscapeUtils;
+//import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +33,7 @@ import com.mweka.natwende.operator.vo.SeatVO;
 import com.mweka.natwende.trip.vo.TripVO;
 import com.mweka.natwende.util.ServiceLocator;
 
+@Singleton
 @ServerEndpoint("/seatUpdater")
 public class SeatUpdater {
 
@@ -148,10 +154,10 @@ public class SeatUpdater {
 				try {
 					SeatUpdateVO update = new SeatUpdateVO(Collections.singleton(seat.getCoordinates()), action);
 					switch (action) {
-					case "reserve" : update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeHtml("Seat no." + seat.getSeatNo() + " was reserved.")));
+					case "reserve" : update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeXml("Seat no." + seat.getSeatNo() + " was reserved.")));
 					updateGlobalCache(trip, seat, action);
 					break;
-					case "vacate" : update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeHtml("Seat no." + seat.getSeatNo() + " was vacated.")));
+					case "vacate" : update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeXml("Seat no." + seat.getSeatNo() + " was vacated.")));
 					updateGlobalCache(trip, seat, action);
 					break;
 					default : LOGGER.logp(Level.SEVERE, CLASS_NAME, methodName, "Case item not yet implemented [{0}].", action);

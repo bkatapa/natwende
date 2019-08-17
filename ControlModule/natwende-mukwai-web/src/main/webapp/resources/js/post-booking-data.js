@@ -8,18 +8,24 @@ function postBookingData() {
 		console.log($(this).text());
 		optionTexts.push($(this).text());
 	});
+	
 	var $totalFare = $('#total').text();
+	
 	var url = 'http://' + window.location.host + '/natwende/bookingData';
+	
 	var jqxhr = $.post(url, JSON.stringify({bookedSeats: optionTexts, total: $totalFare}));
+	
 	jqxhr.done(function() {
-		console.log('booking data posted successfully ...');
+		console.log("booking data posted successfully ...");
 		window.location.replace('/trips/bookingConfirmation.xhtml');
 	});
+	
 	jqxhr.fail(function(xhr, status, error) {
-		console.log('error occurred while posting booking data ... ' + xhr.toString());
-		console.log('Status: ' + status);
-		console.log('Error: ' + error.toString());
+		console.log("error occurred while posting booking data ... " + xhr.toString());
+		console.log("Status: " + status);
+		console.log("Error: " + error.toString());
 	});
+	
 	jqxhr.always(function() {
 		console.log('finished posting booking data.');
 	});

@@ -7,76 +7,65 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 
+import com.mweka.natwende.exceptions.EntityNotFoundException;
 import com.mweka.natwende.helper.MessageHelper;
-import com.mweka.natwende.route.vo.RouteStretchLinkVO;
+import com.mweka.natwende.helper.VelocityGen;
+import com.mweka.natwende.operator.vo.BusVO;
+import com.mweka.natwende.route.vo.RouteStopLinkVO;
+import com.mweka.natwende.route.vo.RouteVO;
 import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.route.vo.StretchVO;
-//import com.mweka.natwende.trip.vo.TripScheduleVO;
-//import com.mweka.natwende.operator.action.OperatorRouteLinkAction;
+import com.mweka.natwende.trip.search.vo.TripSearchResultVO;
+//import com.mweka.natwende.route.vo.StretchVO;
+import com.mweka.natwende.trip.search.vo.TripSearchVO;
 import com.mweka.natwende.trip.vo.TripVO;
 import com.mweka.natwende.types.Town;
+import com.mweka.natwende.util.DateUtil;
 
 @Named("TripAction")
 @SessionScoped
 public class TripAction extends MessageHelper<TripVO> {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3475365497078490512L;
 	
-	private Date travelDate, returnDate;
 	private boolean bookReturn;
-	//private List<String> townListAsString;
+	private TripSearchVO searchVO;
+	private TripSearchResultVO selectedSearchResult;
+	private List<TripSearchResultVO> searchResultList;
 	
-	//@Inject
-	//private OperatorRouteLinkAction operatorRouteLinkAction;
+	@Inject
+	private VelocityGen velocityGen;
 	
 	@PostConstruct
 	public void init() {
-		super.init(TripVO.class);
-		travelDate = new Date();
-		returnDate = new Date();
+		super.init(TripVO.class);				
 		bookReturn = false;
-		
-		//for (Town t : Town.values()) {
-			//townListAsString.add(t.getDisplay());
-		//}
+		searchResultList = new ArrayList<>();
 	}
 
 	@Override
-	protected List<TripVO> getEntityList() {
-		populateEntityList();
+	public List<TripVO> getEntityList() {
+		//populateEntityList();
+		if (entityList == null) {
+			entityList = new ArrayList<>();
+		}
 		return entityList;
 	}
-
-	public Date getTravelDate() {
-		return travelDate;
-	}
 	
-	public String getTravelDateAsString() {
-		return formatDate(travelDate, "dd/MM/yyyy");
-	}
-
-	public void setTravelDate(Date travelDate) {
-		this.travelDate = travelDate;
-	}
-
-	public Date getReturnDate() {
-		return returnDate;
+	public List<TripSearchResultVO> getSearchResults() {
+		return searchResultList;
 	}
 	
 	public String getReturnDateAsString() {
-		return formatDate(returnDate, "dd/MM/yyyy");
-	}
-
-	public void setReturnDate(Date returnDate) {
-		this.returnDate = returnDate;
+		return formatDate(searchVO.getReturnDate(), "dd/MM/yyyy");
 	}
 
 	public boolean isBookReturn() {
@@ -85,6 +74,25 @@ public class TripAction extends MessageHelper<TripVO> {
 
 	public void setBookReturn(boolean bookReturn) {
 		this.bookReturn = bookReturn;
+	}
+
+	public TripSearchVO getSearchVO() {
+		if (searchVO == null) {
+			searchVO = new TripSearchVO();
+		}
+		return searchVO;
+	}
+
+	public void setSearchVO(TripSearchVO searchVO) {
+		this.searchVO = searchVO;
+	}
+
+	public TripSearchResultVO getSelectedSearchResult() {
+		return selectedSearchResult;
+	}
+
+	public void setSelectedSearchResult(TripSearchResultVO selectedSearchResult) {
+		this.selectedSearchResult = selectedSearchResult;
 	}
 
 	@Override
@@ -107,14 +115,17 @@ public class TripAction extends MessageHelper<TripVO> {
 	}
 
 	@Override
-	protected String viewEntity() {
-		// TODO Auto-generated method stub
-		return null;
+	public String viewEntity() {		
+		return "";
 	}
 
 	@Override
-	protected void deleteEntity() {
-		// TODO Auto-generated method stub		
+	public void deleteEntity() {
+		try {
+			serviceLocator.getTripDataFacade().deleteById(selectedEntity.getId());
+		} catch (EntityNotFoundException e) {
+			onMessage(SEVERITY_ERROR, e.getMessage());
+		}	
 	}
 	
 	public String listEntities() {
@@ -122,53 +133,57 @@ public class TripAction extends MessageHelper<TripVO> {
 	}
 	
 	public String search() {
-		if (selectedEntity.getFrom() == null) {
-			onMessage(SEVERITY_ERROR, "Please select departure town");
-			return null;
-		}
-		
-		if (selectedEntity.getTo() == null) {
-			onMessage(SEVERITY_ERROR, "Please select destination town");
-			return null;
-		}
-		
-		log.debug("From: [" + selectedEntity.getFrom() + "]");
-		log.debug("To: [" + selectedEntity.getTo() + "]");
-		log.debug("Travel date: [" + getTravelDateAsString() + "]");
-		
-		// Search a route with entered stretch
 		try {
-			//List<TripVO> tripList = new ArrayList<>();
-			
-			StretchVO stretch = serviceLocator.getStretchFacade().getStretchByEndpoints(selectedEntity.getFrom(), selectedEntity.getTo());
-			
-			if (stretch == null) {
-				onMessage(SEVERITY_INFO, "Sorry. No results were found for your trip search [" + selectedEntity.getFrom() + " - " + selectedEntity.getTo() + "]");
-				return null;
-			}
-			
-			List<RouteStretchLinkVO> rslList = serviceLocator.getRouteStretchLinkFacade().obtainByStretchId(stretch.getId());
-			
-			if (rslList.isEmpty()) {
-				onMessage(SEVERITY_INFO, "Sorry. Currently we have no buses servicing this route stretch. [" + selectedEntity.getFrom() + " - " + selectedEntity.getTo() + "]");
-			}
-			
-			//List<TripScheduleVO> scheduleList = new ArrayList<>();
-			
-			//for (RouteStretchLinkVO rsl : rslList) {
-				// extract schedules, matching on routes
-				//TripVO trip = new TripVO();
-				
-			//}
+			entityList = serviceLocator.getTripFacade().scan(searchVO);
 		}
 		catch (Exception e) {
-			onMessage(SEVERITY_ERROR, e.getMessage());
+			onMessage(SEVERITY_ERROR, e.getMessage());			
 		}
-		return performSearch();
+		return listEntities();
 	}
 	
-	public void toggleBookReturn() {
-		
+	public String scanForTrips() {
+		try {
+			StretchVO stretch = serviceLocator.getStretchFacade().getStretchByEndpoints(searchVO.getFromTown(), searchVO.getToTown());
+			if (stretch != null) {
+				searchVO.setStretch(stretch);
+				List<RouteVO> routeList = serviceLocator.getRouteDataFacade().getByStretch(stretch);
+				entityList.clear();
+				for (RouteVO route : routeList) {
+					entityList.addAll(serviceLocator.getTripDataFacade().getByRouteAndDepartureDate(route, searchVO.getTravelDate()));
+				}
+				if (entityList.isEmpty()) {
+					// Attempt to create new trips from schedule
+					log.debug("No trips for this search. Inspecting tripSchedule ... if valid create trip and add to routeList");				
+					for (RouteVO route : routeList) {
+						entityList.addAll(serviceLocator.getTripFacade().createTripFromRoute(route, searchVO.getTravelDate()));
+					}				
+					if (entityList.isEmpty()) {
+						throw new Exception("Sorry, currently we dont have a bus on this route [" + searchVO.getStretch() + "]");
+					}
+				}
+				if (!entityList.isEmpty()) {
+					prepareSearchResults();
+				}
+			}
+			else {
+				throw new Exception("Sorry, currently we dont have a bus from [" 
+						+ searchVO.getFromTown().getDisplay() 
+						+ "] to [" 
+						+ searchVO.getToTown().getDisplay() 
+						+ "]");
+			}
+		}
+		catch (Exception ex) {
+			log.debug(ex);
+			ex.printStackTrace();
+			onMessage(SEVERITY_ERROR, ex.getMessage());
+			return null;
+		}
+		return listEntities();
+	}
+	
+	public void toggleBookReturn() {		
 	}
 	
 	public List<Town> completeTown(String query) {
@@ -195,58 +210,77 @@ public class TripAction extends MessageHelper<TripVO> {
 			selectedEntity.setTo((Town) event.getObject());
 		}
 	}
-	
+	/*
 	private void populateEntityList() {
 		try {
-			entityList = serviceLocator.getTripFacade().obtainListByRouteName("");
-		} catch (Exception e) {
-			onMessage(SEVERITY_ERROR, e.getMessage());
-			e.printStackTrace();
+			entityList = serviceLocator.getTripDataFacade().getActiveTrips();
+			for (TripVO trip : entityList) {
+				StretchVO stretch = serviceLocator.getStretchFacade().getStretchByEndpoints(trip.getFrom(), trip.getTo());
+				if (stretch != null) {
+					String amtStr = new DecimalFormat("K#,###.00").format(stretch.getFareAmount());
+					trip.setPriceStr(amtStr);
+				}
+			}
+		}
+		catch (Exception e) {
+			onMessage(SEVERITY_ERROR, e.getMessage());			
 		}
 	}
-	
+	*/
 	private String formatDate(Date date, String fmt) {
 		return date == null ? StringUtils.EMPTY : new SimpleDateFormat(fmt).format(date);
+	}	
+	
+	public String getBusTemplateScript() {
+		BusVO selectedBus = serviceLocator.getBusDataFacade().getByReg(selectedSearchResult.getTrip().getBusReg());
+		return velocityGen.busTemplate(selectedBus.getSeatsAsString(), searchVO.getStretch().getFareAmount());
 	}
 	
-	private String performSearch() {
-		if (selectedEntity.getFrom() == null || selectedEntity.getTo() == null) {
-			// raise error
+	private void prepareSearchResults() {
+		searchResultList = new ArrayList<>();
+		TripSearchResultVO result;
+		for (TripVO trip : entityList) {
+			result = new TripSearchResultVO();
+			result.setRouteStopLinks(serviceLocator.getRouteStopLinkDataFacade().getAllByRoute(trip.getTripSchedule().getRoute()));
+			result.setStretch(searchVO.getStretch());
+			result.setTrip(trip);
+			result.setFromTown(searchVO.getStretch().getFrom().getTown());
+			result.setToTown(searchVO.getStretch().getTo().getTown());
+			result.setId(trip.getId());
+			setJourneyTimes(result);
+			searchResultList.add(result);
 		}
-		
-		try {
-			List<StopVO> departureStationList = serviceLocator.getStopFacade().obtainStopByTown(selectedEntity.getFrom());
-			List<StopVO> destinationStationList = serviceLocator.getStopFacade().obtainStopByTown(selectedEntity.getTo());
-			List<TripVO> resultList = new ArrayList<>();
-			
-			for (StopVO dep : departureStationList) {
-				for (StopVO dest : destinationStationList) {
-					resultList.addAll(serviceLocator.getTripFacade().searchActiveByStretchAndTravelDate(new StretchVO(dep, dest), travelDate));
+	}
+	
+	private void setJourneyTimes(TripSearchResultVO searchResult) {
+		TripVO trip = searchResult.getTrip();
+		if (searchResult.getRouteStopLinks() == null || searchResult.getRouteStopLinks().isEmpty()) { // No transit stations
+			searchResult.setEstimatedJourneyStartDate(trip.getScheduledDepartureDate());
+		}
+		else { // Check if origin town is transit
+			boolean isOriginTransit = false;
+			StopVO origin = null;
+			for (RouteStopLinkVO rsl : searchResult.getRouteStopLinks()) {
+				if (searchResult.getStretch().getFrom().equals(rsl.getStop())) {
+					origin = rsl.getStop();
+					isOriginTransit = true;
 				}
 			}
-			
-			if (resultList.isEmpty()) {
-				log.debug("No trips for this search. Inspecting tripSchedule ... if valid create trip and add to resultList");
-				StretchVO stretch = serviceLocator.getStretchFacade().getStretchByEndpoints(selectedEntity.getFrom(), selectedEntity.getTo());
-				
-				if (stretch == null) {
-					log.debug("Sorry, currently we don't have bus on this route. [" + stretch + "]");
-					return null;
+			if (isOriginTransit) {
+				try {
+					Date travelDate = trip.getScheduledDepartureDate();
+					StopVO loadingStation = trip.getTripSchedule().getRoute().getStart();
+					StretchVO stretchToPickupPoint = serviceLocator.getStretchFacade().getStretchByEndpoints(loadingStation, origin);
+					searchResult.setEstimatedJourneyStartDate(DateUtil.addTimeToDate(stretchToPickupPoint.getEstimatedTravelTime(), travelDate));
 				}
-				
-				log.debug("Attempting to create some trips from valid schedules if any ...");
-				resultList.addAll(serviceLocator.getTripFacade().createNewTripFromSchedule(stretch, travelDate));
+				catch (Exception ex) {
+					onMessage(SEVERITY_ERROR, ex.getMessage());
+				}
 			}
-			
-			entityList.clear();
-			entityList.addAll(resultList);
-			
-			return listEntities();
+			else { // Origin is not a transit town
+				searchResult.setEstimatedJourneyStartDate(trip.getScheduledDepartureDate());
+			}
+			searchResult.setEstimatedJouneyEndDate(DateUtil.addTimeToDate(searchVO.getStretch().getEstimatedTravelTime(), searchResult.getEstimatedJourneyStartDate()));
 		}
-		catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
-		}
-		
-		return null;
 	}
 }

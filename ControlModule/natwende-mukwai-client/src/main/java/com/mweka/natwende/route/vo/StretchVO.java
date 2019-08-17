@@ -124,16 +124,20 @@ public class StretchVO extends BaseVO {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}		
-		if (this.getId() > -1L && obj instanceof StretchVO && this.getId() == ((StretchVO) obj).getId()) {
-			return true;
-		}
-		if (from == null || to == null) {
+		if (!(obj instanceof StretchVO)) {
 			return false;
 		}
-		if (from.equals(to)) {
+		StretchVO other = (StretchVO) obj;
+		if (this == other) {
+			return true;
+		}		
+		if (this.getId() > -1L && this.getId() == other.getId()) {
+			return true;
+		}
+		if (this.from == null || this.to == null) {
+			return false;
+		}
+		if (this.from.getId() == other.from.getId() && this.to.getId() == other.to.getId()) {
 			return true;
 		}
 		return false;

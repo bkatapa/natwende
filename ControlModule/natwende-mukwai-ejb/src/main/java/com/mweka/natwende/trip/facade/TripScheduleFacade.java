@@ -30,7 +30,16 @@ public class TripScheduleFacade  extends AbstractFacade<TripScheduleVO> {
 	}
 	
 	public List<TripScheduleVO> getActiveSchedules(OperatorName operatorName) {
-		return serviceLocator.getTripScheduleDataFacade().getListByOperatorNameAndStatus(operatorName, Status.ACTIVE);
+		List<TripScheduleVO> resultList = serviceLocator.getTripScheduleDataFacade().getListByOperatorNameAndStatus(operatorName, Status.ACTIVE);
+		try {
+			for (TripScheduleVO tripSchedule : resultList) {
+				tripSchedule.setBusTripScheduleLinkList(serviceLocator.getBusTripScheduleLinkFacade().fetchByTripSchedule(tripSchedule));
+			}
+		}
+		catch (Exception ex) {
+			throw new EJBException(ex);
+		}
+		return resultList;
 	}
 	
 }

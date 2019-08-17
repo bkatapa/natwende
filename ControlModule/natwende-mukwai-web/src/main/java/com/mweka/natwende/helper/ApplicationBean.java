@@ -7,6 +7,7 @@ package com.mweka.natwende.helper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,12 +27,16 @@ public class ApplicationBean {
 	private Map<String, Object> cacheMap;
 	
 	@PostConstruct
-	private void init(){
+	public void init(){
 		applicationProperties = loadManifestFile();
 		cacheMap = new ConcurrentHashMap<>();
 	}
 	
-	private Properties loadManifestFile() {
+	public Properties loadManifestFile() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		if (facesContext == null) {
+			return null;
+		}
 		ServletContext servletContext = (ServletContext) FacesContext
 			.getCurrentInstance().getExternalContext().getContext();
 		Properties prop = new Properties();
@@ -63,4 +68,11 @@ public class ApplicationBean {
 		return cacheMap.get(key);
 	}
 	
+	public Object purge(String key) {
+		return cacheMap.remove(key);
+	}
+	
+	public int capacity() {
+		return cacheMap.size();
+	}
 }

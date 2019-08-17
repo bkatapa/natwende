@@ -2,24 +2,31 @@ package com.mweka.natwende.route.entity;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mweka.natwende.base.BaseEntity;
+import com.mweka.natwende.operator.entity.Operator;
 
 @Entity
-@Table(name = "fare", uniqueConstraints = {@UniqueConstraint(columnNames = {"from_id", "to_id"})})
+@Table(name = "Fare", uniqueConstraints = {@UniqueConstraint(columnNames = {"operator_id", "stretch_id"})})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = Fare.QUERY_FIND_ALL, query=" SELECT f FROM Fare f "),
-    @NamedQuery(name = Fare.QUERY_FIND_BY_ROUTE, query = " SELECT frl.fare FROM FareRouteLink frl WHERE frl.route.id = :routeId AND frl.route.status = :status ")
+    @NamedQuery(name = Fare.QUERY_FIND_BY_STRETCH_ID, query = " SELECT f FROM Fare f WHERE f.stretch.id = :stretchId "),
+    @NamedQuery(name = Fare.QUERY_FIND_BY_ROUTE_ID_AND_OPERATOR_ID, query = " SELECT f FROM Fare f, RouteStretchLink rsl WHERE f.stretch.id = rsl.stretch.id AND f.operator.id = :operatorId AND rsl.route.id = :routeId "),
+    @NamedQuery(name = Fare.QUERY_FIND_BY_OPERATOR_ID_AND_STRETCH_ID, query = " SELECT f FROM Fare f WHERE f.stretch.id = :stretchId AND f.operator.id = :operatorId ")
 })
 public class Fare extends BaseEntity {
 
@@ -33,37 +40,54 @@ public class Fare extends BaseEntity {
 	 */
 	public static final String QUERY_FIND_ALL = "Fare.findAll";
 	public static final String QUERY_FIND_BY_ROUTE = "Fare.findByRoute";
+	public static transient final String QUERY_FIND_BY_ROUTE_ID_AND_OPERATOR_ID = "Fare.findByRouteIdAndOperatorId";
+	public static transient final String QUERY_FIND_BY_OPERATOR_ID_AND_STRETCH_ID = "Fare.findByOperatorIdAndStretchId";
+	public static transient final String QUERY_FIND_BY_STRETCH_ID = "Fare.findByStretchId";
 	
 	/**
 	 * Query parameters
-	 */
+	 */	
+	public static transient final String PARAM_FARE_ID = "fareId";
+	
+	@Transient
+	private boolean global;
+	
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "operator_id", referencedColumnName = "id", nullable = false)
+	private Operator operator;
 
-	@JoinColumn(name = "from_id", referencedColumnName = "id", nullable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-	private Stop from;
+	@JoinColumn(name = "stretch_id", referencedColumnName = "id", nullable = false)
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
+	private Stretch stretch;
 	
-	@JoinColumn(name = "to_id", referencedColumnName = "id", nullable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-	private Stop to;
+	@NotNull
+	@Column(nullable = false)
+	private BigDecimal amount = BigDecimal.ZERO;	
 	
-	private BigDecimal amount;
-	
-	public Stop getFrom() {
-		return from;
+	public boolean isGlobal() {
+		return global;
 	}
-	
-	public void setFrom(Stop from) {
-		this.from = from;
+
+	public void setGlobal(boolean global) {
+		this.global = global;
 	}
-	
-	public Stop getTo() {
-		return to;
+
+	public Operator getOperator() {
+		return operator;
 	}
-	
-	public void setTo(Stop to) {
-		this.to = to;
+
+	public void setOperator(Operator operator) {
+		this.operator = operator;
 	}
-	
+
+	public Stretch getStretch() {
+		return stretch;
+	}
+
+	public void setStretch(Stretch stretch) {
+		this.stretch = stretch;
+	}
+
 	public BigDecimal getAmount() {
 		return amount;
 	}

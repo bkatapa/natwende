@@ -1,10 +1,18 @@
 package com.mweka.natwende.payment.vo;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mweka.natwende.base.vo.BaseVO;
+import com.mweka.natwende.types.PaymentOption;
 import com.mweka.natwende.types.PaymentStatus;
 
+@XmlRootElement(name = "payment")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentVO extends BaseVO {
 
 	/**
@@ -14,14 +22,28 @@ public class PaymentVO extends BaseVO {
 	
 	private BigDecimal amount;
 	private String cardNumber;
+	private String nameOnCard;
 	private String expDate;
 	private String cvv2;
 	private String ref;
 	private String customerName;
+	private String customerNrc;
 	private String beneficiary;
 	private String address;
 	private String phoneNumber;
 	private PaymentStatus paymentStatus;
+	private PaymentOption paymentOption;
+	private String description;
+	
+	public PaymentVO() {
+		String[] comps = UUID.randomUUID().toString().split("-");
+		ref = comps[comps.length - 1];
+	}
+	
+	public PaymentVO(BigDecimal fareAmount) {
+		this();
+		this.amount = fareAmount;
+	}
 	
 	public BigDecimal getAmount() {
 		return amount;
@@ -100,6 +122,38 @@ public class PaymentVO extends BaseVO {
 	
 	public void setPaymentStatus(PaymentStatus paymentStatus) {
 		this.paymentStatus = paymentStatus;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getNameOnCard() {
+		return nameOnCard;
+	}
+
+	public void setNameOnCard(String nameOnCard) {
+		this.nameOnCard = nameOnCard;
+	}
+
+	public String getCustomerNrc() {
+		return customerNrc;
+	}
+
+	public void setCustomerNrc(String customerNrc) {
+		this.customerNrc = customerNrc;
+	}
+
+	public PaymentOption getPaymentOption() {
+		return paymentOption;
+	}
+
+	public void setPaymentOption(PaymentOption paymentOption) {
+		this.paymentOption = paymentOption;
 	}	
 	
 }

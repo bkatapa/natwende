@@ -13,322 +13,442 @@
 				
 	<ui:define name="content">
 	
-		<h:form id="newRoute-form">
+		<p:outputPanel rendered="#{RouteAction.selectedEntity.id gt 0}" id="routeView-panel" styleClass="routeViewPanel-class">
 			
-			<p:messages severity="info,error" autoUpdate="true" showIcon="true" closable="true" />
-			
-			<p:steps activeIndex="#{RouteAction.currentStep}"
-					 styleClass="custom"
-					 style="margin-top: 20px; margin-bottom: 20px;">
-			 	<p:menuitem value="Loading station" />
-			 	<p:menuitem value="Final destination" />
-			 	<p:menuitem value="Transit stations" />
-			 	<p:menuitem value="Re-order transit stations" />
-			 	<p:menuitem value="Travel time estimates" />
-			 	<p:menuitem value="Confirm" />
-		 	</p:steps>
-		 	
-		 	<p:panel id="step1" header="Specify loading station" rendered="#{RouteAction.currentStep eq 0}" style="margin-top: 70px;">
-		 		<p:selectOneMenu id="newRoute-start" value="#{RouteAction.selectedEntity.start}" converter="#{StopVOConverter}">
-		 			<f:selectItems value="#{RouteAction.stationList}"
-	 							   var="start"
-	 							   itemValue="#{start}"
-	 							   itemLabel="#{start}" />
-			   		<p:ajax process="step1" update="newRoute-form" />
-		 		</p:selectOneMenu>
-		 		
-		 		<p:toolbar style="border: none; margin-top: 5px;">
-		 			<p:toolbarGroup align="left">
-		 				<p:commandButton ajax="true"
-		 								 process="@this"
-		 								 value="Cancel"
-		 								 action="/admin/adminPanel?faces-redirect=true&amp;i=2" />
-		 			</p:toolbarGroup>
-		 			<p:toolbarGroup align="right">
-		 				<p:commandButton ajax="true"
-		 								 process="@this, newRoute-form"
-		 								 update="newRoute-form"
-		 								 value="Next"
-		 								 actionListener="#{RouteAction.step}">
-		 					<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" removeFrom="#{RouteAction.stationList}" />				 
-					 	</p:commandButton>
-		 			</p:toolbarGroup>
-		 		</p:toolbar>
-		 	</p:panel>
-		 	
-		 	<p:panel id="step2" header="Specify final destination" rendered="#{RouteAction.currentStep eq 1}" style="margin-top: 70px;">
-		 		<p:selectOneMenu id="newRoute-stop" value="#{RouteAction.selectedEntity.stop}" converter="#{StopVOConverter}">
-		 			<f:selectItems value="#{RouteAction.stationList}"
-	 							   var="stop"
-	 							   itemValue="#{stop}"
-	 							   itemLabel="#{stop}" />
-			   		<p:ajax process="step2" update="newRoute-form"/>
-		 		</p:selectOneMenu>
-		 		
-		 		<p:toolbar style="border: none; margin-top: 5px;">
-		 			<p:toolbarGroup align="left">
-		 				<p:commandButton process="@this"
-		 								 update="newRoute-form"
-		 								 value="Prev"
-		 								 actionListener="#{RouteAction.step}">
-					 		<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" addTo="#{RouteAction.stationList}" />
-				 		</p:commandButton>						 
-		 			</p:toolbarGroup>
-		 			<p:toolbarGroup align="right">
-		 				<p:commandButton process="@this, newRoute-form"
-		 								 update="newRoute-form"
-		 								 value="Next"
-		 								 actionListener="#{RouteAction.step}">
-				 			<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" removeFrom="#{RouteAction.stationList}" />
-				 			<p:collector unique="true" value="#{RouteAction.selectedEntity.stop}" removeFrom="#{RouteAction.stationList}" />
-				 		</p:commandButton>
-						 
-		 			</p:toolbarGroup>
-		 		</p:toolbar>
-		 	</p:panel>
-			
-			<p:panel id="step3" header="Transit stations" rendered="#{RouteAction.currentStep eq 2}" style="margin-top: 70px;">
-				<p:pickList id="transitStations-picklist"
-							style="width: 600px;"
-							value="#{RouteAction.stationPickList}"
-							var="stop"
-							itemLabel="#{stop}"
-							itemValue="#{stop}"
-							converter="#{StopVOConverter}" />
-							
-				<p:toolbar style="border: none; margin-top: 5px;">
-		 			<p:toolbarGroup align="left">
-		 				<p:commandButton process="@this"
-		 								 update="newRoute-form"
-		 								 value="Prev"
-		 								 actionListener="#{RouteAction.step}">
-				 			<p:collector unique="true" value="#{RouteAction.selectedEntity.stop}" addTo="#{RouteAction.stationList}" />
-				 		</p:commandButton>						 
-		 			</p:toolbarGroup>
-		 			<p:toolbarGroup align="right">
-		 				<p:commandButton process="@this, newRoute-form"
-		 								 update="newRoute-form"
-		 								 value="Next"
-		 								 actionListener="#{RouteAction.step}" />
-						 
-		 			</p:toolbarGroup>
-		 		</p:toolbar>
-			</p:panel>
-			
-			<p:panel id="step44" header="Re-order transit stations" rendered="#{RouteAction.currentStep eq 3}" style="margin-top: 70px;">
-				<p:orderList value="#{RouteAction.transitStationList}"
-							 var="station"
-							 converter="#{StationConverter}"
-							 controlsLocation="left"
-							 responsive="true"
-							 itemValue="#{station}">
-					 
-		 			<p:ajax event="reorder" listener="#{RouteAction.onReorder}" update="step44"/>
-		 			<p:ajax event="select" listener="#{RouteAction.onSelect}" update="step44"/>
-					 		
-		 			<p:column style="width: 200px;">
-		 				<h:outputText value="Transit station ##{station.index + 1}"/>
-		 			</p:column>
-		 			
-		 			<p:column>
-		 				<h:outputText value="#{station}"/>
-		 			</p:column>		
-				</p:orderList>
-				
-				<p:toolbar style="border: none; margin-top: 5px;">
-		 			<p:toolbarGroup align="left">
-		 				<p:commandButton process="@this"
-		 								 update="newRoute-form"
-		 								 value="Prev"
-		 								 actionListener="#{RouteAction.step}" />				 								 
-		 			</p:toolbarGroup>
-		 			<p:toolbarGroup align="right">
-		 				<p:commandButton process="@this, step44"
-		 								 update="newRoute-form"
-		 								 value="Next"
-		 								 actionListener="#{RouteAction.step}">
-							<f:actionListener binding="#{RouteGraphAction.init()}"/>
-							<f:actionListener binding="#{RouteGraphAction.onPageLoad()}"/>	 
-			 			</p:commandButton>						 
-		 			</p:toolbarGroup>
-		 		</p:toolbar>
-			</p:panel>
-			
-			<p:panel id="step5" header="Configure travel time estimates" rendered="#{RouteAction.currentStep eq 4}" style="margin-top: 70px;">
-				<p:messages autoUpdate="true" closable="true" severity="info,error"/>
-				
-				<c:set var="curIndex" value="#{RouteGraphAction.currentIndex}" />
-				<c:set var="graphLen" value="#{RouteGraphAction.allRouteStationList.size()}" />
-				<c:set var="done" value="#{graphLen eq (curIndex + 1)}" />
-				
-				<p:panelGrid columns="1" layout="grid" rendered="#{not done}">
-					
-					<f:facet name="header">
-						<h:panelGrid columns="4" width="100%">
-							<h:outputLabel value="From:"/>
-							<h:outputText value="#{RouteGraphAction.allRouteStationList[curIndex]}" style="background: #FFFFFF;"/>
-							
-							<h:outputLabel value="To:"/>
-							<h:outputText value="#{RouteGraphAction.allRouteStationList[curIndex + 1]}" style="background: #FFFFFF;"/>
-						</h:panelGrid>
-					</f:facet>
-					
-					<h:panelGrid columns="2" cellpadding="10" cellspacing="10">
-						<h:outputLabel value="Estimated travel time *" for="travel-time"/>
-						<p:calendar id="travel-time"
-									value="#{RouteGraphAction.selectedEntity.estimatedTravelTime}"
-									timeOnly="true"
-									required="true"
-									mask="99:99"
-									size="10"
-									pattern="HH:mm">
-							<p:ajax event="change" />			
-						</p:calendar>									
-					</h:panelGrid>
-					
-					<f:facet name="footer">
-						<div align="center">
-							<h:outputLabel value="Transit distance #{curIndex + 1}/#{graphLen}"/>
-						</div>
-					</f:facet>
-				</p:panelGrid>
-				
-				<p:toolbar style="border: none; margin-top: 2px;">
-					<p:toolbarGroup align="left">
-						<p:commandButton id="btn-reset"
-										 ajax="true" 
-										 value="Reset" 
-										 icon="ui-icon-close" 
-										 process="@this"
-										 update="step5"
-										 actionListener="#{RouteGraphAction.onPageLoad}">
-							<f:actionListener binding="#{RouteGraphAction.init()}"/>				 
-						 </p:commandButton>
-					</p:toolbarGroup>
-					
-					<p:toolbarGroup align="left">
-						<p:commandButton id="btn-add" value="Add" icon="ui-icon-plus" process="@this, step5" update="step5">
-							<f:actionListener binding="#{RouteGraphAction.addToEntityList()}"/>
-						</p:commandButton>
-					</p:toolbarGroup>
-				</p:toolbar>
-				
-				<p:outputPanel id="routeGraph-panel" style="margin-top: 15px;">
-					<p:dataTable value="#{RouteGraphAction.entityList}"
-								 var="entity"
-								 id="routeGraph-table"
-								 styleClass="routeGraphTable-class">
-						<p:column headerText="From">
-							<h:outputText value="#{entity.from}"/>
-						</p:column>
+			<h:form id="routeView-form">
+				<p:messages autoUpdate="true" closable="true" severity="info,error" />
+				<p:panel header="#{RouteAction.selectedEntity.name}">
+					<p:panelGrid columns="2" layout="grid">
+						<p:outputLabel value="Departure station:" />
+						<h:outputText value="#{RouteAction.selectedEntity.start.asString}" />
 						
-						<p:column headerText="To">
-							<h:outputText value="#{entity.to}"/>
-						</p:column>
-						
-						<p:column headerText="TRavel time">
-							<h:outputText value="#{entity.estimatedTravelTimeAsString}"/>
-						</p:column>
-						
-						<p:column headerText="Action">
-							<p:commandLink value="Remove"
-										   update="routeGraph-table, @form"
-										   process="@this"
-										   disabled="#{entity.selected}">
-								<p:collector unique="true" value="#{entity}" removeFrom="#{RouteGraphAction.entityList}" />
-								<f:setPropertyActionListener value="#{curIndex - 1}" target="#{RouteGraphAction.currentIndex}" />
-								<f:actionListener binding="#{RouteGraphAction.activateLast()}"/>		   
-				   			</p:commandLink>
-						</p:column>		 
-					 </p:dataTable>
-				</p:outputPanel>
+						<p:outputLabel value="Final destination:" />
+						<h:outputText value="#{RouteAction.selectedEntity.stop.asString}" />
+					</p:panelGrid>
+					<p:toolbar>
+						<f:facet name="left">
+							<p:commandButton value="Back" action="#{RouteAction.listEntities}" />
+						</f:facet>
+						<f:facet name="right">
+							<p:commandButton value="Edit" icon="ui-icon-pencil" />
+						</f:facet>
+					</p:toolbar>
+				</p:panel>
 				
-				<p:toolbar style="border: none; margin-top: 15px;">
-					<p:toolbarGroup align="left">
-						<p:commandButton value="Prev"
-										 actionListener="#{RouteAction.step}"
-										 process="@this"
-										 update="newRouteForm"/>
-					</p:toolbarGroup>
-					<p:toolbarGroup align="right">
-						<p:commandButton value="Next"
-										 actionListener="#{RouteAction.step}"
-										 process="@this, step5"
-										 update="newRouteForm"
-										 rendered="#{done}" />
-					</p:toolbarGroup>
-				</p:toolbar>
-			</p:panel>
-			
-			<p:panel id="step6" header="Confirm route details" rendered="#{RouteAction.currentStep eq 5}" style="margin-top: 70px;">
-				<p:tabView>
-					<p:tab title="Route details">				
-						<p:panelGrid columns="3" layout="grid">
-							<p:panel header="Loading station" style="border: none;">
-								<p:toolbar style="border: none;">
-									<f:facet name="left">
-										<h:outputText value="#{RouteAction.selectedEntity.start.description}" styleClass="confirmFont"/>
-									</f:facet>
-								</p:toolbar>
-							</p:panel>
-							
-							<p:panel header="Final destination" style="border: none;">
-								<p:toolbar style="border: none;">
-									<f:facet name="left">
-										<h:outputText value="#{RouteAction.selectedEntity.stop.description}" styleClass="confirmFont"/>
-									</f:facet>
-								</p:toolbar>
-							</p:panel>
-							
-							<p:panel header="Transit stations" style="border: none;">
-								<ui:repeat value="#{RouteAction.stationPickList.target}" var="stop" varStatus="counter">
-									<p:toolbar style="border: none;">
-										<f:facet name="left">
-											<h:outputText value="#{counter.index + 1})  #{stop}" styleClass="confirmFont"/>
-										</f:facet>
-									</p:toolbar>
-								</ui:repeat>
-							</p:panel>
-						</p:panelGrid>
+				<p:accordionPanel activeIndex="null" id="routeDetails-accordionPanel">
+					<p:ajax event="tabChange" listener="#{RouteAction.onTabChange}" update="routeDetails-accordionPanel"/>
+					<p:tab title="Transit stations">
+						<ui:repeat value="#{RouteAction.selectedEntity.routeStops}" var="link">
+							<h:outputText value="#{link.stop.asString}" style="margin-top: 5px;" />
+							<br />
+							<p:separator />
+						</ui:repeat>
 					</p:tab>
-					<p:tab title="Travel times between stations">
-						<p:dataTable value="#{RouteGraphAction.entityList}"
-									 var="graph"
+					<p:tab title="Travel times between stations">						
+						<p:dataTable value="#{RouteAction.selectedEntity.stretchLinks}"
+									 var="entity"
 									 paginator="true"
 									 paginatorPosition="bottom"
 									 rows="10">
+							<f:facet name="header">
+								<h:outputText value="Total travel time: "/>
+							</f:facet>
 							<p:column headerText="From">
-								<h:outputText value="#{graph.from}"/>
+								<h:outputText value="#{entity.stretch.from.asString}"/>
+							</p:column>
+							<p:column headerText="To">
+								<h:outputText value="#{entity.stretch.to.asString}"/>
+							</p:column>
+							<p:column headerText="Travel time">
+								<h:outputText value="#{entity.stretch.estimatedTravelTimeAsString}"/>
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+					<p:tab title="Mirror route">
+						<p:commandButton value="Create mirror"
+										 action="#{StretchAction.createMirror}"
+										 process="@this"
+										 update="routeView-form"
+										 icon="ui-icon-copy"
+										 rendered="#{empty RouteAction.selectedEntity.mirrorRoute}"
+										 oncomplete="window.location.replace('#{application.contextPath}/route/routeView.xhtml');" />
+						 <p:commandLink rendered="#{not empty RouteAction.selectedEntity.mirrorRoute}"
+						 				process="@this"
+						 				update="@widgetVar(var_RouteViewDlg)"
+						 				oncomplete="PF('var_loadMirrorRouteWarningDlg').show();">
+							<p:toolbar>
+								<f:facet name="left">
+									<h:panelGrid columns="2" cellspacing="5">
+										<p:graphicImage name="/images/icons/route.png" width="30" height="30"/>
+										<h:outputText value="#{RouteAction.selectedEntity.mirrorRoute.name}" style="font-weight: normal"/>
+									</h:panelGrid>
+								</f:facet>
+							</p:toolbar>
+							<f:setPropertyActionListener value="#{RouteAction.selectedEntity.mirrorRoute}" target="#{RouteAction.selectedEntity}" />										
+		 				</p:commandLink>
+					</p:tab>
+				</p:accordionPanel>
+			</h:form>
+			
+		</p:outputPanel>
+		
+		<p:outputPanel rendered="#{RouteAction.selectedEntity.id eq -1}">
+	
+			<h:form id="newRoute-form">
+				
+				<p:steps activeIndex="#{RouteAction.currentStep}"
+						 styleClass="custom"
+						 style="margin-top: 20px; margin-bottom: 20px;">
+				 	<p:menuitem value="Loading station" />
+				 	<p:menuitem value="Final destination" />
+				 	<p:menuitem value="Transit stations" />
+				 	<p:menuitem value="Re-order transit stations" />
+				 	<p:menuitem value="Travel time estimates" />
+				 	<p:menuitem value="Confirm" />
+			 	</p:steps>
+			 	
+			 	<p:panel id="step1" header="Specify loading station" rendered="#{RouteAction.currentStep eq 0}" style="margin-top: 70px;">
+			 		<p:selectOneMenu id="newRoute-start" value="#{RouteAction.selectedEntity.start}" converter="#{StopVOConverter}">
+			 			<f:selectItems value="#{RouteAction.stationList}"
+		 							   var="start"
+		 							   itemValue="#{start}"
+		 							   itemLabel="#{start}" />
+				   		<p:ajax process="step1" update="newRoute-form" />
+			 		</p:selectOneMenu>
+			 		
+			 		<p:toolbar style="border: none; margin-top: 5px;">
+			 			<p:toolbarGroup align="left">
+			 				<p:commandButton ajax="true"
+			 								 process="@this"
+			 								 value="Cancel"
+			 								 action="/admin/adminPanel?faces-redirect=true&amp;i=2" />
+			 			</p:toolbarGroup>
+			 			<p:toolbarGroup align="right">
+			 				<p:commandButton ajax="true"
+			 								 process="@this, newRoute-form"
+			 								 update="newRoute-form"
+			 								 value="Next"
+			 								 actionListener="#{RouteAction.step}">
+			 					<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" removeFrom="#{RouteAction.stationList}" />				 
+						 	</p:commandButton>
+			 			</p:toolbarGroup>
+			 		</p:toolbar>
+			 	</p:panel>
+			 	
+			 	<p:panel id="step2" header="Specify final destination" rendered="#{RouteAction.currentStep eq 1}" style="margin-top: 70px;">
+			 		<p:selectOneMenu id="newRoute-stop" value="#{RouteAction.selectedEntity.stop}" converter="#{StopVOConverter}">
+			 			<f:selectItems value="#{RouteAction.stationList}"
+		 							   var="stop"
+		 							   itemValue="#{stop}"
+		 							   itemLabel="#{stop}" />
+				   		<p:ajax process="step2" update="newRoute-form"/>
+			 		</p:selectOneMenu>
+			 		
+			 		<p:toolbar style="border: none; margin-top: 5px;">
+			 			<p:toolbarGroup align="left">
+			 				<p:commandButton process="@this"
+			 								 update="newRoute-form"
+			 								 value="Prev"
+			 								 actionListener="#{RouteAction.step}">
+						 		<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" addTo="#{RouteAction.stationList}" />
+					 		</p:commandButton>						 
+			 			</p:toolbarGroup>
+			 			<p:toolbarGroup align="right">
+			 				<p:commandButton process="@this, newRoute-form"
+			 								 update="newRoute-form"
+			 								 value="Next"
+			 								 actionListener="#{RouteAction.step}">
+					 			<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" removeFrom="#{RouteAction.stationList}" />
+					 			<p:collector unique="true" value="#{RouteAction.selectedEntity.stop}" removeFrom="#{RouteAction.stationList}" />
+					 		</p:commandButton>
+							 
+			 			</p:toolbarGroup>
+			 		</p:toolbar>
+			 	</p:panel>
+				
+				<p:panel id="step3" header="Transit stations" rendered="#{RouteAction.currentStep eq 2}" style="margin-top: 70px;">
+					
+					<p:toolbar style="border: none; margin-top: 5px;">
+			 			<p:toolbarGroup align="left">
+			 				<h:panelGrid columns="4">
+			 					<h:outputText value="Loading station:" />
+			 					<h:outputText value="#{RouteAction.selectedEntity.start.asString}" style="font-weight: normal;"/>
+			 				</h:panelGrid>
+			 			</p:toolbarGroup>
+			 			<p:toolbarGroup align="right">
+			 				<h:panelGrid columns="2">
+			 					<h:outputText value="Final destination:" />
+			 					<h:outputText value="#{RouteAction.selectedEntity.stop.asString}" style="font-weight: normal;"/>
+			 				</h:panelGrid>
+			 			</p:toolbarGroup>
+					</p:toolbar>
+				
+					<p:pickList id="transitStations-picklist"
+								responsive="true"
+								value="#{RouteAction.stationPickList}"
+								var="stop"
+								itemLabel="#{stop}"
+								itemValue="#{stop}"
+								converter="#{StopVOConverter}">
+						<p:ajax event="transfer" listener="#{RouteAction.onTransfer}" />	
+					</p:pickList>
+								
+					<p:toolbar style="border: none; margin-top: 5px;">
+			 			<p:toolbarGroup align="left">
+			 				<p:commandButton process="@this"
+			 								 update="newRoute-form"
+			 								 value="Prev"
+			 								 actionListener="#{RouteAction.step}">
+					 			<p:collector unique="true" value="#{RouteAction.selectedEntity.stop}" addTo="#{RouteAction.stationList}" />
+					 			<p:collector unique="true" value="#{RouteAction.selectedEntity.start}" addTo="#{RouteAction.stationPickList.source}" />
+					 			<p:collector unique="true" value="#{RouteAction.selectedEntity.stop}" addTo="#{RouteAction.stationPickList.source}" />
+					 		</p:commandButton>						 
+			 			</p:toolbarGroup>
+			 			<p:toolbarGroup align="right">
+			 				<p:commandButton process="@this, step3"
+			 								 update="newRoute-form"
+			 								 value="Next"
+			 								 actionListener="#{RouteAction.step}">
+							 	<f:setPropertyActionListener value="#{RouteAction.stationPickList.target}" target="#{RouteAction.transitStationList}" />
+							 </p:commandButton>
+			 			</p:toolbarGroup>
+			 		</p:toolbar>
+				</p:panel>
+				
+				<p:panel id="step4" header="Re-order transit stations" rendered="#{RouteAction.currentStep eq 3}" style="margin-top: 70px;">
+					<p:orderList value="#{RouteAction.transitStationList}"
+								 var="station"
+								 converter="#{StopVOConverter}"
+								 controlsLocation="left"
+								 responsive="true"
+								 itemValue="#{station}"
+								 itemLabel="#{station}">
+						 
+			 			<p:ajax event="reorder" update="step4"/>
+			 			<p:ajax event="select" listener="#{RouteAction.onSelect}" />
+						 		
+			 			<p:column style="width: 200px;">
+			 				<h:outputText value="Transit station ##{station.index + 1}"/>
+			 			</p:column>
+			 			
+			 			<p:column>
+			 				<h:outputText value="#{station.asString}"/>
+			 			</p:column>		
+					</p:orderList>
+					
+					<p:toolbar style="border: none; margin-top: 5px;">
+			 			<p:toolbarGroup align="left">
+			 				<p:commandButton process="@this"
+			 								 update="newRoute-form"
+			 								 value="Prev"
+			 								 actionListener="#{RouteAction.step}" />				 								 
+			 			</p:toolbarGroup>
+			 			<p:toolbarGroup align="right">
+			 				<p:commandButton process="@this, step4"
+			 								 update="newRoute-form"
+			 								 value="Next"
+			 								 actionListener="#{RouteAction.step}">
+								<f:actionListener binding="#{StretchAction.init()}"/>
+								<f:actionListener binding="#{StretchAction.onPageLoad()}"/>	 
+				 			</p:commandButton>						 
+			 			</p:toolbarGroup>
+			 		</p:toolbar>
+				</p:panel>
+				
+				<p:panel id="step5" header="Configure travel time estimates" rendered="#{RouteAction.currentStep eq 4}" style="margin-top: 70px;">					
+					<!--
+					<c:set var="curIndex" value="#{StretchAction.currentIndex}" />					
+					<c:set var="stretchLen" value="#{StretchAction.allRouteStationList.size() - 1}" />
+					<c:set var="editTravelTime" value="#{StretchAction.selectedEntity.id eq 0}" />
+					<c:set var="done" value="#{stretchLen eq curIndex}" />
+					
+					<h:outputText value="curIndex -> #{curIndex}"/><br/>
+							<h:outputText value="stretchLen -> #{stretchLen}"/><br/>
+							<h:outputText value="editTravelTime -> #{editTravelTime}"/>
+							<h:outputText value="done -> #{stretchLen eq curIndex}"/>
+					-->
+					<p:panelGrid columns="1" layout="grid" rendered="#{not StretchAction.config.done}">						
+						<f:facet name="header">							
+							<div style="text-align: left;">
+								<p:outputLabel value="From: #{StretchAction.allRouteStationList[StretchAction.currentIndex]}"
+											   style="background: #FFFFFF;"/>								
+								<p:outputLabel value="To: #{StretchAction.allRouteStationList[StretchAction.currentIndex + 1]}"
+											   style="background: #FFFFFF; float: right;"/>
+							</div>							
+						</f:facet>			
+						
+						<h:panelGrid columns="2" cellpadding="10" cellspacing="10">
+							<h:outputLabel value="Estimated travel time *" for="travel-time"/>
+							<h:outputText id="travel-time-no-edit"
+										  value="#{StretchAction.selectedEntity.estimatedTravelTimeAsString}" />
+							<p:calendar id="travel-time"
+										value="#{StretchAction.selectedEntity.estimatedTravelTime}"
+										timeOnly="true"
+										required="true"
+										mask="99:99"
+										size="10"
+										readonly="#{not StretchAction.config.editTravelTime}"
+										pattern="HH:mm"
+										showHour="#{StretchAction.config.editTravelTime}"
+										showMinute="#{StretchAction.config.editTravelTime}">
+								<p:ajax event="change" process="@this" update="travel-time-no-edit"/>			
+							</p:calendar>									
+						</h:panelGrid>
+						
+						<f:facet name="footer">
+							<div align="center">
+								<h:outputLabel value="Transit distance #{StretchAction.config.curIndex + 1}/#{StretchAction.config.stretchLen}"/>
+							</div>
+						</f:facet>
+					</p:panelGrid>
+					
+					<p:toolbar style="border: none; margin-top: 2px;" rendered="#{not StretchAction.config.done}">
+						<p:toolbarGroup align="left">
+							<p:commandButton id="btn-reset"
+											 ajax="true" 
+											 value="Reset" 
+											 icon="ui-icon-close" 
+											 process="@this"
+											 update="step5"
+											 actionListener="#{StretchAction.onPageLoad}">
+								<f:actionListener binding="#{StretchAction.init()}"/>				 
+							 </p:commandButton>
+						</p:toolbarGroup>
+						
+						<p:toolbarGroup align="right">
+							<p:commandButton id="btn-add" 
+											 value="Add"
+											 actionListener="#{StretchAction.addToEntityList}" 
+											 icon="ui-icon-plus" 
+											 process="@this, travel-time" 
+											 update="step5" />
+						</p:toolbarGroup>
+					</p:toolbar>
+					
+					<p:outputPanel id="stretch-panel" style="margin-top: 15px;">
+						<p:dataTable value="#{StretchAction.entityList}"
+									 var="entity"
+									 id="stretch-table"
+									 styleClass="stretchTable-class">
+							<p:column headerText="From">
+								<h:outputText value="#{entity.from.asString}"/>
 							</p:column>
 							
 							<p:column headerText="To">
-								<h:outputText value="#{graph.to}"/>
+								<h:outputText value="#{entity.to.asString}"/>
 							</p:column>
 							
 							<p:column headerText="Travel time">
-								<h:outputText value="#{graph.estimatedTravelTimeAsString}"/>
-							</p:column>			 
+								<h:outputText value="#{entity.estimatedTravelTimeAsString}"/>
+							</p:column>
+							
+							<p:column headerText="Action">
+								<p:commandLink value="Remove"
+											   actionListener="#{StretchAction.onEntityRemove}"
+											   update="newRoute-form:step5"
+											   process="@this"
+											   disabled="#{entity.selected}">
+							   		<p:collector unique="true" value="#{entity}" removeFrom="#{StretchAction.entityList}" />							   		
+							   		<f:actionListener binding="#{StretchAction.activateLast()}"/>		   
+					   			</p:commandLink>
+							</p:column>		 
 						 </p:dataTable>
-					</p:tab>
-				</p:tabView>
+					</p:outputPanel>
+					
+					<p:toolbar style="border: none; margin-top: 15px;">
+						<p:toolbarGroup align="left">
+							<p:commandButton value="Prev"
+											 actionListener="#{RouteAction.step}"
+											 process="@this"
+											 update="newRoute-form">
+								<f:actionListener binding="#{RouteAction.onReorder()}"/>				 
+							 </p:commandButton>
+						</p:toolbarGroup>
+						<p:toolbarGroup align="right">
+							<p:commandButton value="Next"
+											 actionListener="#{RouteAction.step}"
+											 process="@this, step5"
+											 update="newRoute-form"
+											 rendered="#{StretchAction.config.done}" />
+						</p:toolbarGroup>
+					</p:toolbar>
+				</p:panel>
 				
-				<p:toolbar style="border: none; margin-top: 5px;">
-		 			<p:toolbarGroup align="left">
-		 				<p:commandButton process="@this"
-		 								 update="newRoute-form"
-		 								 value="Prev"
-		 								 actionListener="#{RouteAction.step}" />						 
-		 			</p:toolbarGroup>
-		 			<p:toolbarGroup align="right">
-		 				<p:commandButton process="@this"		 								 
-		 								 value="Finish"
-		 								 actionListener="#{RouteAction.saveEntity}" />
-						 
-		 			</p:toolbarGroup>
-		 		</p:toolbar>
-			</p:panel>
+				<p:panel id="step6" header="Confirm route details" rendered="#{RouteAction.currentStep eq 5}" style="margin-top: 70px;">
+					<p:tabView id="routeView-tabView">
+						<p:ajax event="tabChange" listener="#{RouteAction.onTabChange}" update="routeView-tabView"/>
+						<p:tab title="Route details">				
+							<p:panelGrid columns="4" layout="grid" style="border: none;" styleClass="ui-fluid">
+								<p:panel header="Loading station" style="border: none;">
+									<p:toolbar style="border: none;">
+										<f:facet name="left">
+											<h:outputText value="#{RouteAction.selectedEntity.start.asString}" style="font-weight: normal;" styleClass="confirmFont"/>
+										</f:facet>
+									</p:toolbar>
+								</p:panel>
+								
+								<p:panel header="Final destination" style="border: none;">
+									<p:toolbar style="border: none;">
+										<f:facet name="left">
+											<h:outputText value="#{RouteAction.selectedEntity.stop.asString}" style="font-weight: normal;" styleClass="confirmFont"/>
+										</f:facet>
+									</p:toolbar>
+								</p:panel>
+								
+								<p:panel header="Transit stations" style="border: none;">
+									<ui:repeat value="#{RouteAction.stationPickList.target}" var="stop" varStatus="counter">
+										<p:toolbar style="border: none;">
+											<f:facet name="left">
+												<h:outputText value="#{counter.index + 1})  #{stop}" styleClass="confirmFont" style="font-weight: normal;"/>
+											</f:facet>
+										</p:toolbar>
+									</ui:repeat>
+								</p:panel>
+							</p:panelGrid>
+						</p:tab>
+						<p:tab title="Travel times between stations">
+							<p:dataTable value="#{StretchAction.finalEntityList}"
+										 var="stretch"
+										 paginator="true"
+										 paginatorPosition="bottom"
+										 rows="10">
+								<p:column headerText="From">
+									<h:outputText value="#{stretch.from.asString}"/>
+								</p:column>
+								
+								<p:column headerText="To">
+									<h:outputText value="#{stretch.to.asString}"/>
+								</p:column>
+								
+								<p:column headerText="Travel time">
+									<h:outputText value="#{stretch.estimatedTravelTimeAsString}"/>
+								</p:column>			 
+							 </p:dataTable>
+						</p:tab>
+					</p:tabView>
+					
+					<p:toolbar style="border: none; margin-top: 5px;">
+			 			<p:toolbarGroup align="left">
+			 				<p:commandButton process="@this"
+			 								 update="newRoute-form"
+			 								 value="Prev"
+			 								 actionListener="#{RouteAction.step}" />						 
+			 			</p:toolbarGroup>
+			 			<p:toolbarGroup align="right">
+			 				<p:commandButton action="#{RouteAction.saveEntity}"
+			 								 immediate="true" 
+			 								 process="@this"
+			 								 icon="ui-icon-check"		 								 
+			 								 value="Finish">
+			 					<f:setPropertyActionListener value="true" target="#{StretchAction.mirror}" />				 
+							 </p:commandButton>							 
+			 			</p:toolbarGroup>
+			 		</p:toolbar>
+				</p:panel>
+				
+			</h:form>
 			
-		</h:form>
+		</p:outputPanel>
 		
 		<style>
 			.ui-steps.custom { margin-bottom: 30px; }			

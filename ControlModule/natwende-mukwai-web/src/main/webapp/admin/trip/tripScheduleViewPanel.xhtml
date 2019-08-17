@@ -7,24 +7,22 @@
 				xmlns:h="http://java.sun.com/jsf/html"
 				xmlns:f="http://java.sun.com/jsf/core">
 				
-	<p:outputPanel rendered="#{not TripScheduleAction.showMirror}" autoUpdate="true">
-		<p:accordionPanel id="editTripSchedule-accordion">
-			<p:tab title="Bus(es)">
-				<ui:include src="/admin/trip/editBus.xhtml">
-					<ui:param name="tripSchedule" value="#{TripScheduleAction.selectedEntity}" />
-				</ui:include>
-			</p:tab>
-			<p:tab title="Assigned driver(es)">
-				<ui:include src="/admin/trip/editAssignedDriver.xhtml">
-					<ui:param name="tripSchedule" value="#{TripScheduleAction.selectedEntity}" />
-					<ui:param name="idPrefix" value="@form:editTripSchedule-accordion" />
-				</ui:include>
-			</p:tab>
+	<p:outputPanel autoUpdate="true">
+		<p:accordionPanel id="editTripSchedule-accordion" activeIndex="#{TripScheduleAction.activeIndex}">
+			<p:ajax event="tabChange" listener="#{TripScheduleAction.onTabChange}" update="editTripSchedule-accordion"/>
 			<p:tab title="Running schedule">
 				<ui:include src="/admin/trip/editRunningSchedule.xhtml">
-					<ui:param name="tripSchedule" value="#{TripScheduleAction.selectedEntity}" />
+					<ui:param name="idPrefix" value="#{p:component('editTripSchedule-accordion')}" />
 				</ui:include>
 			</p:tab>
+			<p:tab title="Bus(es)">
+				<ui:include src="/admin/trip/editBus.xhtml"/>
+			</p:tab>
+			<p:tab title="Assigned driver(s)" disabled="#{TripScheduleAction.selectedBusList.size() eq 0}" id="driver-tab">
+				<ui:include src="/admin/trip/editAssignedDriver.xhtml">					
+					<ui:param name="idPrefix" value="#{p:component('editTripSchedule-accordion')}" />
+				</ui:include>
+			</p:tab>			
 		</p:accordionPanel>
 		<p:toolbar style="margin-top: 10px; border: none;">
 			<f:facet name="left">
@@ -37,58 +35,27 @@
 	 			</p:commandButton>						 		
 			</f:facet>
 			<f:facet name="right">
-				<p:commandButton value="Save"			 									 
+				<p:commandButton process="@form"
+								 update="editTripSchedule-accordion"
+								 value="Save"			 									 
 								 icon="ui-icon-disk"
 								 iconPos="left"
 								 action="#{TripScheduleAction.saveEntity}"
+								 rendered="#{not TripScheduleAction.showMirror}"
 								 title="Click to save schedule.">			 										 
 	 			</p:commandButton>						 		
 			</f:facet>
-		</p:toolbar>
-	</p:outputPanel>
-	
-	<p:outputPanel rendered="#{TripScheduleAction.showMirror}" autoUpdate="true">
-		<p:accordionPanel id="editTripScheduleMirror-accordion" activeIndex="#{TripScheduleAction.activeIndex}">
-			<p:tab title="Bus(es)">
-				<ui:include src="/admin/trip/editBus.xhtml">
-					<ui:param name="tripSchedule" value="#{TripScheduleAction.mirrorSchedule}" />
-				</ui:include>
-				<p:toolbar style="margin-bottom: 5px; border: none; margin-top: 30px;">
-					<f:facet name="right">
-						<p:commandButton value="Assigned driver(s)"
-										 process="@this"			 									 
-										 icon="ui-icon-arrowthick-1-e"
-										 iconPos="right"
-										 actionListener="#{TripScheduleAction.assignedDriversToBuses}"
-										 title="View drivers and their assigned buses.">
-				 			<f:setPropertyActionListener value="1" target="#{TripScheduleAction.activeIndex}" />			 										 
-			 			</p:commandButton>						 		
-					</f:facet>
-				</p:toolbar>
-			</p:tab>
-			<p:tab title="Assigned driver(es)">
-				<ui:include src="/admin/trip/editAssignedDriver.xhtml">
-					<ui:param name="tripSchedule" value="#{TripScheduleAction.mirrorSchedule}" />
-					<ui:param name="idPrefix" value="tripScheduleEdit-form:editTripSchedule-accordion" />
-				</ui:include>
-			</p:tab>
-			<p:tab title="Running schedule">
-				<ui:include src="/admin/trip/editRunningSchedule.xhtml">
-					<ui:param name="tripSchedule" value="#{TripScheduleAction.mirrorSchedule}" />
-				</ui:include>
-			</p:tab>
-		</p:accordionPanel>
-		<p:toolbar style="margin-top: 10px; border: none;">
-			<f:facet name="left">
-				<p:commandButton value="Done"
-								 process="@this"
-								 update="@form"			 									 
-								 icon="ui-icon-check"
-								 oncomplete="PF('var_TripScheduleEditDlg').hide();"
-								 title="Click to close window.">			 										 
+			<f:facet name="right">
+				<p:commandButton update="main-content"
+								 process="@this, editTripSchedule-accordion"
+								 value="Done"			 									 
+								 icon="ui-icon-check"								 
+								 oncomplete="PF('var_TripScheduleEditDlg').hide()"
+								 rendered="#{TripScheduleAction.showMirror}"
+								 title="Click to finish.">		 						 										 
 	 			</p:commandButton>						 		
-			</f:facet>			
+			</f:facet>
 		</p:toolbar>
-	</p:outputPanel>				
+	</p:outputPanel>		
 				
 </ui:composition>

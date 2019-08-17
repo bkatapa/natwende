@@ -1,9 +1,10 @@
 package com.mweka.natwende.trip.vo;
 
+import java.math.BigDecimal;
+
 import com.mweka.natwende.base.vo.BaseVO;
-import com.mweka.natwende.payment.vo.PaymentVO;
 import com.mweka.natwende.types.BookingStatus;
-import com.mweka.natwende.types.OperatorName;
+import com.mweka.natwende.types.Title;
 
 public class BookingVO extends BaseVO {
 
@@ -13,16 +14,29 @@ public class BookingVO extends BaseVO {
 	private static final long serialVersionUID = 9006165678645743154L;
 	
 	private String seatNumber;
-	private String accountUser;
-	private String accountUserEmail;
-	private String customerName;
 	private String customerEmail;
 	private String from;
 	private String to;
+	private BigDecimal fare;
 	private BookingStatus bookingStatus;
-	private OperatorName operatorName;
+	private String passengerFirstName;
+	private String passengerLastName;
+	private String passengerEmail;	
+	private String passengerPhoneNumber;
+	private String passengerAddress;
+	private String passengerNrc;
+	private Title passengerTitle;
+	
 	private TripVO trip;
-	private PaymentVO payment;
+	private ReservationVO reservation;
+	
+	public BookingVO() {
+		fare = BigDecimal.ZERO;
+	}
+	
+	public BookingVO(String seatNumber) {
+		this.seatNumber = seatNumber;
+	}
 	
 	public String getSeatNumber() {
 		return seatNumber;
@@ -47,30 +61,6 @@ public class BookingVO extends BaseVO {
 	public void setTo(String to) {
 		this.to = to;
 	}
-	
-	public String getAccountUser() {
-		return accountUser;
-	}
-
-	public void setAccountUser(String accountUser) {
-		this.accountUser = accountUser;
-	}
-
-	public String getAccountUserEmail() {
-		return accountUserEmail;
-	}
-
-	public void setAccountUserEmail(String accountUserEmail) {
-		this.accountUserEmail = accountUserEmail;
-	}
-
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
 
 	public String getCustomerEmail() {
 		return customerEmail;
@@ -80,28 +70,12 @@ public class BookingVO extends BaseVO {
 		this.customerEmail = customerEmail;
 	}
 
-	public OperatorName getOperatorName() {
-		return operatorName;
-	}
-
 	public BookingStatus getBookingStatus() {
 		return bookingStatus;
 	}
 
 	public void setBookingStatus(BookingStatus bookingStatus) {
 		this.bookingStatus = bookingStatus;
-	}
-
-	public void setOperatorName(OperatorName operatorName) {
-		this.operatorName = operatorName;
-	}
-
-	public PaymentVO getPayment() {
-		return payment;
-	}
-	
-	public void setPayment(PaymentVO payment) {
-		this.payment = payment;
 	}
 	
 	public TripVO getTrip() {
@@ -110,6 +84,86 @@ public class BookingVO extends BaseVO {
 	
 	public void setTrip(TripVO trip) {
 		this.trip = trip;
+	}
+
+	public BigDecimal getFare() {
+		return fare;
+	}
+
+	public void setFare(BigDecimal fare) {
+		this.fare = fare;
+	}
+
+	public String getPassengerFirstName() {
+		return passengerFirstName;
+	}
+
+	public void setPassengerFirstName(String passengerFirstName) {
+		this.passengerFirstName = passengerFirstName;
+	}
+
+	public String getPassengerLastName() {
+		return passengerLastName;
+	}
+
+	public void setPassengerLastName(String passengerLastName) {
+		this.passengerLastName = passengerLastName;
+	}
+
+	public String getPassengerEmail() {
+		return passengerEmail;
+	}
+
+	public void setPassengerEmail(String passengerEmail) {
+		this.passengerEmail = passengerEmail;
+	}
+
+	public String getPassengerPhoneNumber() {
+		return passengerPhoneNumber;
+	}
+
+	public void setPassengerPhoneNumber(String passengerPhoneNumber) {
+		this.passengerPhoneNumber = passengerPhoneNumber;
+	}
+
+	public String getPassengerAddress() {
+		return passengerAddress;
+	}
+
+	public void setPassengerAddress(String passengerAddress) {
+		this.passengerAddress = passengerAddress;
+	}
+
+	public String getPassengerNrc() {
+		return passengerNrc;
+	}
+
+	public void setPassengerNrc(String passengerNrc) {
+		this.passengerNrc = passengerNrc;
+	}
+
+	public Title getPassengerTitle() {
+		return passengerTitle;
+	}
+
+	public void setPassengerTitle(Title passengerTitle) {
+		this.passengerTitle = passengerTitle;
+	}
+
+	public ReservationVO getReservation() {
+		return reservation;
+	}
+
+	public void setReservation(ReservationVO reservation) {
+		this.reservation = reservation;
+	}
+	
+	@Override
+	public String toString() {
+		if (reservation != null && trip != null) {
+			return passengerFirstName + " " + passengerLastName + ", " + trip;
+		}
+		return super.toString();
 	}
 
 }

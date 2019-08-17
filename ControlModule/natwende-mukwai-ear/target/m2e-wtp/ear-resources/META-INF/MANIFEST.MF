@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Built-By: Bell
-Build-Jdk: 1.8.0_171
+Built-By: bellk
+Build-Jdk: 1.8.0_222
 Created-By: Maven Integration for Eclipse
 artifactId: natwende-mukwai-ear
 groupId: com.mweka.natwende

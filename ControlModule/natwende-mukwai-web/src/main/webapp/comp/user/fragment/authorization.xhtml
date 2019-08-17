@@ -7,7 +7,7 @@
 				xmlns:h="http://java.sun.com/jsf/html"
 				xmlns:f="http://java.sun.com/jsf/core">
 				
-	<h:panelGrid columns="2" cellpadding="5">
+	<h:panelGrid columns="2" cellpadding="5" rendered="#{UserAction.selectedEntity.id lt 0}">
 		<h:outputText value="Password: *" />
 		<p:password value="#{UserAction.selectedEntity.passwd}" required="true" label="Password"/>
 		
@@ -15,26 +15,32 @@
 		<p:password value="#{UserAction.selectedEntity.confirmPasswd}" required="true" label="Confirm password"/>
 	</h:panelGrid>
 
-	<p:separator />
+	<fieldset style="border-color: lightgray;" class="ui-corner-all">
+		<legend style="font-style: italic; font-weight: bold;">Current permissions</legend>
 	
-	<p:selectOneRadio id="permissions"
-					  value="#{UserAction.userRole}"
-					  layout="responsive"
-					  columns="3"
-					  converter="#{RoleVOConverter}">
-		<f:selectItems value="#{UserAction.roleList}"
-					   var="role"
-					   itemLabel="#{role}"
-					   itemValue="#{role}" />
-	   <p:ajax />				  
-  	</p:selectOneRadio>
+		<p:selectOneRadio id="permissions"
+						  value="#{UserAction.userRole}"
+						  layout="responsive"
+						  columns="3"
+						  converter="#{RoleVOConverter}">
+			<f:selectItems value="#{UserAction.roleList}"
+						   var="role"
+						   itemLabel="#{role}"
+						   itemValue="#{role}" />
+		   <p:ajax />				  
+	  	</p:selectOneRadio>
+		  	
+  	</fieldset>
   	
-  	<p:toolbar style="margin-bottom: 5px; margin-top: 5px; border:none;">
+  	<p:toolbar style="margin-top: 10px; border:none;" 
+  			   rendered="#{UserAction.selectedEntity.id gt 0}">
   		<f:facet name="left">
-  			<p:commandButton value="Validate"
+  			<p:commandButton value="Reset password"
+  							 actionListener="#{UserAction.resetPassword}"
   							 process="@this"
-  							 icon="ui-icon-check"
-  							 title="Click to validate profile." />
+  							 update="#{p:component(parentComponentMsgs)}"
+  							 icon="fa fa-key"
+  							 title="Click to send password reset link." />
   		</f:facet>
   	</p:toolbar>
 	

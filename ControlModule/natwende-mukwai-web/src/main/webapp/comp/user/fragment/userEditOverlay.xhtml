@@ -15,47 +15,7 @@
 					showCloseIcon="false"
 					dismissable="false">
 	
-		<p:messages closable="true" severity="error,info" />
-		
-		<p:tabView activeIndex="0"
-				   effect="slide"
-				   id="userEdit-tabView"
-				   style="border: none;">
-			
-			<p:tab title="Personal info">
-				<ui:include src="/comp/user/fragment/personalInfo.xhtml" />
-			</p:tab>
-			
-			<p:tab title="Address">
-				<ui:include src="/comp/user/fragment/address.xhtml" />
-			</p:tab>
-			
-			<p:tab title="Permissions">
-				<ui:include src="/comp/user/fragment/authorization.xhtml" />
-			</p:tab>
-			
-			<p:tab title="Profile pic">
-				<ui:include src="/comp/user/fragment/profilePic.xhtml" />
-			</p:tab>
-			
-		</p:tabView>
-		
-		<p:toolbar style="border: none; margin-top: 5px;">
-			<f:facet name="left">
-				<p:commandButton value="Cancel"
-								 icon="ui-icon-close"
-								 process="@this"
-								 oncomplete="PF('var_UserEditPanel').hide();" />
-			</f:facet>
-			
-			<f:facet name="right">
-				<p:commandButton value="Save"
-								 actionListener="#{UserAction.updateEntity}"
-								 icon="ui-icon-disk"
-								 process="@this, userEdit-tabView"
-								 update="#{p:component('userView-form')}" />
-			</f:facet>
-		</p:toolbar>
+		<ui:include src="/comp/user/userEdit.xhtml" />
 		
 	</p:overlayPanel>
 	

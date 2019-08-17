@@ -7,8 +7,10 @@ import javax.persistence.TypedQuery;
 
 import com.mweka.natwende.exceptions.EntityNotFoundException;
 import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.operator.entity.Operator;
 import com.mweka.natwende.operator.entity.OperatorRouteLink;
 import com.mweka.natwende.operator.vo.OperatorRouteLinkVO;
+import com.mweka.natwende.route.entity.Route;
 
 @Stateless
 public class OperatorRouteLinkDataFacade extends AbstractDataFacade<OperatorRouteLinkVO, OperatorRouteLink> {
@@ -34,10 +36,10 @@ public class OperatorRouteLinkDataFacade extends AbstractDataFacade<OperatorRout
 		convertBaseVOToEntity(vo, entity);
 		
 		if (vo.getOperator() != null) {
-			entity.setOperator(serviceLocator.getOperatorDataFacade().findById(vo.getId()));
+			entity.setOperator(serviceLocator.getOperatorDataFacade().findById(vo.getOperator().getId()));
 		}
 		if (vo.getRoute() != null) {
-			entity.setRoute(serviceLocator.getRouteDataFacade().findById(vo.getId()));
+			entity.setRoute(serviceLocator.getRouteDataFacade().findById(vo.getRoute().getId()));
 		}
 		return entity;
 	}
@@ -48,6 +50,14 @@ public class OperatorRouteLinkDataFacade extends AbstractDataFacade<OperatorRout
 		convertVOToEntity(vo, entity);
 		update(entity);
 		return entity;
+	}
+	
+	public OperatorRouteLinkVO getByOperatorIdAndRouteId(Long operatorId, Long routeId) {
+		List<OperatorRouteLink> resultList = createNamedQuery(OperatorRouteLink.QUERY_FIND_BY_OPERATOR_ID_AND_ROUTE_ID, getEntityClass())
+				.setParameter(Operator.PARAM_OPERATOR_ID, operatorId)
+				.setParameter(Route.PARAM_ROUTE_ID, routeId)
+				.getResultList();
+		return getVOFromList(resultList);
 	}
 	
 	public List<OperatorRouteLinkVO> getListByOperatorId(Long operatorId) {

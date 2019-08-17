@@ -16,7 +16,7 @@
 
 		<h:form id="operatorView-form" styleClass="formBackground">
 		
-			<p:outputPanel rendered="#{OperatorAction.newOperator}">			
+			<p:outputPanel rendered="#{OperatorAction.selectedEntity.id lt 0}">			
 				<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info,error" />
 				<p:panel header="Enroll Operator">
 				
@@ -60,12 +60,21 @@
 		</h:form>
 		
 		<h:form id="busList-form" styleClass="formBackground">
-			<p:outputPanel rendered="#{not OperatorAction.newOperator}">
-				<p:messages autoUpdate="true" showIcon="true" closable="true" severity="info,error" />
+			<p:outputPanel rendered="#{OperatorAction.selectedEntity.id gt 0}">				
 				<p:panel header="#{OperatorAction.selectedEntity.name.display}">
-				
-					<p:accordionPanel>
-					
+					<p:toolbar style="margin-bottom: 5px; border: none;">
+						<f:facet name="left">
+							<p:button value="Back"
+									  outcome="/admin/adminPanel?i=2"
+									  icon="ui-icon-arrowthick-1-w"
+									  title="Back to administration page" />
+						</f:facet>
+					</p:toolbar>
+					<p:accordionPanel id="busList-accordion" activeIndex="#{OperatorAction.activeIndex}">
+						<p:ajax event="tabChange" listener="#{OperatorAction.onTabChange}" update="busList-accordion" />
+						<p:tab title="Schedules">
+							<ui:include src="/admin/trip/tripScheduleList.xhtml" />
+						</p:tab>					
 						<p:tab title="Buses">
 							<p:toolbar style="margin-top: 5px; border: none;">
 								<p:toolbarGroup align="left">
@@ -77,46 +86,11 @@
 									<p:commandButton value="Add bus"
 											  		 actionListener="#{BusAction.createEntity}"
 											  		 process="@this"
-											  		 update="busList-form"
+											  		 update="@widgetVar(var_NewBus)"
 											  		 oncomplete="PF('var_NewBus').show()"
 											  		 icon="ui-icon-plusthick" />
 								</p:toolbarGroup>
 							</p:toolbar>
-							
-							<p:panel id="newBus-panel" header="New bus" rendered="#{BusAction.enableNewBusPanel}">
-							
-								<p:panelGrid id="newBus-grid" columns="3" columnClasses="columnHeader, columnNormal, columnNormal" styleClass="v-align-top">
-									<p:outputLabel for="bus-reg" value="Plate reg number:" />
-									<p:inputText id="bus-reg" value="#{BusAction.selectedEntity.reg}" />
-									<p:message for="bus-reg" style="color:red" />
-									
-									<p:outputLabel for="bus-capacity" value="Capacity:" />
-									<p:inputText id="bus-capacity" value="#{BusAction.selectedEntity.capacity}" />
-									<p:message for="bus-capacity" style="color:red" />
-								</p:panelGrid>
-								
-								<p:toolbar style="margin-top: 5px; border: none;">								
-									<p:toolbarGroup align="left">
-										<p:commandButton value="Cancel"
-											  		 	 process="@this"
-											  		 	 update="busList-form"
-											  		 	 oncomplete="PF('var_NewBus').hide()"
-											  		 	 icon="ui-icon-close">
-								  		 	 <f:setPropertyActionListener value="false" target="#{BusAction.enableNewBusPanel}" />
-							  		 	 </p:commandButton>
-									</p:toolbarGroup>
-									
-									<p:toolbarGroup align="right">
-										<p:commandButton value="Save"
-														 process="@this, newBus-panel"
-														 update="@(.busListDataTable-class(busList-dataTable)), newBus-panel"
-											  			 actionListener="#{BusAction.saveEntity}"
-									  		  			 icon="ui-icon-disk" />				  		  			 
-									</p:toolbarGroup>									
-								</p:toolbar>
-							</p:panel>
-							
-							<p:spotlight target="newBus-panel" widgetVar="var_NewBus" />
 							
 							<!-- Buses data table -->
 							<ui:include src="/admin/operator/operatorDataTables/busListDT.xhtml" />

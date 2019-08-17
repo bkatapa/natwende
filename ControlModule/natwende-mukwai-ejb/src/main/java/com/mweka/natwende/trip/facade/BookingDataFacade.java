@@ -3,14 +3,17 @@ package com.mweka.natwende.trip.facade;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.TypedQuery;
-
 import org.apache.commons.logging.LogFactory;
 
 import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.operator.entity.Operator;
+import com.mweka.natwende.operator.entity.Seat;
 import com.mweka.natwende.trip.entity.Booking;
+import com.mweka.natwende.trip.entity.Reservation;
 import com.mweka.natwende.trip.entity.Trip;
 import com.mweka.natwende.trip.vo.BookingVO;
+import com.mweka.natwende.trip.vo.ReservationVO;
+import com.mweka.natwende.types.OperatorName;
 
 @Stateless
 public class BookingDataFacade extends AbstractDataFacade<BookingVO, Booking> {
@@ -31,46 +34,44 @@ public class BookingDataFacade extends AbstractDataFacade<BookingVO, Booking> {
     @Override
     public void convertEntitytoVO(Booking entity, BookingVO vo) {
     	convertBaseEntityToVO(entity, vo);
-    	
-        vo.setAccountUser(entity.getAccountUser());
-        vo.setAccountUserEmail(entity.getAccountUserEmail());
+        vo.setFare(entity.getFare());
+        vo.setPassengerAddress(entity.getPassengerAddress());
+        vo.setPassengerEmail(entity.getPassengerEmail());
+        vo.setPassengerFirstName(entity.getPassengerFirstName());
+        vo.setPassengerNrc(entity.getPassengerNrc());
+        vo.setPassengerPhoneNumber(entity.getPassengerPhoneNumber());
+        vo.setPassengerTitle(entity.getPassengerTitle());
         vo.setBookingStatus(entity.getBookingStatus());
-        vo.setCustomerEmail(entity.getCustomerEmail());
-        vo.setCustomerName(entity.getCustomerName());
         vo.setFrom(entity.getFrom());
         vo.setTo(entity.getTo());
-        vo.setOperatorName(entity.getOperatorName());
-        vo.setSeatNumber(entity.getSeatNumber());
-        
+        vo.setSeatNumber(entity.getSeatNumber());        
         if (entity.getTrip() != null) {
         	vo.setTrip(serviceLocator.getTripDataFacade().getCachedVO(entity.getTrip()));
-        }
-        
-        if (entity.getPayment() != null) {
-        	vo.setPayment(serviceLocator.getPaymentDataFacade().getCachedVO(entity.getPayment()));
+        }        
+        if (entity.getReservation() != null) {
+        	vo.setReservation(serviceLocator.getReservationDataFacade().getCachedVO(entity.getReservation()));
         }
     }
 
     @Override
     public Booking convertVOToEntity(BookingVO vo, Booking entity) {
         convertBaseVOToEntity(vo, entity);
-
-        entity.setAccountUser(vo.getAccountUser());
-        entity.setAccountUserEmail(vo.getAccountUserEmail());
         entity.setBookingStatus(vo.getBookingStatus());
-        entity.setCustomerEmail(vo.getCustomerEmail());
-        entity.setCustomerName(vo.getCustomerName());
+        entity.setFare(vo.getFare());
+        entity.setPassengerAddress(vo.getPassengerAddress());
+        entity.setPassengerEmail(vo.getPassengerEmail());
+        entity.setPassengerFirstName(vo.getPassengerFirstName());
+        entity.setPassengerNrc(vo.getPassengerNrc());
+        entity.setPassengerPhoneNumber(vo.getPassengerPhoneNumber());
+        entity.setPassengerTitle(vo.getPassengerTitle());
         entity.setFrom(vo.getFrom());
         entity.setTo(vo.getTo());
-        entity.setOperatorName(vo.getOperatorName());
-        entity.setSeatNumber(vo.getSeatNumber());
-        
+        entity.setSeatNumber(vo.getSeatNumber());        
         if (vo.getTrip() != null) {
         	entity.setTrip(serviceLocator.getTripDataFacade().findById(vo.getTrip().getId()));
-        }
-        
-        if (vo.getPayment() != null) {
-        	entity.setPayment(serviceLocator.getPaymentDataFacade().findById(vo.getPayment().getId()));
+        }        
+        if (vo.getReservation() != null) {
+        	entity.setReservation(serviceLocator.getReservationDataFacade().findById(vo.getReservation().getId()));
         }
         return entity;
     }
@@ -82,13 +83,36 @@ public class BookingDataFacade extends AbstractDataFacade<BookingVO, Booking> {
     }
     
     public List<BookingVO> getListByTripId(Long tripId) {
-    	return transformList(findListByTripId(tripId));
+    	List<Booking> resultList = createNamedQuery(Booking.QUERY_FIND_LIST_BY_TRIP_ID, getEntityClass())
+    			.setParameter(Trip.PARAM_TRIP_ID, tripId)
+    			.getResultList();
+    	return transformList(resultList);
     }
     
-    private List<Booking> findListByTripId(Long tripId) {
-    	TypedQuery<Booking> query = createNamedQuery(Booking.QUERY_FIND_LIST_BY_TRIP_ID, getEntityClass())
-    			.setParameter(Trip.PARAM_TRIP_ID, tripId);
-    	return query.getResultList();
+    public List<BookingVO> getByReservation(ReservationVO reservation) {
+    	List<Booking> resultList = createNamedQuery(Booking.QUERY_FIND_LIST_BY_RESERVATION_ID, getEntityClass())
+    			.setParameter(Reservation.PARAM_RESERVATION_ID, reservation.getId())
+    			.getResultList();
+    	return transformList(resultList);
+    }
+    
+    public BookingVO getByTripIdAndSeatNo(Long tripId, String seatNo) {
+    	List<Booking> resultList = createNamedQuery(Booking.QUERY_FIND_BY_TRIP_ID_AND_SEAT_NUMBER, getEntityClass())
+    			.setParameter(Trip.PARAM_TRIP_ID, tripId)
+    			.setParameter(Seat.PARAM_SEAT_NO, seatNo)
+    			.getResultList();
+    	return getVOFromList(resultList);
+    }
+    
+    public List<BookingVO> getByOperator(OperatorName operatorName) {
+    	List<Booking> resultList = createNamedQuery(Booking.QUERY_FIND_LIST_BY_OPERATOR_NAME, getEntityClass())
+    			.setParameter(Operator.PARAM_OPERATOR_NAME, operatorName)
+    			.getResultList();
+    	return transformList(resultList);
+    }
+    
+    public List<BookingVO> getAll() {
+    	return transformList(findAll());
     }
 
 }

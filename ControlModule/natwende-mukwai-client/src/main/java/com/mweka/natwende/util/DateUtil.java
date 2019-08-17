@@ -2,6 +2,7 @@ package com.mweka.natwende.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class DateUtil {
@@ -150,5 +151,15 @@ public class DateUtil {
 	 
 		Date result = calendarA.getTime();
 		return result; 
+	}
+	
+	public static Date addTimeToDate(Date time, Date date) {
+		Calendar cTime = Calendar.getInstance(TimeZone.getDefault());
+		Calendar cDate = Calendar.getInstance(TimeZone.getDefault());
+		cTime.setTime(time);
+		cDate.setTime(date);
+		cDate.set(Calendar.HOUR_OF_DAY, cDate.get(Calendar.HOUR_OF_DAY) + cTime.get(Calendar.HOUR_OF_DAY));
+		cDate.set(Calendar.MINUTE, cDate.get(Calendar.MINUTE) + cTime.get(Calendar.MINUTE));
+		return cDate.getTime();
 	}
 }

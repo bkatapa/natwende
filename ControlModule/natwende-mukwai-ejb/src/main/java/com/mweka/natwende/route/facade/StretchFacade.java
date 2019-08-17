@@ -1,5 +1,6 @@
 package com.mweka.natwende.route.facade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJBException;
@@ -29,16 +30,19 @@ public class StretchFacade extends AbstractFacade<StretchVO> {
 		}
 	}
 	
-	public void saveStretchList(List<StretchVO> stretchList) throws Exception {
-		for (StretchVO vo : stretchList) {
-			if (serviceLocator.getStretchDataFacade().getByEndpointIds(vo.getFrom().getId(), vo.getTo().getId()) == null) {			
-				serviceLocator.getStretchFacade().saveStretch(vo);
+	public List<StretchVO> saveStretchList(List<StretchVO> stretchList) throws Exception {
+		List<StretchVO> resultList = new ArrayList<>();
+		for (StretchVO s : stretchList) {
+			if (s.getId() == -1L) {
+				resultList.add(serviceLocator.getStretchDataFacade().update(s));
 			}
 		}
+		return resultList;
 	}
 
 	public void deleteStretch(Long stretchId) throws Exception {
 		try {
+			serviceLocator.getRouteStretchLinkFacade().deleteByStretchId(stretchId);
 			serviceLocator.getStretchDataFacade().deleteById(stretchId);
 		}
 		catch (Exception ex) {
@@ -47,7 +51,7 @@ public class StretchFacade extends AbstractFacade<StretchVO> {
 		}
 	}
 	
-	public int deleteStretchesAssociatedWithRouteId(Long routeId) throws Exception {
+	public long deleteStretchesAssociatedWithRouteId(Long routeId) throws Exception {
 		try {
 			return serviceLocator.getRouteStretchLinkDataFacade().deleteByRouteId(routeId);
 		}
@@ -65,6 +69,10 @@ public class StretchFacade extends AbstractFacade<StretchVO> {
 			log.debug(ex);
 			throw new EJBException(ex);
 		}
+	}
+	
+	public StretchVO getStretchByEndpoints(StopVO origin, StopVO destination) throws Exception {
+		return serviceLocator.getStretchDataFacade().getByEndpointIds(origin.getId(), destination.getId());
 	}
 	
 	public StretchVO getStretchByEndpoints(Long fromId, Long toId) throws Exception {
@@ -116,7 +124,7 @@ public class StretchFacade extends AbstractFacade<StretchVO> {
 	}
 	
 	public List<StretchVO> obtainStretchListGivenRouteId(Long routeId) {
-		return serviceLocator.getStretchDataFacade().getListByRouteId(routeId);
+		return routeId == null ? serviceLocator.getStretchDataFacade().getAll() : serviceLocator.getStretchDataFacade().getListByRouteId(routeId);
 	}
 	
 }

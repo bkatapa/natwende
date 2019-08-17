@@ -35,5 +35,10 @@ public class OperatorRouteLinkFacade extends AbstractFacade<SeatVO> {
 			throw new EJBException(ex);
 		}
 	}
+	
+	public OperatorRouteLinkVO fetchByOperatorIdAndRouteId(Long operatorId, Long routeId) throws Exception {
+		OperatorRouteLinkVO result = serviceLocator.getOperatorRouteLinkDataFacade().getByOperatorIdAndRouteId(operatorId, routeId);
+		return result;
+	}
 
 }

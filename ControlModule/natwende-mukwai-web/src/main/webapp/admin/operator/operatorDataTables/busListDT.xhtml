@@ -19,7 +19,10 @@
 					   styleClass="paginated, busListDataTable-class">
 		
 		<p:column headerText="Bus pic" style="text-align: center;">
-			<p:graphicImage name="#{empty entity.imgUrl ? 'images/default-bus.png' : 'images'.concat(entity.imgUrl)}" width="50" height="40" styleClass="ui-corner-all"/>
+			<p:graphicImage name="#{empty entity.imgUrl ? 'images/default-bus.png' : 'images'.concat(entity.imgUrl)}" 
+							width="30" 
+							height="20" 
+							styleClass="ui-corner-all"/>
 		</p:column>
 		
 		<p:column headerText="Bus Id">

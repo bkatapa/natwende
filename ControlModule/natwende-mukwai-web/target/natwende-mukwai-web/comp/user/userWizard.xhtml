@@ -10,139 +10,157 @@
 				xmlns:pe="http://primefaces.org/ui/extensions"
 				xmlns:o="http://omnifaces.org/ui"
 				xmlns:c="http://java.sun.com/jsp/jstl/core">
+				
+	<ui:define name="content">
 
-	<h:form id="registerMainForm" styleClass="formBackground">
-		<p:panel header="User registration">
-				
-			<p:wizard flowListener="#{UserAction.onFlowProcess}">
+		<h:form id="registration-form" styleClass="formBackground">
 			
-				<p:tab id="personal" title="Personal info">
-					<p:panel header="Personal Information">
-						<p:messages autoUpdate="true" showIcon="true" closable="true"/>
-						<p:panelGrid columns="2" layout="grid" columnClasses="label, value">
-							<p:outputLabel value="First name: *"/>
-							<p:inputText value="#{UserAction.selectedUser.firstname}"/>
-							
-							<p:outputLabel value="Last name: *"/>
-							<p:inputText value="#{UserAction.selectedUser.lastname}"/>
-							
-							<p:outputLabel value="Email: *"/>
-							<p:inputText value="#{UserAction.selectedUser.email}"/>
-							
-							<p:outputLabel value="Mobile number: *"/>
-							<p:inputText value="#{UserAction.selectedUser.contactNumber}"/>
-							
-							<p:outputLabel value="Password: *"/>
-							<p:password value="#{UserAction.selectedUser.passwd}"/>
-							 
-							<p:outputLabel value="Confirm password: *"/>
-							<p:password value="#{UserAction.selectedUser.confirmPasswd}"/>
-						</p:panelGrid>
-					</p:panel>
-				</p:tab>
-				
-				<c:if test="#{sourcePage eq 'Admin'}">
-					<p:tab id="permissions" title="Permissions">
-						<p:panel header="Describe permissions">
-							<p:messages autoUpdate="true" showIcon="true" closable="true"/>
-							<p:panelGrid columns="2" layout="grid">
-	        					<p:selectManyCheckbox value="#{UserAction.selectedRoleTypes}"
-	        										  layout="grid"
-													  columns="1">
-									<f:selectItems value="#{UserAction.roleTypes}" />															
-								</p:selectManyCheckbox>        					
-							</p:panelGrid>
-						</p:panel>
-					</p:tab>
-				</c:if>
-					
-				<p:tab id="address" title="Address info">
-					<p:panel header="Address Information">
-						<p:messages autoUpdate="true" showIcon="true" closable="true"/>
-						<p:panelGrid columns="2" layout="grid" columnClasses="label, value">
-							<p:outputLabel value="Line 1: *"/>
-							<p:inputText value="#{UserAction.selectedAddress.line1}"/>
-							
-							<p:outputLabel value="Street: *"/>
-							<p:inputText value="#{UserAction.selectedAddress.street}"/>
-							
-							<p:outputLabel value="Surbub: *"/>
-							<p:inputText value="#{UserAction.selectedAddress.surbub}"/>
-							
-							<p:outputLabel value="City: *"/>
-							<p:inputText value="#{UserAction.selectedAddress.city}"/>
-							
-							<p:outputLabel value="Province: *"/>
-							<p:inputText value="#{UserAction.selectedAddress.province}"/>
-							
-							<p:outputLabel value="Country: *"/>
-							<p:inputText value="#{UserAction.selectedAddress.country}"/>
-						</p:panelGrid>
-					</p:panel>
-				</p:tab>
-					
-				<p:tab id="confirmation" title="Confirm">
-					<p:tabView>
-						<p:tab title="Confirm personal information">							
-							<p:panelGrid columns="2" layout="grid" columnClasses="label, value">
-								<p:outputLabel value="First name: *"/>
-								<p:inputText value="#{UserAction.selectedUser.firstname}"/>
-								
-								<p:outputLabel value="Last name: *"/>
-								<p:inputText value="#{UserAction.selectedUser.lastname}"/>
-								
-								<p:outputLabel value="Email: *"/>
-								<p:inputText value="#{UserAction.selectedUser.email}"/>
-								
-								<p:outputLabel value="Mobile number: *"/>
-								<p:inputText value="#{UserAction.selectedUser.contactNumber}"/>
-							</p:panelGrid>
-						</p:tab>
-						<p:tab title="Confirm user permissions">
-							<ui:repeat var="roleType" value="#{UserAction.selectedRoleTypes}">							
-								<p:toolbar style="border: none; margin-bottom: 2px;">
-									<p:outputLabel value="#{roleType.description}"/>
-								</p:toolbar>
-							</ui:repeat>
-						</p:tab>
-						<p:tab title="Confirm address">							
-							<p:panelGrid columns="2" layout="grid" columnClasses="label, value">
-								<p:outputLabel value="Line 1: *"/>
-								<p:inputText value="#{UserAction.selectedAddress.line1}"/>
-								
-								<p:outputLabel value="Street: *"/>
-								<p:inputText value="#{UserAction.selectedAddress.street}"/>
-								
-								<p:outputLabel value="Surbub: *"/>
-								<p:inputText value="#{UserAction.selectedAddress.surbub}"/>
-								
-								<p:outputLabel value="City: *"/>
-								<p:inputText value="#{UserAction.selectedAddress.city}"/>
-								
-								<p:outputLabel value="Province: *"/>
-								<p:password value="#{UserAction.selectedAddress.province}"/>
-								
-								<p:outputLabel value="Country: *"/>
-								<p:password value="#{UserAction.selectedAddress.country}"/>
-							</p:panelGrid>
-						</p:tab>
-					</p:tabView>
-					
-					<p:commandLink action="#{UserAction.register}" ajax="false" id="register-btn" style="float: right;">
-						<p:graphicImage name="images/register-green.png" width="180" height="50"/>
-					</p:commandLink>
-					
-				</p:tab>
+			<p:growl id="growl" sticky="true" showDetail="true" severity="error,info"/>
 			
-			</p:wizard>
-								
-		</p:panel>
-	</h:form>
-	
-	<style>
-   		.v-align-top td {
-   			vertical-align: top;
-		}
-   	</style>
+			<p:steps activeIndex="#{UserAction.currentStep}"
+					 styleClass="custom"
+					 style="margin-top: 20px; margin-bottom: 20px;">
+	 			<p:menuitem value="Personal details" />
+	 			<p:menuitem value="Profile picture" />
+	 			<p:menuitem value="Confirmation" />
+		 	</p:steps>
+					
+			<!-- Step #1 -->
+			
+			<p:panel id="step1" 
+					 header="Personal details" 
+					 rendered="#{UserAction.currentStep eq 0}" 
+					 style="margin-top: 50px; border: none;">
+					 
+				<p:messages id="step1-msgs" autoUpdate="true" 
+							showIcon="true" 
+							closable="true" 
+							severity="error,info"/>
+				
+				<p:panelGrid columns="3" layout="grid" columnClasses="label, value">
+					<p:fieldset legend="Personal info" style="border: none;">
+						<ui:include src="/comp/user/fragment/personalInfo.xhtml" />
+					</p:fieldset>
+					
+					<p:fieldset legend="Address" style="border: none;">
+						<ui:include src="/comp/user/fragment/address.xhtml" />
+					</p:fieldset>
+					
+					<p:fieldset legend="Permissions" style="border: none;">
+						<ui:include src="/comp/user/fragment/authorization.xhtml">
+							<ui:param name="parentComponentMsgs" value="step1-msgs" />
+						</ui:include>
+					</p:fieldset>
+				</p:panelGrid>
+				
+				<p:toolbar style="border: none;">
+					<f:facet name="left">
+						<p:commandButton value="Cancel"
+										 process="@this"
+										 action="#{MenuAction.homePage}"
+										 icon="ui-icon-close"
+										 title="Back to home page" />
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton value="Next"
+										 process="@this, step1"
+										 update="registration-form"
+										 actionListener="#{UserAction.step}"
+										 icon="ui-icon-arrowthick-1-e"
+										 iconPos="right"
+										 title="Back to home page" />
+					</f:facet>
+				</p:toolbar>
+				
+			</p:panel>
+			
+			<!-- Step #2 -->
+			
+			<p:panel id="step2" 
+					 header="Profile picture" 
+					 rendered="#{UserAction.currentStep eq 1}" 
+					 style="margin-top: 50px; border: none;">
+				
+				<ui:include src="/comp/user/fragment/profilePic.xhtml" />	 
+				
+				<p:toolbar style="border: none;">
+					<f:facet name="left">
+						<p:commandButton value="Prev"
+										 process="@this"
+										 update="registration-form"
+										 actionListener="#{UserAction.step}"
+										 icon="ui-icon-arrowthick-1-w"
+										 title="Back to Personal details." />
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton value="Next"
+										 process="@this, step2"
+										 update="registration-form"
+										 actionListener="#{UserAction.step}"
+										 icon="ui-icon-arrowthick-1-e"
+										 iconPos="right"
+										 title="Next to home Confirmation" />
+					</f:facet>
+				</p:toolbar>
+				
+			</p:panel>
+			
+			<!-- Step #3 -->
+			
+			<p:panel id="step3" 
+					 header="Confirmation" 
+					 rendered="#{UserAction.currentStep eq 2}" 
+					 style="margin-top: 50px; border: none;">
+				
+				<ui:include src="/comp/user/userDetailsView.xhtml" />	 
+				
+				<p:toolbar style="border: none;">
+					<f:facet name="left">
+						<p:commandButton value="Prev"
+										 process="@this"
+										 update="registration-form"
+										 actionListener="#{UserAction.step}"
+										 icon="ui-icon-arrowthick-1-w"
+										 title="Back to Profile picture." />
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton value="Finish"
+										 process="@this"
+										 action="#{UserAction.register}"
+										 icon="ui-icon-check"
+										 iconPos="right"
+										 title="Click to save your information." />
+					</f:facet>
+				</p:toolbar>
+				
+			</p:panel>
+		</h:form>
+		
+		<style type="text/css">
+			.ui-steps.custom {
+				margin-bottom: 30px;
+			}			
+			.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+				height: 10px; padding: 0 1em;
+			}			
+			.ui-steps.custom .ui-steps-item .ui-steps-number {
+				background-color: #0081c2;
+				color: #FFFFFF;
+				display: inline-block;
+				width: 30px;
+				border-radius: 10px;
+				margin-top: -10px;
+				margin-bottom: 10px;
+				margin-bottom: 10px;
+			}
+			.alignVertical>tbody>tr>td {
+				vertical-algn: top;
+			}
+	   		.v-align-top td {
+	   			vertical-align: top;
+			}
+	   	</style>
+   	
+   	</ui:define>
 		
 </ui:composition>

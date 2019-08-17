@@ -9,6 +9,9 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.primefaces.component.accordionpanel.AccordionPanel;
+import org.primefaces.event.TabChangeEvent;
+
 import com.mweka.natwende.helper.MessageHelper;
 import com.mweka.natwende.operator.vo.OperatorVO;
 import com.mweka.natwende.types.OperatorName;
@@ -22,17 +25,17 @@ public class OperatorAction extends MessageHelper<OperatorVO> {
 	private static final long serialVersionUID = 1L;	
 	
 	//private OperatorSearchVO searchVO;
+	private String activeIndex;
 	private List<OperatorVO> allAvailableOperators;
 
 	@EJB
 	private ServiceLocator serviceLocator;
 
 	@PostConstruct
-	//@Override
 	public void init() {		
 		setSelectedEntity(new OperatorVO(-1L));		
 		allAvailableOperators = new ArrayList<>();
-		
+		activeIndex = "0";
 		for (OperatorName name : OperatorName.values()) {
 			allAvailableOperators.add(new OperatorVO(name));
 		}
@@ -78,6 +81,14 @@ public class OperatorAction extends MessageHelper<OperatorVO> {
 		}
 	}
 	
+	public String getActiveIndex() {
+		return activeIndex;
+	}
+
+	public void setActiveIndex(String activeIndex) {
+		this.activeIndex = activeIndex;
+	}
+
 	public boolean isNewOperator() {
 		return getSelectedEntity().getId() < 0;
 	}
@@ -104,6 +115,10 @@ public class OperatorAction extends MessageHelper<OperatorVO> {
 		return names;
 	}
 	
+	public void onTabChange(TabChangeEvent event) {
+		activeIndex = ((AccordionPanel) event.getTab().getParent()).getActiveIndex();
+	}
+	
 	private void loadEntityList() {
 		entityList = serviceLocator.getOperatorDataFacade().getAllByStatus(Status.ACTIVE);
 		
@@ -121,7 +136,7 @@ public class OperatorAction extends MessageHelper<OperatorVO> {
 		}
 	}
 	
-	private static final String VIEW_PAGE = "/admin/operator/operatorView?faces-redirect=true";
+	private static final String VIEW_PAGE = "/admin/operator/operatorView?faces-redirect=true&i=2";
 	private static final String SUCCESS_PAGE = null; //"/admin/adminPanel?faces-redirect=true";
 	
 }
