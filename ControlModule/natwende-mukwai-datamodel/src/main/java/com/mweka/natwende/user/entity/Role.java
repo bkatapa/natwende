@@ -9,6 +9,7 @@ import com.mweka.natwende.base.BaseEntity;
 import com.mweka.natwende.types.RoleType;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "Roles", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"roleType"})})
+    @UniqueConstraint(columnNames = {"role_type"})})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = Role.QUERY_FIND_ALL, query = "SELECT r FROM Role r"),
@@ -52,6 +53,7 @@ public class Role extends BaseEntity {
     public static final transient String PARAM_STATUS = "_status";
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role_type")
     private RoleType roleType;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.LAZY)

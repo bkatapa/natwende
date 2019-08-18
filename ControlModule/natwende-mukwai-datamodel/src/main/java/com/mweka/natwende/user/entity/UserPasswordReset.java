@@ -2,7 +2,10 @@ package com.mweka.natwende.user.entity;
 
 import com.mweka.natwende.base.BaseEntity;
 import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -15,7 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "UserPasswordReset",uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id"})})
+    @UniqueConstraint(columnNames = {"user_id"})
+})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserPasswordReset.findByUsername", query = "SELECT upr FROM UserPasswordReset upr JOIN upr.user u WHERE u.username = :username ")
@@ -35,13 +39,16 @@ public class UserPasswordReset extends BaseEntity {
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "expiry_date")
     private Date expiryDate;
 
     private String email;
     
+    @Column(name = "reset_pin")
     private String resetPin;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Date getExpiryDate() {

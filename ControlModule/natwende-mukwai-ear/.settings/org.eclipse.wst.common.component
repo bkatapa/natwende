@@ -35,9 +35,6 @@
         <dependent-module archiveName="commons-codec-1.10.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="commons-lang3-3.4.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="natwende-mukwai-datamodel-1.0-SNAPSHOT.jar" deploy-path="/lib" handle="module:/resource/natwende-mukwai-datamodel/natwende-mukwai-datamodel">
             <dependency-type>uses</dependency-type>
         </dependent-module>

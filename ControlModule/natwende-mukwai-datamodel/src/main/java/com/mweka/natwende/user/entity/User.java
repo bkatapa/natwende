@@ -84,7 +84,7 @@ public class User extends BaseEntity {
     private String nrc;
     
     @Size(max = 45)
-	@Column(length = 45)
+	@Column(name = "contact_number", length = 45)
 	private String contactNumber;
     
 	@Size(max = 50)
@@ -111,6 +111,7 @@ public class User extends BaseEntity {
     
     @Lob
     @Basic(fetch = FetchType.LAZY, optional = true)
+    @Column(name = "profile_pic")
     private byte[] profilePic;
 
     public User() {

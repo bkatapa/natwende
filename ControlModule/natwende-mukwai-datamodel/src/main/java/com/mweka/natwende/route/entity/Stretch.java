@@ -56,10 +56,10 @@ public class Stretch extends BaseEntity {
 	@Column(name = "observed_travel_time")
 	private Date observedTravelTime;
 	
-	@Column(name = "distance_km")
+	@Column(name = "distance_km", scale = 10)
 	private BigDecimal distanceKM;
 	
-	@Column(name = "fare_amount")
+	@Column(name = "fare_amount", scale = 15)
 	private BigDecimal fareAmount;
 	
 	@ManyToOne(optional = false)

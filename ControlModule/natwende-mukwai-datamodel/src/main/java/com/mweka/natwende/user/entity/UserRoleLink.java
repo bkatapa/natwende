@@ -30,11 +30,11 @@ public class UserRoleLink extends BaseEntity {
 	public static transient final String QUERY_FIND_BY_USER_ID = "UserRoleLink.findByUserId";
 	public static transient final String QUERY_FIND_BY_USER_ID_AND_ROLE_ID = "UserRoleLink.findByUserIdAndRoleId";
 
-    @JoinColumn(name = "User_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
     
-    @JoinColumn(name = "Roles_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Role role;
 

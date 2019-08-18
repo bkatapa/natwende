@@ -61,7 +61,7 @@ public class Fare extends BaseEntity {
 	private Stretch stretch;
 	
 	@NotNull
-	@Column(nullable = false)
+	@Column(nullable = false, scale = 12)
 	private BigDecimal amount = BigDecimal.ZERO;	
 	
 	public boolean isGlobal() {
