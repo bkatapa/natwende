@@ -13,6 +13,7 @@ import com.mweka.natwende.cdi.StretchHelperInstance;
 import com.mweka.natwende.dashboard.facade.BookingDashboardFacade;
 import com.mweka.natwende.exceptions.ServiceLocatorException;
 import com.mweka.natwende.location.facade.AddressDataFacade;
+import com.mweka.natwende.log.facade.ActivityLogDataFacade;
 import com.mweka.natwende.mail.MailerFacade;
 import com.mweka.natwende.media.facade.MediaDataFacade;
 import com.mweka.natwende.media.facade.MediaFacade;
@@ -50,6 +51,7 @@ import com.mweka.natwende.trip.facade.BookingFacade;
 import com.mweka.natwende.trip.facade.BusTripScheduleLinkDataFacade;
 import com.mweka.natwende.trip.facade.BusTripScheduleLinkFacade;
 import com.mweka.natwende.trip.facade.ReservationDataFacade;
+import com.mweka.natwende.trip.facade.TempBookingDataFacade;
 import com.mweka.natwende.trip.facade.TripDataFacade;
 import com.mweka.natwende.trip.facade.TripFacade;
 import com.mweka.natwende.trip.facade.TripScheduleDataFacade;
@@ -226,6 +228,12 @@ public class ServiceLocator {
 	
 	@EJB
 	private MessageDataFacade messageDataFacade;
+	
+	@EJB
+	private ActivityLogDataFacade activityLogDataFacade;
+	
+	@EJB
+	private TempBookingDataFacade tempBookingDataFacade;
 	
 	@Inject
 	@StretchHelperInstance
@@ -470,5 +478,13 @@ public class ServiceLocator {
 	
 	public MessageDataFacade getMessageDataFacade() {
 		return messageDataFacade;
+	}
+	
+	public ActivityLogDataFacade getActivityLogDataFacade() {
+		return activityLogDataFacade;
+	}
+	
+	public TempBookingDataFacade getTempBookingDataFacade() {
+		return tempBookingDataFacade;
 	}
 }

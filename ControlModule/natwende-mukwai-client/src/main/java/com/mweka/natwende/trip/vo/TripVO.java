@@ -45,10 +45,17 @@ public class TripVO extends BaseVO {
 	@JsonIgnore
 	private List<BookingVO> bookings;
 	
+	@XmlTransient
+	@JsonIgnore
 	private TripScheduleVO tripSchedule;
 	
 	// No need to persist these
+	@XmlTransient
+	@JsonIgnore
 	private transient String priceStr;
+	
+	@XmlTransient
+	@JsonIgnore
 	private transient List<StretchVO> stretchList;
 	
 	public String getBusReg() {

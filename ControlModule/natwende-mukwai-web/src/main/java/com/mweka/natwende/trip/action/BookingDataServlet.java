@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import javax.inject.Inject;
 //import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,6 +26,9 @@ import com.mweka.natwende.trip.vo.BookingVO;
 @WebServlet("/bookingData")
 public class BookingDataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private BookingAction bookingAction;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -81,7 +85,7 @@ public class BookingDataServlet extends HttpServlet {
 		int bookedSeatsIndex = data.indexOf("bookedSeats");
 		String bookedSeatsLine = data.substring(bookedSeatsIndex + 14, data.length() - 3);
 		String[] bookingList = bookedSeatsLine.split(",");
-		//bookingAction.getEntityList().clear();
+		bookingAction.getEntityList().clear();
 		
 		if (bookingList.length == 1) {
 			breakDownBookingData(bookedSeatsLine);
@@ -101,7 +105,7 @@ public class BookingDataServlet extends HttpServlet {
 		BookingVO booking = new BookingVO(seatNo);
 		BigDecimal busFare = BigDecimal.valueOf(Double.parseDouble(seatFare));
 		booking.setFare(busFare);
-		//bookingAction.getEntityList().add(booking);		
+		bookingAction.getEntityList().add(booking);		
 	}
 	
 	private boolean extractDataFromJson(String jsonLine) { // json: { "bookedSeats" : [""], "total" : "0" }

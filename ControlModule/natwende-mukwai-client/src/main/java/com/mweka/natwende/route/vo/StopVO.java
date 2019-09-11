@@ -1,6 +1,7 @@
 package com.mweka.natwende.route.vo;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -8,6 +9,7 @@ import com.mweka.natwende.base.vo.BaseVO;
 import com.mweka.natwende.types.Province;
 import com.mweka.natwende.types.Town;
 
+@XmlRootElement
 public class StopVO extends BaseVO {
 
 	/**
@@ -18,7 +20,7 @@ public class StopVO extends BaseVO {
 	private int index;
 	
 	@NotNull(message = "Station name cannot be empty.")
-	@NotEmpty(message = "Station name cannot be empty.")
+	@NotEmpty(message = "Station name cannot be empty.")	
 	private String name;
 	
 	@NotNull(message = "Town cannot be empty.")

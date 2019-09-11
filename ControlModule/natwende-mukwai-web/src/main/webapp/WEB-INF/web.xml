@@ -73,6 +73,7 @@
       <url-pattern>/dashboard/*</url-pattern>
       <url-pattern>/report/*</url-pattern>
       <url-pattern>/support/*</url-pattern>
+      <url-pattern>/trip/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>SYSTEM_ADMINISTRATOR</role-name>

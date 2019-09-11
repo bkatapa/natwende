@@ -267,4 +267,8 @@ public abstract class AbstractDataFacade<V extends BaseVO, E extends BaseEntity>
     	return list.isEmpty() ? null : getCachedVO(list.get(0));
     }
     
+    protected V getVOFromVOList(List<V> list) {
+    	return list.isEmpty() ? null : list.get(0);
+    }
+    
 }

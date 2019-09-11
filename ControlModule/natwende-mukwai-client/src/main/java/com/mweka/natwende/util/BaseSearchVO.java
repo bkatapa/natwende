@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties
@@ -12,21 +13,27 @@ public class BaseSearchVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlTransient
+    @JsonIgnore
     private int startPosition = 0;
     
     @XmlTransient
+    @JsonIgnore
     private int maxNumberOfResultsToRetrieve = 1000;
     
     @XmlTransient
+    @JsonIgnore
     private boolean matchExact = false;
     
     @XmlTransient
+    @JsonIgnore
     private String sortField;
     
     @XmlTransient
+    @JsonIgnore
     private Boolean sortAscending = null;
     
     @XmlTransient
+    @JsonIgnore
     private boolean forExport = false;
 
     public int getStartPosition() {

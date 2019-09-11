@@ -69,6 +69,7 @@ public class User extends BaseEntity {
     // Query Parameters
     public static transient final String PARAM_USER_ID = "userId";
     public static transient final String PARAM_NRC = "nrc";
+    public static transient final String PARAM_USERNAME = "username";
 
     @Size(max = 255)
     @Column(length = 255)

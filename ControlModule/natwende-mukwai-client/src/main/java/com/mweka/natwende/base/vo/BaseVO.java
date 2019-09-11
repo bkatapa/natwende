@@ -1,5 +1,6 @@
 package com.mweka.natwende.base.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mweka.natwende.types.Status;
 import java.io.Serializable;
@@ -42,37 +43,44 @@ public abstract class BaseVO implements Serializable {
      * Synthetic object Id for persistence.
      */
     @XmlTransient
+    @JsonIgnore
     private long id = -1L;
 
     /**
      * Date at which object was inserted to persistence layer.
      */
     @XmlTransient
+    @JsonIgnore
     private Date insertDate;
 
     /**
      * Date at which object was updated to persistence layer.
      */
     @XmlTransient
+    @JsonIgnore
     private Date updateDate;
 
     /**
      * Object UniqueId.
      */
     @XmlTransient
+    @JsonIgnore
     @Size(min = UID_LENGTH, max = UID_LENGTH, message = "GUID Required")
     private String uniqueId;
 
     @XmlTransient
+    @JsonIgnore
     private Status status = Status.ACTIVE;
 
     /**
      * Version field for object.
      */
     @XmlTransient
+    @JsonIgnore
     private long version;
 
     @XmlTransient
+    @JsonIgnore
     private Boolean selected;
 
     /**

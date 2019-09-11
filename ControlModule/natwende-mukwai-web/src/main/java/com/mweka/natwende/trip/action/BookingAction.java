@@ -1,6 +1,7 @@
 package com.mweka.natwende.trip.action;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,11 +50,15 @@ public class BookingAction extends MessageHelper<BookingVO> {
 	@PostConstruct
 	public void init() {
 		selectedEntity = new BookingVO();
+		entityList = new ArrayList<>();
 		activeIndex = currentStep = 0;
 	}
 
 	@Override
 	public List<BookingVO> getEntityList() {
+		if (entityList == null) {
+			init();
+		}
 		return entityList;
 	}
 
@@ -225,6 +230,10 @@ public class BookingAction extends MessageHelper<BookingVO> {
 		else {
 			entityList = serviceLocator.getBookingDataFacade().getListByTripId(tripAction.getSelectedEntity().getId());
 		}
+	}
+	
+	public String checkout() {
+		return "/trip/bookingConfirmation?faces-redirect=true";
 	}
 	
 	private BigDecimal calculateTotalBookingCost() {

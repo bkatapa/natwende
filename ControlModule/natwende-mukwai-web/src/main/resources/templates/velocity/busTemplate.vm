@@ -139,10 +139,13 @@ function recalculateTotal(sc) {
 function updateSeats(jsonObj) {
 	var coordinates = jsonObj.coordinates;
 	var action = jsonObj.action;
-	
 	sc.get(coordinates).status(action === 'reserve' ? 'unavailable' : 'available');
-	//sc.find('unavailable').status('available');
-	//sc.get(['1_4', '1_5']).status('unavailable');
+}
+
+function freeSeats(seats) {
+	var res = JSON.stringify(seats).replace(/ /g, '');
+	var parseRes = JSON.parse(res);
+	sc.get(parseRes).status('available');
 }
 
 function setTripPrice(tripPrice) { alert(tripPrice);

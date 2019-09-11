@@ -2,6 +2,8 @@ package com.mweka.natwende.helper;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,17 +22,18 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.commons.lang.StringEscapeUtils;
-//import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang.StringUtils;
-
-//import org.apache.commons.lang.StringEscapeUtils;
-//import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mweka.natwende.log.vo.ActivityLogVO;
 import com.mweka.natwende.operator.vo.BusVO;
 import com.mweka.natwende.operator.vo.SeatVO;
+import com.mweka.natwende.trip.search.vo.TempBookingSearchVO;
+import com.mweka.natwende.trip.vo.TempBookingVO;
 import com.mweka.natwende.trip.vo.TripVO;
+import com.mweka.natwende.types.ActivityType;
+import com.mweka.natwende.types.SeatStatus;
 import com.mweka.natwende.util.ServiceLocator;
 
 @Singleton
@@ -156,9 +159,11 @@ public class SeatUpdater {
 					switch (action) {
 					case "reserve" : update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeXml("Seat no." + seat.getSeatNo() + " was reserved.")));
 					updateGlobalCache(trip, seat, action);
+					updateTempBookingDatabase(session.getId(), "", session.getUserPrincipal().getName(), trip, seat, action);
 					break;
 					case "vacate" : update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeXml("Seat no." + seat.getSeatNo() + " was vacated.")));
 					updateGlobalCache(trip, seat, action);
+					updateTempBookingDatabase(session.getId(), "", session.getUserPrincipal().getName(), trip, seat, action);
 					break;
 					default : LOGGER.logp(Level.SEVERE, CLASS_NAME, methodName, "Case item not yet implemented [{0}].", action);
 					}
@@ -193,5 +198,59 @@ public class SeatUpdater {
 			reservedSeats.remove(seat.getCoordinates());
 		}
 		LOGGER.logp(Level.CONFIG, CLASS_NAME, methodName, "Reserved seats: {0}", reservedSeats);
+	}
+	
+	private void updateTempBookingDatabase(String wsSessionId, String userSessionId, String username, TripVO trip, SeatVO seat, String action) {
+		final String methodName = "updateTempBookingDatabase";
+		TempBookingSearchVO tmpSearchVO = new TempBookingSearchVO(wsSessionId);
+		tmpSearchVO.setTripId(trip.getId());
+		tmpSearchVO.setSeatNo(seat.getSeatNo());		
+		ActivityLogVO result = serviceLocator.getActivityLogDataFacade().getByUserSession(userSessionId);
+		List<TempBookingVO> tmpResultList = serviceLocator.getTempBookingDataFacade().findBySearchVO(tmpSearchVO);
+		TempBookingVO tmpResult = null;
+		if (result == null) {
+			result = new ActivityLogVO();
+			result.setActivityType(ActivityType.BOOKING);
+			result.setUsername(username);
+			result.setUserSessionId(userSessionId);
+		}
+		if (!tmpResultList.isEmpty()) {
+			tmpResult = tmpResultList.get(0);
+		}
+		if ("reserve".equals(action)) {
+			if (tmpResult != null) {
+				if (SeatStatus.VACANT == tmpResult.getSeatStatus()) {			
+					tmpResult.setWsSessionId(wsSessionId);
+					tmpResult.setLastHeartBeat(new Date());					
+					tmpResult.setSeatStatus(SeatStatus.OCCUPIED);
+				}
+			}
+			else {
+				tmpResult = new TempBookingVO();
+				tmpResult.setWsSessionId(wsSessionId);
+				tmpResult.setSeatNo(seat.getSeatNo());
+				tmpResult.setLastHeartBeat(new Date());
+				tmpResult.setTripId(trip.getId());
+				tmpResult.setSeatStatus(SeatStatus.OCCUPIED);
+			}
+		}
+		else if ("vacate".equals(action)) {
+			if (tmpResult != null) {
+				tmpResult.setWsSessionId(null);
+				tmpResult.setLastHeartBeat(new Date());
+				tmpResult.setSeatStatus(SeatStatus.VACANT);
+				tmpResult.setSeatNo(null);
+			}
+		}
+		if (tmpResult != null) {
+			try {
+				result.setData(new ObjectMapper().writeValueAsString(result));
+				serviceLocator.getActivityLogDataFacade().update(result);
+				serviceLocator.getTempBookingDataFacade().update(tmpResult);
+			}
+			catch (JsonProcessingException jpex) {
+				LOGGER.logp(Level.SEVERE, CLASS_NAME, methodName, "Session_id [" + userSessionId + "]. Exception was thrown", jpex);
+			}
+		}
 	}
 }
