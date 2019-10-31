@@ -27,7 +27,8 @@ import com.mweka.natwende.types.Title;
     @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_TRIP_ID, query = " SELECT b FROM Booking b WHERE b.trip.id = :tripId "),
     @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_RESERVATION_ID, query = " SELECT b FROM Booking b WHERE b.reservation.id = :reservationId "),
     @NamedQuery(name = Booking.QUERY_FIND_LIST_BY_OPERATOR_NAME, query = " SELECT b FROM Booking b WHERE b.trip.operatorName = :operatorName "),
-    @NamedQuery(name = Booking.QUERY_FIND_BY_TRIP_ID_AND_SEAT_NUMBER, query = " SELECT b FROM Booking b WHERE b.trip.id = :tripId AND b.seatNumber = :seatNo ")
+    @NamedQuery(name = Booking.QUERY_FIND_BY_TRIP_ID_AND_SEAT_NUMBER, query = " SELECT b FROM Booking b WHERE b.trip.id = :tripId AND b.seatNumber = :seatNo "),
+    @NamedQuery(name = Booking.QUERY_FIND_LIST_OF_OCCUPIED_SEAT_COORDINATES, query = " SELECT b.seatCoordinate FROM Booking b WHERE b.trip.id = :tripId ")
 })
 public class Booking extends BaseEntity {
 	/**
@@ -43,6 +44,7 @@ public class Booking extends BaseEntity {
 	public static transient final String QUERY_FIND_LIST_BY_RESERVATION_ID = "Booking.findListByReservationId";
 	public static transient final String QUERY_FIND_LIST_BY_OPERATOR_NAME = "Booking.findListByOperatorName";
 	public static transient final String QUERY_FIND_BY_TRIP_ID_AND_SEAT_NUMBER = "Booking.findByTripIdAndSeatNumber";
+	public static transient final String QUERY_FIND_LIST_OF_OCCUPIED_SEAT_COORDINATES = "Booking.findListOfOccupiedSeatCoordinates";
 	
 	/**
 	 * Query parameters
@@ -60,6 +62,10 @@ public class Booking extends BaseEntity {
 	@NotNull
 	@Column(name = "seat_no", length = 10)
 	private String seatNumber;
+	
+	@NotNull
+	@Column(name = "seat_coordinate", length = 10)
+	private String seatCoordinate;
 	
 	@NotNull
 	@Column(name = "passenger_first_name", length = 100)
@@ -184,6 +190,14 @@ public class Booking extends BaseEntity {
 
 	public void setPassengerNrc(String passengerNrc) {
 		this.passengerNrc = passengerNrc;
+	}
+
+	public String getSeatCoordinate() {
+		return seatCoordinate;
+	}
+
+	public void setSeatCoordinate(String seatCoordinate) {
+		this.seatCoordinate = seatCoordinate;
 	}
 
 	public BigDecimal getFare() {

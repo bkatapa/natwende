@@ -1,5 +1,6 @@
 package com.mweka.natwende.trip.vo;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -247,4 +248,23 @@ public class TripVO extends BaseVO {
 		return new java.text.SimpleDateFormat("EEEE, dd MMMM yyyy, HH:mm").format(scheduledDepartureDate);
 	}
 	
+	public static ElasticTripVO convertToElasticData(TripVO trip, ElasticTripVO elasticData) {		
+		elasticData.setActualArrivalDate(trip.getActualArrivalDate());
+		elasticData.setActualDepartureDate(trip.getActualDepartureDate());
+		elasticData.setAvailNumOfSeats(trip.getAvailableNumOfSeats());
+		elasticData.setBookedNumOfSeats(trip.getBookedNumOfSeats());
+		elasticData.setBusReg(trip.getBusReg());
+		elasticData.setDriverName(trip.getDriverName());
+		elasticData.setFromTown(trip.getFrom().getDisplay());
+		elasticData.setId(trip.getId());
+		elasticData.setInsertDate(trip.getInsertDate());
+		elasticData.setOccupiedSeats(new ArrayList<>(trip.getOccupiedSeats()));
+		elasticData.setOperatorName(trip.getOperatorName().getDisplay());
+		elasticData.setRouteName(trip.getRouteName());
+		elasticData.setScheduledArrivalDate(trip.getScheduledArrivalDate());
+		elasticData.setScheduledDepartureDate(trip.getScheduledDepartureDate());
+		elasticData.setStatus(trip.getTripStatus().getDisplay());
+		elasticData.setUniqueId(trip.getUniqueId());
+		return elasticData;
+	}
 }

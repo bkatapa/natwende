@@ -21,8 +21,8 @@ import com.mweka.natwende.types.SeatStatus;
 @XmlRootElement
 @NamedQueries({ 
 	@NamedQuery(name = TempBooking.QUERY_FIND_ALL, query = " SELECT tb FROM TempBooking tb "),
-	@NamedQuery(name = TempBooking.QUERY_FIND_BY_WS_SESSION, query = " SELECT tb FROM TempBooking tb WHERE tb.wsSessionId = :wsSessionId "),
-	@NamedQuery(name = TempBooking.QUERY_FIND_BY_SEAT_STATUS, query = " SELECT tb FROM TempBooking tb WHERE tb.seatStatus = :seatStatus ")
+	//@NamedQuery(name = TempBooking.QUERY_FIND_BY_WS_SESSION, query = " SELECT tb FROM TempBooking tb WHERE tb.wsSessionId = :wsSessionId "),
+	//@NamedQuery(name = TempBooking.QUERY_FIND_BY_SEAT_STATUS, query = " SELECT tb FROM TempBooking tb WHERE tb.seatStatus = :seatStatus ")
 })
 public class TempBooking extends BaseEntity {
 	/**

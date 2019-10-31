@@ -14,6 +14,7 @@ public class BookingVO extends BaseVO {
 	private static final long serialVersionUID = 9006165678645743154L;
 	
 	private String seatNumber;
+	private String seatCoordinate;
 	private String customerEmail;
 	private String from;
 	private String to;
@@ -140,6 +141,14 @@ public class BookingVO extends BaseVO {
 
 	public void setPassengerNrc(String passengerNrc) {
 		this.passengerNrc = passengerNrc;
+	}
+
+	public String getSeatCoordinate() {
+		return seatCoordinate;
+	}
+
+	public void setSeatCoordinate(String seatCoordinate) {
+		this.seatCoordinate = seatCoordinate;
 	}
 
 	public Title getPassengerTitle() {

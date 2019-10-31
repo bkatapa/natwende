@@ -3,17 +3,14 @@ package com.mweka.natwende.listener;
 import javax.inject.Inject;
 import javax.servlet.annotation.WebListener;
 
-import java.util.Date;
-
 import javax.ejb.EJB;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.commons.logging.Log;
 
-import com.mweka.natwende.helper.SeatUpdater;
+//import com.mweka.natwende.helper.SeatUpdater;
 import com.mweka.natwende.log.vo.ActivityLogVO;
-import com.mweka.natwende.types.SeatStatus;
 import com.mweka.natwende.util.ServiceLocator;
 
 @WebListener
@@ -21,8 +18,8 @@ public class HouseKeepingSessionListener implements HttpSessionListener {
 	@EJB
 	private ServiceLocator serviceLocator;
 	
-	@Inject
-	private SeatUpdater seatUpdater;
+	//@Inject
+	//private SeatUpdater seatUpdater;
 	
 	@Inject
 	private Log log;
@@ -34,13 +31,13 @@ public class HouseKeepingSessionListener implements HttpSessionListener {
 	public void sessionDestroyed(HttpSessionEvent event) {		
 		ActivityLogVO result = serviceLocator.getActivityLogDataFacade().getByUserSession(event.getSession().getId());
 		if (result != null) {
-			result.setWsSessionId(null);
+			//result.setWsSessionId(null);
 			result.setUserSessionId(null);
-			result.setLastHeartBeat(new Date());			
+			//result.setLastHeartBeat(new Date());			
 			result.setUsername(null);
-			result.setSeatStatus(SeatStatus.VACANT);
+			//result.setSeatStatus(SeatStatus.VACANT);
 			serviceLocator.getActivityLogDataFacade().update(result);
-			seatUpdater.sendMessageToAllSessions("Trip [" + result.getTripId() + "], seat [" + result.getSeatNo() + "] was vacated.");
+			//seatUpdater.sendMessageToAllSessions("Trip [" + result.getTripId() + "], seat [" + result.getSeatNo() + "] was vacated.");
 		}
 		event.getSession().removeAttribute("FilterRan");
 		event.getSession().removeAttribute("userPermissionSet");

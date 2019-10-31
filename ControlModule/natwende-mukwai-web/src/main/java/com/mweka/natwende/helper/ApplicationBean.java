@@ -7,24 +7,35 @@ package com.mweka.natwende.helper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 
+import com.mweka.natwende.trip.vo.ElasticTripVO;
+import com.mweka.natwende.trip.vo.TripVO;
+import com.mweka.natwende.util.MapObjectInstance;
+import com.mweka.natwende.util.ServiceLocator;
+
 @Named("ApplicationBean")
 @ApplicationScoped
 public class ApplicationBean {
+	
+	private static final Logger LOGGER = Logger.getLogger(ApplicationBean.class.getName()); 
 
 	private Properties applicationProperties;
 	private Map<String, Object> cacheMap;
+	
+	@EJB
+	private ServiceLocator serviceLocator;
 	
 	@PostConstruct
 	public void init(){
@@ -46,10 +57,26 @@ public class ApplicationBean {
 				prop.load(resourceAsStream);
 			}
 		} catch (IOException ex) {
-			Logger.getLogger(ApplicationBean.class.getName()).log(Level.SEVERE, null, ex);
+			LOGGER.log(Level.SEVERE, null, ex);
 		}
 
 		return prop;
+	}
+	
+	public void loadActiveTrips() {
+		try {
+			List<TripVO> resultList = serviceLocator.getTripDataFacade().getActiveTrips();
+			ElasticTripVO elasticData = new ElasticTripVO();
+			Map<String, Object> data = null;
+			for (TripVO trip : resultList) {
+				elasticData = TripVO.convertToElasticData(trip, elasticData);
+				data = MapObjectInstance.parameters(elasticData);
+				serviceLocator.getESUtils().insertData(data, ElasticTripVO.INDEX, ElasticTripVO.TYPE, trip.getUniqueId());
+			}
+		}
+		catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, "Exception", ex);
+		}
 	}
 
 	public Properties getApplicationProperties() {

@@ -20,11 +20,13 @@ import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.route.vo.StretchVO;
 import com.mweka.natwende.trip.search.vo.TripSearchResultVO;
 import com.mweka.natwende.trip.search.vo.TripSearchVO;
+import com.mweka.natwende.trip.vo.ElasticTripVO;
 import com.mweka.natwende.trip.vo.TripScheduleVO;
 import com.mweka.natwende.trip.vo.TripVO;
 import com.mweka.natwende.types.DaysOfWeek;
 import com.mweka.natwende.user.vo.UserVO;
 import com.mweka.natwende.util.DateUtil;
+import com.mweka.natwende.util.MapObjectInstance;
 
 @Stateless
 @LocalBean
@@ -123,7 +125,7 @@ public class TripFacade extends AbstractFacade<TripVO> {
 		
 		trip.setBusReg(bus.getReg());
 		trip.setTotalNumOfSeats(bus.getCapacity());
-		trip.setDriverName(driver.getName());
+		trip.setDriverName(driver.getName() == null ? "Josiah" : driver.getName());
 		trip.setFrom(schedule.getRoute().getStart().getTown());
 		trip.setTo(schedule.getRoute().getStop().getTown());
 		trip.setTripSchedule(schedule);
@@ -131,6 +133,7 @@ public class TripFacade extends AbstractFacade<TripVO> {
 		trip.setBusReg(schedule.getBusListAsString());
 		trip.setRouteName(schedule.getRoute().getName());
 		trip.setScheduledDepartureDate(DateUtil.addTimeToDate(schedule.getScheduledDepartureTime(), travelDate));
+		trip.setAvailableNumOfSeats(bus.getCapacity());
 		
 		try {
 			StretchVO stretch = serviceLocator.getStretchFacade().getStretchByEndpoints(trip.getFrom(), trip.getTo());
@@ -162,7 +165,11 @@ public class TripFacade extends AbstractFacade<TripVO> {
 			dateTime = dateTime.plusHours(durHrs).plusMinutes(durMin);
 			trip.setScheduledArrivalDate(dateTime.toDate());
 			
-			return serviceLocator.getTripDataFacade().update(trip);
+			trip = serviceLocator.getTripDataFacade().update(trip);
+			ElasticTripVO elasticData = TripVO.convertToElasticData(trip, new ElasticTripVO());
+			serviceLocator.getESUtils().insertData(MapObjectInstance.parameters(elasticData), ElasticTripVO.INDEX, ElasticTripVO.TYPE, trip.getUniqueId());
+			
+			return trip;
 		}
 		catch (Exception ex) {
 			log.debug(ex.getMessage(), ex);
@@ -260,12 +267,13 @@ public class TripFacade extends AbstractFacade<TripVO> {
 			result = new TripSearchResultVO();
 			result.setRouteStopLinks(serviceLocator.getRouteStopLinkDataFacade().getAllByRoute(trip.getTripSchedule().getRoute()));
 			result.setStretch(stretch);
-			result.setTrip(trip);
+			result.setTrip(trip);			
 			result.setFromTown(stretch.getFrom().getTown());
 			result.setToTown(stretch.getTo().getTown());
 			result.setOperatorName(trip.getTripSchedule().getOperator().getName());
 			setJourneyTimes(stretch, result);
 			searchResultList.add(result);
+			trip.setOccupiedSeats(new java.util.HashSet<String>(serviceLocator.getBookingDataFacade().getBookedSeatCoordinates(trip)));
 		}
 	}
 	

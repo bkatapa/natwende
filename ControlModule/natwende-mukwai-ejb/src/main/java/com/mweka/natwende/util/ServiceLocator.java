@@ -10,6 +10,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import com.mweka.natwende.cdi.StretchHelperInstance;
+import com.mweka.natwende.cdi.elastic.ESUtils;
 import com.mweka.natwende.dashboard.facade.BookingDashboardFacade;
 import com.mweka.natwende.exceptions.ServiceLocatorException;
 import com.mweka.natwende.location.facade.AddressDataFacade;
@@ -238,6 +239,9 @@ public class ServiceLocator {
 	@Inject
 	@StretchHelperInstance
 	private StretchHelper stretchHelper;
+	
+	@Inject
+	private ESUtils esUtils;
 
 	public Object getRemote(String jndiName) throws ServiceLocatorException {
 		Object obj = null;
@@ -486,5 +490,9 @@ public class ServiceLocator {
 	
 	public TempBookingDataFacade getTempBookingDataFacade() {
 		return tempBookingDataFacade;
+	}
+	
+	public ESUtils getESUtils() {
+		return esUtils;
 	}
 }

@@ -13,6 +13,7 @@ public abstract class Booking_ extends com.mweka.natwende.base.BaseEntity_ {
 
 	public static volatile SingularAttribute<Booking, BigDecimal> fare;
 	public static volatile SingularAttribute<Booking, String> passengerNrc;
+	public static volatile SingularAttribute<Booking, String> seatCoordinate;
 	public static volatile SingularAttribute<Booking, String> passengerEmail;
 	public static volatile SingularAttribute<Booking, String> seatNumber;
 	public static volatile SingularAttribute<Booking, Trip> trip;
