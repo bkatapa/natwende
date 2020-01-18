@@ -15,8 +15,6 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <elastic.search.version>6.2.2</elastic.search.version>
-        <jackson.version>2.9.9</jackson.version>
     </properties>
 
     <dependencies>
@@ -37,7 +35,7 @@
             <artifactId>natwende-mukwai-client</artifactId>
             <version>${natwende.mukwai.version}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>        
         <!-- 
         <dependency>
             <groupId>commons-logging</groupId>
@@ -122,40 +120,7 @@
     		<artifactId>cloning</artifactId>
     		<version>1.9.3</version>
     		<scope>provided</scope>
-		</dependency>
-		
-		<!-- Elasticsearch dependencies -->
-		<dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
-            <version>${elastic.search.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>${elastic.search.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client-sniffer</artifactId>
-            <version>${elastic.search.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client</artifactId>
-            <version>${elastic.search.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>            
-        </dependency>
-        	
+		</dependency>        	
     </dependencies>
 
     <build>

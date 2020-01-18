@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+    version="2.0">
+    <persistence-unit name="ppmPU">               
+        <jta-data-source>jdbc/arquillian</jta-data-source>
+        <shared-cache-mode>DISABLE_SELECTIVE</shared-cache-mode>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.show_sql" value="false" />
+            
+            <property name="hibernate.cache.use_second_level_cache" value="true" />
+        	<property name="hibernate.cache.use_query_cache" value="true" />     
+
+	        <!-- http://frightanic.com/software-development/jpa-batch-inserts/ -->
+	        <!-- http://java-persistence-performance.blogspot.com/2011/06/how-to-improve-jpa-performance-by-1825.html -->
+<!-- 	        <property name="hibernate.jdbc.batch_size" value="100" /> -->
+<!-- 	        <property name="hibernate.order_inserts" value="true" /> -->
+<!-- 	        <property name="hibernate.order_updates" value="true" />     -->
+	        
+<!-- 	        <property name="hibernate.jdbc.batch_size" value="100"/> -->
+<!-- 			<property name="hibernate.order_inserts" value="true"/> -->
+<!-- 			<property name="hibernate.order_updates" value="true"/> -->
+<!-- 			<property name="hibernate.jdbc.batch_versioned_data" value="true"/> -->
+	        
+            
+        </properties>
+    </persistence-unit>
+</persistence>

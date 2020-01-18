@@ -2,6 +2,7 @@ package com.mweka.natwende.trip.vo;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -197,7 +198,7 @@ public class TripVO extends BaseVO {
 	}
 
 	public Set<String> getOccupiedSeats() {
-		return occupiedSeats;
+		return occupiedSeats == null ? Collections.singleton("") : occupiedSeats;
 	}
 	
 	public void setOccupiedSeats(Set<String> occupiedSeats) {
@@ -255,15 +256,23 @@ public class TripVO extends BaseVO {
 		elasticData.setBookedNumOfSeats(trip.getBookedNumOfSeats());
 		elasticData.setBusReg(trip.getBusReg());
 		elasticData.setDriverName(trip.getDriverName());
-		elasticData.setFromTown(trip.getFrom().getDisplay());
+		if (trip.getFrom() != null) {
+			elasticData.setFromTown(trip.getFrom().getDisplay());
+		}
 		elasticData.setId(trip.getId());
 		elasticData.setInsertDate(trip.getInsertDate());
-		elasticData.setOccupiedSeats(new ArrayList<>(trip.getOccupiedSeats()));
-		elasticData.setOperatorName(trip.getOperatorName().getDisplay());
+		if (trip.getOccupiedSeats() != null) {
+			elasticData.setOccupiedSeats(new ArrayList<>(trip.getOccupiedSeats()));
+		}
+		if (trip.getOperatorName() != null) {
+			elasticData.setOperatorName(trip.getOperatorName().getDisplay());
+		}
 		elasticData.setRouteName(trip.getRouteName());
 		elasticData.setScheduledArrivalDate(trip.getScheduledArrivalDate());
 		elasticData.setScheduledDepartureDate(trip.getScheduledDepartureDate());
-		elasticData.setStatus(trip.getTripStatus().getDisplay());
+		if (trip.getTripStatus() != null) {
+			elasticData.setStatus(trip.getTripStatus().getDisplay());
+		}
 		elasticData.setUniqueId(trip.getUniqueId());
 		return elasticData;
 	}

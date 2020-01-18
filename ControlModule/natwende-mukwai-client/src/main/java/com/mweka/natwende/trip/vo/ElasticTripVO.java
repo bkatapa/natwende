@@ -1,7 +1,12 @@
 package com.mweka.natwende.trip.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.mweka.natwende.operator.vo.SeatVO;
 
 public class ElasticTripVO implements java.io.Serializable {
 	/**
@@ -9,7 +14,8 @@ public class ElasticTripVO implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -6676404862792320257L;
 
-	private List<String> tripSessions, occupiedSeats;
+	private Map<String, SeatVO> tripSessions;
+	private List<String> occupiedSeats;
 	private Long id;
 	private Date insertDate;
 	private String status;
@@ -34,15 +40,24 @@ public class ElasticTripVO implements java.io.Serializable {
 	private String tripStatus;
 	private Long tripScheduleId;
 	
-	public List<String> getTripSessions() {
+	public ElasticTripVO() {		
+	}
+	
+	public Map<String, SeatVO> getTripSessions() {
+		if (tripSessions == null) {
+			tripSessions = new HashMap<>();
+		}
 		return tripSessions;
 	}
 	
-	public void setTripSessions(List<String> tripSessions) {		
+	public void setTripSessions(Map<String, SeatVO> tripSessions) {		
 		this.tripSessions = tripSessions;
 	}
 	
 	public List<String> getOccupiedSeats() {
+		if (occupiedSeats == null) {
+			occupiedSeats = new ArrayList<>();
+		}
 		return occupiedSeats;
 	}
 	

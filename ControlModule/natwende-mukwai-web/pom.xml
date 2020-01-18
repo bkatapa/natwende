@@ -19,7 +19,7 @@
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.jboss.bom>10.1.0.Final</version.jboss.bom>
-		<httpclient.version>4.5</httpclient.version>
+		<httpclient.version>4.5.2</httpclient.version>
 		<commons-io.version>2.4</commons-io.version>
 	</properties>
 
@@ -30,14 +30,13 @@
 			<version>${version.jboss.bom}</version>
 			<type>pom</type>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>		 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>${httpclient.version}</version>
-			<scope>provided</scope>
+			<scope>provided</scope>			
 		</dependency>
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -82,7 +81,7 @@
 			<artifactId>natwende-mukwai-client</artifactId>
 			<version>${natwende.mukwai.version}</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>natwende-mukwai-ejb</artifactId>
@@ -94,6 +93,11 @@
 			<artifactId>natwende-mukwai-datamodel</artifactId>
 			<version>${natwende.mukwai.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.jboss.resteasy</groupId>
+    		<artifactId>resteasy-client</artifactId>
+    		<version>3.0.11.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
@@ -112,6 +116,12 @@
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<version>3.0.11.Final</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.core</groupId>
+    		<artifactId>jackson-annotations</artifactId>
+    		<version>2.9.9</version>
+    		<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>

@@ -24,7 +24,7 @@ function openConnection() {
 		updateSeats(jsonObj);
 	};
 	websocket.onopen = function() {
-		sendData('trip_id:' + document.getElementById('trip-id').value);
+		sendData('trip_unique_id:' + document.getElementById('trip-id').value);
 	};
 }
 

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -24,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mweka.natwende.operator.vo.BusVO;
 import com.mweka.natwende.operator.vo.SeatVO;
+import com.mweka.natwende.resource.elasticdb.ElasticDB;
 import com.mweka.natwende.trip.vo.ElasticTripVO;
 import com.mweka.natwende.util.ServiceLocator;
 
@@ -37,11 +39,12 @@ public class SeatUpdater {
 	private static final Map<String, String> SESSION_TRIP_MAPPING = new ConcurrentHashMap<>();
 	
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final String INDEX = "trips";
-    private static final String TYPE = "trip";
 	
 	@EJB
 	private ServiceLocator serviceLocator;
+	
+	@Inject
+	private ElasticDB elasticDB;
 	
 	@OnOpen
 	public void open(Session session) {
@@ -61,15 +64,19 @@ public class SeatUpdater {
 			if (StringUtils.startsWithIgnoreCase(msg, "trip_unique_id")) {
 				try {
 					SESSION_TRIP_MAPPING.put(session.getId(), msg);
-					String tripUniqueId = msg.split(":")[1];				
-					String elasticData = serviceLocator.getESUtils().getDataById(tripUniqueId, INDEX, TYPE);
-					ElasticTripVO elasticTrip = OBJECT_MAPPER.readValue(elasticData, ElasticTripVO.class);
+					String tripUniqueId = msg.split(":")[1];
+					ElasticTripVO elasticTrip = elasticDB.getEntity(tripUniqueId);
 					
-					if (elasticTrip != null && !elasticTrip.getOccupiedSeats().isEmpty()) {						
-						Set<String> reservedSeats = new java.util.HashSet<>(elasticTrip.getOccupiedSeats());
-						SeatUpdateVO update = new SeatUpdateVO(reservedSeats, "reserve");
-						String jsonMsg = new ObjectMapper().writeValueAsString(update);
-						sendMessageToSession(jsonMsg, session);
+					if (elasticTrip != null) {
+						//elasticTrip.getOccupiedSeats().removeIf(StringUtils::isEmpty);
+						elasticTrip.getOccupiedSeats().removeAll(Collections.singleton(null));
+						elasticTrip.getOccupiedSeats().removeAll(Collections.singleton(StringUtils.EMPTY));
+						if (!elasticTrip.getOccupiedSeats().isEmpty()) {
+							Set<String> reservedSeats = new java.util.HashSet<>(elasticTrip.getOccupiedSeats());
+							SeatUpdateVO update = new SeatUpdateVO(reservedSeats, "reserve");
+							String jsonMsg = OBJECT_MAPPER.writeValueAsString(update);
+							sendMessageToSession(jsonMsg, session);
+						}
 					}
 				}			
 				catch (Exception jex) {
@@ -134,9 +141,8 @@ public class SeatUpdater {
 		final String methodName = "updateSeatAcrossSessions";
 		try {
 			String publisherTripUniqueId = SESSION_TRIP_MAPPING.get(session.getId());
-			String tripUniqueId = publisherTripUniqueId.split(":")[1];
-			String elasticData = serviceLocator.getESUtils().getDataById(tripUniqueId, INDEX, TYPE);
-			ElasticTripVO elasticTrip = OBJECT_MAPPER.readValue(elasticData, ElasticTripVO.class);		
+			String tripUniqueId = publisherTripUniqueId.split(":")[1];			
+			ElasticTripVO elasticTrip = elasticDB.getEntity(tripUniqueId);				
 			BusVO bus = serviceLocator.getBusDataFacade().getByReg(elasticTrip.getBusReg());
 			String seatNo = msg.split(":")[1];
 			SeatVO seat = serviceLocator.getSeatDataFacade().getBySeatNoAndBusId(seatNo, bus.getId());
@@ -150,21 +156,23 @@ public class SeatUpdater {
 					SeatUpdateVO update = new SeatUpdateVO(Collections.singleton(seat.getCoordinates()), action);
 					switch (action) {
 					case "reserve" :
-							elasticTrip.getTripSessions().add(session.getId() + "=" + seatNo + "=" + seat.getCoordinates());
-							elasticTrip.getOccupiedSeats().add(seat.getCoordinates());
+							elasticTrip.getTripSessions().put(session.getId(), seat);
+							elasticTrip.getOccupiedSeats().add(seat.getCoordinates());							
 							update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeXml("Seat no." + seat.getSeatNo() + " was reserved.")));
 						break;
 						case "vacate" :
-							elasticTrip.getTripSessions().remove(session.getId() + "=" + seatNo + "=" + seat.getCoordinates());
+							elasticTrip.getTripSessions().remove(session.getId());
 							elasticTrip.getOccupiedSeats().remove(seat.getCoordinates());
 							update.setMessage(new FacesMessage(StringEscapeUtils.escapeHtml(seat.getSeatNo()), StringEscapeUtils.escapeXml("Seat no." + seat.getSeatNo() + " was vacated.")));
 						break;
 						default : 
 							LOGGER.logp(Level.SEVERE, CLASS_NAME, methodName, "Case item not yet implemented [{0}].", action);
 							return;
-					}					
-					long version = serviceLocator.getESUtils().updateDataById(tripUniqueId, INDEX, TYPE, OBJECT_MAPPER.writeValueAsString(elasticData));
-					LOGGER.logp(Level.INFO, CLASS_NAME, methodName, "A seat reservation was updated: [{0}, {1}].", new Object[] {action, version});
+					}
+					elasticTrip.setBookedNumOfSeats(elasticTrip.getOccupiedSeats().size());
+					elasticTrip.setAvailNumOfSeats(elasticTrip.getTotalNumOfSeats() - elasticTrip.getBookedNumOfSeats());
+					ElasticTripVO result = elasticDB.updateEntity(elasticTrip);
+					LOGGER.logp(Level.INFO, CLASS_NAME, methodName, "A seat reservation was updated: [{0}, {1}].", new Object[] {action, result});
 					String jsonMsg = OBJECT_MAPPER.writeValueAsString(update);
 					sendMessageToSession(jsonMsg, s);
 				}

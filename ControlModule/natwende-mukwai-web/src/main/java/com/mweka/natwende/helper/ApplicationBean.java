@@ -16,10 +16,15 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Destroyed;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 
+import com.mweka.natwende.resource.elasticdb.ElasticDB;
 import com.mweka.natwende.trip.vo.ElasticTripVO;
 import com.mweka.natwende.trip.vo.TripVO;
 import com.mweka.natwende.util.MapObjectInstance;
@@ -37,11 +42,19 @@ public class ApplicationBean {
 	@EJB
 	private ServiceLocator serviceLocator;
 	
+	@Inject
+	private ElasticDB elasticDB;
+	
 	@PostConstruct
 	public void init(){
 		applicationProperties = loadManifestFile();
+		loadActiveTrips();
 		cacheMap = new ConcurrentHashMap<>();
 	}
+	
+	public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        init();
+    }
 	
 	public Properties loadManifestFile() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -67,11 +80,11 @@ public class ApplicationBean {
 		try {
 			List<TripVO> resultList = serviceLocator.getTripDataFacade().getActiveTrips();
 			ElasticTripVO elasticData = new ElasticTripVO();
-			Map<String, Object> data = null;
+			Map<String, Object> data = null;			
 			for (TripVO trip : resultList) {
 				elasticData = TripVO.convertToElasticData(trip, elasticData);
 				data = MapObjectInstance.parameters(elasticData);
-				serviceLocator.getESUtils().insertData(data, ElasticTripVO.INDEX, ElasticTripVO.TYPE, trip.getUniqueId());
+				elasticDB.insertEntity(data);
 			}
 		}
 		catch (Exception ex) {
@@ -102,4 +115,8 @@ public class ApplicationBean {
 	public int capacity() {
 		return cacheMap.size();
 	}
+	
+	public void destroy(@Observes @Destroyed(ApplicationScoped.class) Object init) {
+		cacheMap.clear();
+    }
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
@@ -20,17 +22,20 @@ import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.route.vo.StretchVO;
 import com.mweka.natwende.trip.search.vo.TripSearchResultVO;
 import com.mweka.natwende.trip.search.vo.TripSearchVO;
+import com.mweka.natwende.trip.vo.ElasticTripEvent;
 import com.mweka.natwende.trip.vo.ElasticTripVO;
 import com.mweka.natwende.trip.vo.TripScheduleVO;
 import com.mweka.natwende.trip.vo.TripVO;
 import com.mweka.natwende.types.DaysOfWeek;
 import com.mweka.natwende.user.vo.UserVO;
 import com.mweka.natwende.util.DateUtil;
-import com.mweka.natwende.util.MapObjectInstance;
 
 @Stateless
 @LocalBean
 public class TripFacade extends AbstractFacade<TripVO> {
+	
+	@Inject
+	private Event<ElasticTripEvent> elasticTripEvent;
 
 	public TripFacade() {
 		super(TripVO.class);
@@ -167,8 +172,8 @@ public class TripFacade extends AbstractFacade<TripVO> {
 			
 			trip = serviceLocator.getTripDataFacade().update(trip);
 			ElasticTripVO elasticData = TripVO.convertToElasticData(trip, new ElasticTripVO());
-			serviceLocator.getESUtils().insertData(MapObjectInstance.parameters(elasticData), ElasticTripVO.INDEX, ElasticTripVO.TYPE, trip.getUniqueId());
-			
+			elasticTripEvent.fire(new ElasticTripEvent(elasticData));
+			log.debug("Trip created from schedule successfully.");
 			return trip;
 		}
 		catch (Exception ex) {

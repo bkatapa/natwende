@@ -60,7 +60,7 @@
 					  		<div id="legend" />
 						</div>
 					</div>
-					<input type="hidden" value="#{TripAction.selectedEntity.id}" id="trip-id" />			
+					<input type="hidden" value="#{TripAction.selectedEntity.uniqueId}" id="trip-id" />			
 					<p:remoteCommand name="updateGrowl" update="@widgetVar(growl)" />
 				</h:form>
 			</p:outputPanel>

@@ -3,15 +3,15 @@ package com.mweka.natwende.util;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+//import javax.annotation.PostConstruct;
+//import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Timeout;
+//import javax.ejb.Timeout;
 import javax.ejb.Timer;
-import javax.ejb.TimerService;
+//import javax.ejb.TimerService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -25,18 +25,18 @@ import com.mweka.natwende.types.SeatStatus;
 @Startup
 public class SeatUpdaterTimer {
  
-    @Resource
-    private TimerService timerService;
+    //@Resource
+    //private TimerService timerService;
     
     @EJB
     private ServiceLocator serviceLocator;
- 
+ /*
     @PostConstruct
     private void init() {
         timerService.createTimer(1000, 1000*60*60, "SeatUpdaterTimer_Info");
-    }
+    }*/
  
-    @Timeout
+    //@Timeout
     public void execute(Timer timer) {    	
         System.out.println("Timer Service : " + timer.getInfo());
         System.out.println("Current Time : " + new Date());
