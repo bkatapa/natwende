@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.mweka.natwende.operator.vo.SeatVO;
 
@@ -15,7 +16,9 @@ public class ElasticTripVO implements java.io.Serializable {
 	private static final long serialVersionUID = -6676404862792320257L;
 
 	private Map<String, SeatVO> tripSessions;
+	private Map<String, Set<String>> userBookings;
 	private List<String> occupiedSeats;
+	private List<String> stationList;
 	private Long id;
 	private Date insertDate;
 	private String status;
@@ -50,8 +53,19 @@ public class ElasticTripVO implements java.io.Serializable {
 		return tripSessions;
 	}
 	
+	public Map<String, Set<String>> getUserBookings() {
+		if (userBookings == null) {
+			userBookings = new HashMap<>();
+		}
+		return userBookings;
+	}
+	
 	public void setTripSessions(Map<String, SeatVO> tripSessions) {		
 		this.tripSessions = tripSessions;
+	}
+	
+	public void setUserBookings(Map<String, Set<String>> userBookings) {		
+		this.userBookings = userBookings;
 	}
 	
 	public List<String> getOccupiedSeats() {
@@ -63,6 +77,17 @@ public class ElasticTripVO implements java.io.Serializable {
 	
 	public void setOccupiedSeats(List<String> occupiedSeats) {
 		this.occupiedSeats = occupiedSeats;
+	}
+	
+	public List<String> getStationList() {
+		if (stationList == null) {
+			stationList = new ArrayList<>();
+		}
+		return stationList;
+	}
+	
+	public void setStationList(List<String> stationList) {
+		this.stationList = stationList;
 	}
 	
 	public Long getId() {

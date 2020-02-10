@@ -60,4 +60,12 @@ public class ReservationVO extends BaseVO {
 		return "";
 	}
 	
+	public static java.util.Set<String> getReservedCoordinates(java.util.Collection<String> bookingList) {
+		java.util.Set<String> resultSet = new java.util.HashSet<>();
+		for (String booking : bookingList) {
+			resultSet.add(booking.split("\\|")[1]);
+		}
+		return resultSet;
+	}
+	
 }

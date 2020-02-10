@@ -13,7 +13,9 @@ public class SeatUpdateVO extends BaseVO  {
 	private static final long serialVersionUID = -3641546585342912482L;
 	private Set<String> coordinates;
 	private String action;
+	private String bookingToken;
 	private FacesMessage message;
+	private int availSeats;
 	
 	public SeatUpdateVO() {			
 	}
@@ -21,6 +23,12 @@ public class SeatUpdateVO extends BaseVO  {
 	public SeatUpdateVO(Set<String> coordinates, String action) {
 		this.coordinates = coordinates;
 		this.action = action;
+	}
+	
+	public SeatUpdateVO(Set<String> coordinates, String action, String bookingToken) {
+		this.coordinates = coordinates;
+		this.action = action;
+		this.bookingToken = bookingToken;
 	}
 
 	public Set<String> getCoordinates() {
@@ -45,6 +53,22 @@ public class SeatUpdateVO extends BaseVO  {
 
 	public void setMessage(FacesMessage message) {
 		this.message = message;
+	}
+
+	public int getAvailSeats() {
+		return availSeats;
+	}
+
+	public void setAvailSeats(int availSeats) {
+		this.availSeats = availSeats;
+	}
+
+	public String getBookingToken() {
+		return bookingToken;
+	}
+
+	public void setBookingToken(String bookingToken) {
+		this.bookingToken = bookingToken;
 	}
 	
 }

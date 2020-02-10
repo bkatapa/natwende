@@ -25,6 +25,7 @@ import javax.inject.Named;
 import javax.servlet.ServletContext;
 
 import com.mweka.natwende.resource.elasticdb.ElasticDB;
+import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.trip.vo.ElasticTripVO;
 import com.mweka.natwende.trip.vo.TripVO;
 import com.mweka.natwende.util.MapObjectInstance;
@@ -81,8 +82,13 @@ public class ApplicationBean {
 			List<TripVO> resultList = serviceLocator.getTripDataFacade().getActiveTrips();
 			ElasticTripVO elasticData = new ElasticTripVO();
 			Map<String, Object> data = null;			
-			for (TripVO trip : resultList) {
+			for (TripVO trip : resultList) {				
+				elasticDB.deleteEntity(elasticDB.getEntity(trip.getUniqueId()));				
 				elasticData = TripVO.convertToElasticData(trip, elasticData);
+				List<StopVO> stationList = serviceLocator.getStopDataFacade().getByRoute(trip.getTripSchedule().getRoute());
+				for (StopVO station : stationList) {
+					elasticData.getStationList().add(station.getTown().getDisplay());
+				}
 				data = MapObjectInstance.parameters(elasticData);
 				elasticDB.insertEntity(data);
 			}

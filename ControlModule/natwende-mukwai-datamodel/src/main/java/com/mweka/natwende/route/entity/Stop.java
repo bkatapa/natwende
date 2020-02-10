@@ -31,6 +31,7 @@ import com.mweka.natwende.types.Town;
     @NamedQuery(name = Stop.QUERY_FIND_STOP_BY_NAME, query="SELECT s FROM Stop s WHERE s.name = :stopName"),
     @NamedQuery(name = Stop.QUERY_FIND_STOP_BY_TOWN, query="SELECT s FROM Stop s WHERE s.town = :town"),
     @NamedQuery(name = Stop.QUERY_FIND_BY_NAME_TOWN_AND_PROVINCE, query="SELECT s FROM Stop s WHERE s.name = :stopName AND s.town = :town AND s.province = :province"),
+    @NamedQuery(name = Stop.QUERY_FIND_BY_ROUTE, query=" SELECT rsl.stop FROM RouteStopLink rsl WHERE rsl.route.id = :routeId "),
 })
 public class Stop extends BaseEntity {
 
@@ -47,6 +48,7 @@ public class Stop extends BaseEntity {
 	public static final String QUERY_FIND_STOP_BY_NAME = "Stop.findStopByName";
 	public static final String QUERY_FIND_STOP_BY_TOWN = "Stop.findStopByTown";
 	public static final String QUERY_FIND_BY_NAME_TOWN_AND_PROVINCE = "Stop.findByNameTownAndProvince";
+	public static final String QUERY_FIND_BY_ROUTE = "Stop.findByRoute";
 	
 	/**
 	 * Query parameters

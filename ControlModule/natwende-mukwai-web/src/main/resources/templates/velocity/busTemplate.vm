@@ -74,7 +74,8 @@ function displaySeats(bookedSeats) {
 					$total.text(recalculateTotal(sc)+this.data().price);
   				}
   				postBookingData();
-  				sendData('selected_seat:' + this.settings.label);
+  				//sendData('selected_seat:' + this.settings.label);
+  				sendData(JSON.stringify({ seatNo: this.settings.label, selected: true }));
 				return 'selected';
 			} 
 			else if (this.status() === 'selected') {
@@ -93,7 +94,8 @@ function displaySeats(bookedSeats) {
 
 				//seat has been vacated
 				// postBookingData();
-				sendData('unselected_seat:' + this.settings.label);
+				//sendData('unselected_seat:' + this.settings.label);
+				sendData(JSON.stringify({ seatNo: this.settings.label, selected: false }));
 				return 'available';
 			} 
 			else if (this.status() == 'unavailable') {
@@ -139,13 +141,26 @@ function recalculateTotal(sc) {
 function updateSeats(jsonObj) {
 	var coordinates = jsonObj.coordinates;
 	var action = jsonObj.action;
-	sc.get(coordinates).status(action === 'reserve' ? 'unavailable' : 'available');
+	switch (action) {
+		case 'reserve': sc.get(coordinates).status('unavailable');
+		break;
+		case 'vacate': sc.get(coordinates).status('available');
+		break;
+		case 'select': sc.get(coordinates).status('selected');
+		break;
+		default: console.log('no seats to update: ' + action);
+	}
 }
 
 function freeSeats(seats) {
 	var res = JSON.stringify(seats).replace(/ /g, '');
 	var parseRes = JSON.parse(res);
 	sc.get(parseRes).status('available');
+}
+
+function selectSeats(seats) {
+	var parseRes = JSON.parse(JSON.stringify(seats).replace(/ /g, ''));
+	sc.get(parseRes).status('selected');
 }
 
 function setTripPrice(tripPrice) { alert(tripPrice);

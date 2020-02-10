@@ -14,17 +14,27 @@ function openConnection() {
 		if (jsonObj.constructor !== {}.constructor) {
 			jsonObj = JSON.parse(jsonObj);
 		}
-		console.log(jsonObj.coordinates);
-		console.log(jsonObj.action);
-		console.log(jsonObj.message);
-		if (jsonObj.message !== 'undefined' && jsonObj.message !== null) {
+		console.log(`Coordinates: ${jsonObj.coordinates}`);
+		console.log(`Action: ${jsonObj.action}`);
+		console.log(`Message: ${jsonObj.message}`);
+		console.log(`Avail seats: ${jsonObj.availSeats}`);
+		if (jsonObj.message !== undefined && jsonObj.message !== null) {
 			jsonObj.message.severity = jsonObj.action === 'reverse' ? 'warn' : 'info';
 			handleMessage(jsonObj.message);
+		}
+		if (jsonObj.availSeats !== undefined && jsonObj.availSeats !== null) {
+			updateAvailSeats(jsonObj.availSeats);
 		}
 		updateSeats(jsonObj);
 	};
 	websocket.onopen = function() {
-		sendData('trip_unique_id:' + document.getElementById('trip-id').value);
+		var townEndpoints = document.getElementById('trip-endpoints-id').value;		
+		console.log(townEndpoints);		
+		var townList = townEndpoints.split(/[.,\/ -]/);		
+		var reservationMg = { tripSerialNo: document.getElementById('trip-id').value, fromTown: townList[0], toTown: townList[1] };		
+		var json = JSON.stringify(reservationMg);
+		console.log(json);		
+		sendData(json);
 	};
 }
 

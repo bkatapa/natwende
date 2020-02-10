@@ -24,7 +24,7 @@
 		<h:body onload="openConnection();" onunload="closeConnection();">
 			<p:outputPanel style="margin-left: 40px; margin-right: 40px;">
 				<ui:include src="/WEB-INF/include/header.xhtml" />
-				<p:growl widgetVar="growl" showDetail="true" severity="error,info" life="1500" sticky="false" />
+				<p:growl widgetVar="growl" showDetail="true" severity="error,info" life="1500" sticky="true" />
 				<h:form id="selectSeat-form">
 					<p:panelGrid columns="2" layout="grid">
 						<f:facet name="header">
@@ -40,7 +40,9 @@
 						<p:outputLabel value="To: " />
 						<h:outputText value="#{TripAction.selectedSearchResult.toTown.display}" />
 						<p:outputLabel value="Seats remaining: " />
-						<h:outputText value="#{TripAction.selectedSearchResult.trip.availableNumOfSeats}" />
+						<p:outputPanel>
+							<div id="avail-seats"></div>
+						</p:outputPanel>
 					</p:panelGrid>
 					<div class="container">
 						<div id="seat-map">
@@ -60,7 +62,8 @@
 					  		<div id="legend" />
 						</div>
 					</div>
-					<input type="hidden" value="#{TripAction.selectedEntity.uniqueId}" id="trip-id" />			
+					<input type="hidden" value="#{TripAction.selectedEntity.uniqueId}" id="trip-id" />
+					<input type="hidden" value="#{TripAction.selectedSearchResult.fromTown.display}-#{TripAction.selectedSearchResult.toTown.display}" id="trip-endpoints-id" />			
 					<p:remoteCommand name="updateGrowl" update="@widgetVar(growl)" />
 				</h:form>
 			</p:outputPanel>
@@ -69,8 +72,11 @@
 			<h:outputScript library="js" name="seat-updater.js"/>
 			<h:outputScript library="js" name="post-booking-data.js"/>
 			<h:outputScript>
-				/*
 				$(document).ready(function () {
+					if (document.getElementById('avail-seats').innerHTML === "") {
+						document.getElementById('avail-seats').innerHTML = #{TripAction.selectedSearchResult.trip.availableNumOfSeats};
+					}
+					/*
 					openConnection();
 					updateOccupiedSeats(#{TripAction.selectedEntity.occupiedSeats});
 					this.data().price = #{TripAction.selectedEntity.priceStr}
@@ -78,11 +84,14 @@
 					$("#checkout").click(function () {
 						postBookingData();
 					});
+					*/
 				});
-				*/
 				function handleMessage(facesMessage) {
 					// updateGrowl();
 					PF('growl').show([facesMessage]);
+				}
+				function updateAvailSeats(availSeats) {
+					document.getElementById('avail-seats').innerHTML = availSeats;
 				}
 			</h:outputScript>
 						

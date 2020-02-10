@@ -8,7 +8,9 @@ import javax.ejb.Stateless;
 import org.apache.commons.logging.LogFactory;
 
 import com.mweka.natwende.facade.AbstractDataFacade;
+import com.mweka.natwende.route.entity.Route;
 import com.mweka.natwende.route.entity.Stop;
+import com.mweka.natwende.route.vo.RouteVO;
 import com.mweka.natwende.route.vo.StopVO;
 import com.mweka.natwende.types.Province;
 import com.mweka.natwende.types.Status;
@@ -90,6 +92,15 @@ public class StopDataFacade extends AbstractDataFacade<StopVO, Stop> {
 	public List<StopVO> getByTown(Town town) {
 		List<Stop> resultList = createNamedQuery(Stop.QUERY_FIND_STOP_BY_TOWN, getEntityClass())
 				.setParameter(Stop.PARAM_TOWN, town)
+				.getResultList();
+		return transformList(resultList);
+	}
+	
+/*========================================================================================================*/
+	
+	public List<StopVO> getByRoute(RouteVO route) {
+		List<Stop> resultList = createNamedQuery(Stop.QUERY_FIND_BY_ROUTE, getEntityClass())
+				.setParameter(Route.PARAM_ROUTE_ID, route.getId())
 				.getResultList();
 		return transformList(resultList);
 	}

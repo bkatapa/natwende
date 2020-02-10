@@ -274,6 +274,7 @@ public class TripVO extends BaseVO {
 			elasticData.setStatus(trip.getTripStatus().getDisplay());
 		}
 		elasticData.setUniqueId(trip.getUniqueId());
+		elasticData.setTotalNumOfSeats(trip.getTotalNumOfSeats());
 		return elasticData;
 	}
 }
