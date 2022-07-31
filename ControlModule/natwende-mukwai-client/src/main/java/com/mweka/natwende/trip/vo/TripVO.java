@@ -10,7 +10,6 @@ import java.util.TimeZone;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.base.vo.BaseVO;
 import com.mweka.natwende.route.vo.StretchVO;
 import com.mweka.natwende.types.OperatorName;
@@ -44,20 +43,16 @@ public class TripVO extends BaseVO {
 	private Set<String> occupiedSeats;
 	
 	@XmlTransient
-	@JsonIgnore
 	private List<BookingVO> bookings;
 	
 	@XmlTransient
-	@JsonIgnore
 	private TripScheduleVO tripSchedule;
 	
 	// No need to persist these
 	@XmlTransient
-	@JsonIgnore
 	private transient String priceStr;
 	
 	@XmlTransient
-	@JsonIgnore
 	private transient List<StretchVO> stretchList;
 	
 	public String getBusReg() {
@@ -275,6 +270,8 @@ public class TripVO extends BaseVO {
 		}
 		elasticData.setUniqueId(trip.getUniqueId());
 		elasticData.setTotalNumOfSeats(trip.getTotalNumOfSeats());
+		elasticData.setTripScheduleId(trip.getId());
+		
 		return elasticData;
 	}
 }

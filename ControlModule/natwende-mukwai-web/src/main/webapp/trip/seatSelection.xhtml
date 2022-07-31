@@ -64,6 +64,7 @@
 					</div>
 					<input type="hidden" value="#{TripAction.selectedEntity.uniqueId}" id="trip-id" />
 					<input type="hidden" value="#{TripAction.selectedSearchResult.fromTown.display}-#{TripAction.selectedSearchResult.toTown.display}" id="trip-endpoints-id" />			
+					<input type="hidden" value="#{TripAction.endpointsAndAnyIntermediateNodesAsJson}" id="traveller-endpoints" />
 					<p:remoteCommand name="updateGrowl" update="@widgetVar(growl)" />
 				</h:form>
 			</p:outputPanel>

@@ -90,7 +90,8 @@
 					<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 			
-				<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+				<!--
+				<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" /> -->
 			
 				<p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false" resizable="false">	
 					<p:graphicImage url="/images/ajax-loader.gif" />	

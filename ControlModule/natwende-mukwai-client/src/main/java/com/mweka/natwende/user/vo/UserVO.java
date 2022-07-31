@@ -67,7 +67,6 @@ public class UserVO extends BaseVO {
     private List<RoleType> permissions;
     
     @XmlTransient
-    @com.fasterxml.jackson.annotation.JsonIgnore
     private byte[] profilePic;
     
     public UserVO() {    	

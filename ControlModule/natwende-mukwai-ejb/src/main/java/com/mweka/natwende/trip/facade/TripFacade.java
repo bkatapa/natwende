@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.joda.time.DateTime;
 
 import com.mweka.natwende.facade.AbstractFacade;
@@ -88,7 +89,7 @@ public class TripFacade extends AbstractFacade<TripVO> {
 		
 		if (!scheduleList.isEmpty()) {
 			log.debug("Found some valid trip schedules, attempting to create some trips ...");
-			String dayOfWeek = new SimpleDateFormat("EEEE").format(travelDate).toUpperCase();
+			String dayOfWeek = new SimpleDateFormat("EEEE").format(ObjectUtils.defaultIfNull(travelDate, new Date())).toUpperCase();
 			
 			try {
 				for (TripScheduleVO schedule : scheduleList) {

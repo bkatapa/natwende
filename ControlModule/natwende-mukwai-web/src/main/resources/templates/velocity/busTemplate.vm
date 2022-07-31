@@ -139,16 +139,52 @@ function recalculateTotal(sc) {
 }
 		
 function updateSeats(jsonObj) {
+
+	console.log(`*****************************************************`);
+	console.log(`Received object: ${JSON.stringify(jsonObj)}`);
+	console.log(`Coordinates: ${jsonObj.coordinates}`);
+	console.log(`Action: ${jsonObj.action}`);
+	console.log(`Message: ${jsonObj.message}`);
+	console.log(`Avail seats: ${jsonObj.availSeats}`);
+	console.log(`Traveller endpoints: ${jsonObj.endpoints}`);	
+
 	var coordinates = jsonObj.coordinates;
 	var action = jsonObj.action;
-	switch (action) {
-		case 'reserve': sc.get(coordinates).status('unavailable');
-		break;
-		case 'vacate': sc.get(coordinates).status('available');
-		break;
-		case 'select': sc.get(coordinates).status('selected');
-		break;
-		default: console.log('no seats to update: ' + action);
+	var travellerEndpoints = document.getElementById('traveller-endpoints').value;	
+	travellerEndpoints = JSON.parse(travellerEndpoints);
+	
+	console.log(travellerEndpoints);
+	console.log(`*****************************************************`);
+	
+	let endpoints = jsonObj.endpoints;
+	let selectableCoordinates = jsonObj.selectableCoordinates;
+	let userBookingTokens = jsonObj.userBookingTokens;
+	let allBookingTokens = jsonObj.allBookingTokens;
+	let reservedCoordinates = jsonObj.reservedCoordinates;
+
+	reservedCoordinates = getNonSelectableCoordinatesForClient(endpoints, selectableCoordinates, userBookingTokens, reservedCoordinates, allBookingTokens);
+	   
+   	if (jsonObj.message) {
+		jsonObj.message.severity = jsonObj.action === 'reverse' ? 'warn' : 'info';
+		handleMessage(jsonObj.message);
+	}
+	if (jsonObj.availSeats) {
+		updateAvailSeats(jsonObj.availSeats);
+	}
+	if (jsonObj.action) {	   	
+		switch (action) {
+			case 'reserve':				
+				sc.get(reservedCoordinates).status('unavailable');							
+				break;
+			case 'vacate': 
+				sc.get(reservedCoordinates).status('available');
+				break;
+			case 'select': 
+				sc.get(selectableCoordinates).status('selected');
+				break;
+			default: 
+				console.log('no seats to update: ' + action);
+		}
 	}
 }
 
@@ -168,4 +204,20 @@ function setTripPrice(tripPrice) { alert(tripPrice);
 		return;
 	}
 	this.data().price = tripPrice;
+}
+
+function getNonSelectableCoordinatesForClient(endpoints, selectableCoordinates, userBookingTokens, reservedCoordinates, allBookingTokens) {		
+  
+    reservedCoordinates = reservedCoordinates.filter( el => !selectableCoordinates.includes( el ) );
+    allBookingTokens = allBookingTokens.filter( el => !userBookingTokens.includes( el ) );
+    
+    allBookingTokens.forEach(token => {        
+        let tokenEndpoints = token.split("|");
+
+        if (endpoints[0].charAt(0) >= tokenEndpoints[3].charAt(0) || endpoints[1].charAt(0) <= tokenEndpoints[2].charAt(0)) {
+            reservedCoordinates.splice(reservedCoordinates.indexOf(tokenEndpoints[1]), 1);			
+        }
+    });
+    
+    return reservedCoordinates;
 }

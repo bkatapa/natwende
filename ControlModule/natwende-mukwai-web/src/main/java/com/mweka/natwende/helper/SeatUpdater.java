@@ -2,7 +2,7 @@ package com.mweka.natwende.helper;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,19 +75,34 @@ public class SeatUpdater {
 					
 					if (elasticTrip != null) {
 						Set<String> userBookings = elasticTrip.getUserBookings().get(session.getUserPrincipal().getName());
-						if (userBookings != null) {
+						if (userBookings != null && !userBookings.isEmpty()) {
 							Set<String> selectableCoordinates = ReservationVO.getReservedCoordinates(userBookings);
-							SeatUpdateVO update = new SeatUpdateVO(selectableCoordinates, "select");
-							elasticTrip.getOccupiedSeats().removeAll(selectableCoordinates);
-							update.setAvailSeats(elasticTrip.getAvailNumOfSeats());
-							session.getAsyncRemote().sendText(OBJECT_MAPPER.writeValueAsString(update));
+							SeatUpdateVO update = new SeatUpdateVO(selectableCoordinates, "select", ReservationVO.getEndpoints(userBookings));
+							elasticTrip.getOccupiedSeats().removeAll(selectableCoordinates);						
+							String jsonMsg = OBJECT_MAPPER.writeValueAsString(update);
+							LOGGER.logp(Level.CONFIG, CLASS_NAME, methodName, "Session_id [" + session + "]. Json for select update: ", jsonMsg);
+							session.getAsyncRemote().sendText(jsonMsg);
+							
+							populateUpdateObj(update, selectableCoordinates, userBookings, elasticTrip);
+									//getNonSelectableCoordinatesForClient(update.getEndpoints(), selectableCoordinates, userBookings, elasticTrip);
+							//if (!reservedSeats.isEmpty()) {
+							//	update = new SeatUpdateVO(reservedSeats, "reserve", update.getEndpoints());
+							//	update.setAvailSeats(elasticTrip.getTotalNumOfSeats() - reservedSeats.size());
+							update.setAction("reserve");
+								session.getAsyncRemote().sendText(OBJECT_MAPPER.writeValueAsString(update));
+							//}
+							return;
 						}						
 						removeNullsAndEmptiesFromList(elasticTrip.getOccupiedSeats());
 						if (!elasticTrip.getOccupiedSeats().isEmpty()) {
-							Set<String> reservedSeats = new java.util.HashSet<>(elasticTrip.getOccupiedSeats());						
-							SeatUpdateVO update = new SeatUpdateVO(reservedSeats, "reserve");
+							String[] travellerEnpoints = ReservationVO.getEndpoints(userBookings);
+							//Set<String> reservedSeats = getNonSelectableCoordinatesForClient(travellerEnpoints, Collections.singleton(""), Collections.singleton(""), elasticTrip);
+									//new java.util.HashSet<>(elasticTrip.getOccupiedSeats());						
+							SeatUpdateVO update = new SeatUpdateVO(Collections.singleton(""), "reserve", travellerEnpoints);
+							populateUpdateObj(update, Collections.singleton(""), userBookings, elasticTrip);
 							update.setAvailSeats(elasticTrip.getAvailNumOfSeats());
 							String jsonMsg = OBJECT_MAPPER.writeValueAsString(update);
+							LOGGER.logp(Level.CONFIG, CLASS_NAME, methodName, "Session_id [" + session + "]. Json for reserve update: ", jsonMsg);
 							sendMessageToSession(jsonMsg, session);
 						}
 					}				
@@ -154,9 +169,10 @@ public class SeatUpdater {
 			BusVO bus = serviceLocator.getBusDataFacade().getByReg(elasticTrip.getBusReg());
 			
 			publisherReservationMsg.setSeatNo(seatNo);
-			SeatVO seat = serviceLocator.getSeatDataFacade().getBySeatNoAndBusId(seatNo, bus.getId());			
-			String bookingToken = StringUtils.join(new Object[]{seat.getSeatNo(), seat.getCoordinates(), publisherReservationMsg.getFromTown(), publisherReservationMsg.getToTown()}, "|");					 
-			SeatUpdateVO update = new SeatUpdateVO(Collections.singleton(seat.getCoordinates()), action, bookingToken);
+			SeatVO seat = serviceLocator.getSeatDataFacade().getBySeatNoAndBusId(seatNo, bus.getId());
+			String townFrom = publisherReservationMsg.getFromTown(), townTo = publisherReservationMsg.getToTown();
+			String bookingToken = StringUtils.join(new Object[]{seat.getSeatNo(), seat.getCoordinates(), townFrom, townTo}, "|");					 
+			SeatUpdateVO update = new SeatUpdateVO(Collections.singleton(seat.getCoordinates()), action, new String[]{townFrom, townTo});
 			
 			switch (action) {
 			case "reserve" :
@@ -181,14 +197,16 @@ public class SeatUpdater {
 			elasticTrip.setAvailNumOfSeats(elasticTrip.getTotalNumOfSeats() - elasticTrip.getBookedNumOfSeats());					
 			ElasticTripVO result = elasticDB.updateEntity(elasticTrip);
 			LOGGER.logp(Level.INFO, CLASS_NAME, methodName, "A seat reservation was updated: [{0}, {1}].", new Object[] {action, result});
-			update.setAvailSeats(elasticTrip.getAvailNumOfSeats());						
-			String jsonMsg = OBJECT_MAPPER.writeValueAsString(update);			
+			update.setAvailSeats(elasticTrip.getAvailNumOfSeats());	
 			
-			List<Session> sessions = new java.util.ArrayList<>();
 			for (Session s : ALL_SESSIONS) {
+				populateUpdateObj(update, 
+						ReservationVO.getReservedCoordinates(elasticTrip.getUserBookings().get(s.getUserPrincipal().getName())), 
+						elasticTrip.getUserBookings().get(s.getUserPrincipal().getName()), elasticTrip);
 				ReservationMessage subscriberReservationMsg = SESSION_TRIP_MAPPING.get(s.getId());
 				if (!s.getId().equals(session.getId()) && subscriberReservationMsg.getTripSerialNo().equals(publisherReservationMsg.getTripSerialNo())) {
-					sessions.add(s);
+					//sessions.add(s);
+					s.getAsyncRemote().sendText(OBJECT_MAPPER.writeValueAsString(update));
 				}
 				else {
 					SeatUpdateVO newUpdate = new Cloner().deepClone(update);
@@ -197,7 +215,6 @@ public class SeatUpdater {
 					s.getAsyncRemote().sendText(OBJECT_MAPPER.writeValueAsString(newUpdate));
 				}
 			}
-			sendMessageToSessions(jsonMsg, sessions);
 		}
 		catch (Exception jex) {
 			LOGGER.logp(Level.SEVERE, CLASS_NAME, methodName, "Exception occurred: ", jex);
@@ -209,7 +226,7 @@ public class SeatUpdater {
 		list.removeAll(Collections.singleton(null));
 		list.removeAll(Collections.singleton(StringUtils.EMPTY));
 	}
-	
+	/*
 	private void sendMessageToSessions(String msg, List<Session> sessions) {
 		final String methodName = "sendMessageToSessions";
 		try {
@@ -222,6 +239,75 @@ public class SeatUpdater {
 		catch (IOException ex) {
 			LOGGER.logp(Level.SEVERE, CLASS_NAME, methodName, "Session_id [{0}]. Exception was thrown", ex);
 		}
+	} */
+	
+	public void populateUpdateObj(SeatUpdateVO update, Set<String> selectableCoordinates, Set<String> userBookingTokens, ElasticTripVO elasticTrip) {		
+		String[] endpoints = update.getEndpoints();
+		endpoints[0] = elasticTrip.marryStationToIndex(endpoints[0]);
+		endpoints[1] = elasticTrip.marryStationToIndex(endpoints[1]);
+		
+		for (String userBookingToken : userBookingTokens) {
+			String[] tokens = userBookingToken.split("\\|");
+			tokens[2] = elasticTrip.marryStationToIndex(tokens[2]);
+			tokens[3] = elasticTrip.marryStationToIndex(tokens[3]);
+			userBookingToken = StringUtils.join(tokens, "|");
+		}
+		
+		Set<String> allBookingTokens = new HashSet<>(elasticTrip.getAllReservations());
+		for (String allBookingToken : allBookingTokens) {
+			String[] tokens = allBookingToken.split("\\|");
+			tokens[2] = elasticTrip.marryStationToIndex(tokens[2]);
+			tokens[3] = elasticTrip.marryStationToIndex(tokens[3]);
+			allBookingToken = StringUtils.join(tokens, "|");
+		}
+		
+		update.setEndpoints(endpoints);
+		update.setSelectableCoordinates(selectableCoordinates);
+		update.setUserBookingTokens(userBookingTokens);
+		update.setReservedCoordinates(new HashSet<>(elasticTrip.getOccupiedSeats()));
+		update.setAllBookingTokens(allBookingTokens);
+	}
+	
+	public static Set<String> getNonSelectableCoordinatesForClient(String[] endpoints, Set<String> selectableCoordinates, Set<String> userBookingTokens, ElasticTripVO elasticTrip) {		
+		Set<String> allReservedCoordinatesCopy = new HashSet<>(elasticTrip.getOccupiedSeats());
+		allReservedCoordinatesCopy.removeAll(selectableCoordinates);
+		
+		Set<String> allBookingTokensCopy = new HashSet<>(elasticTrip.getAllReservations());
+		allBookingTokensCopy.removeAll(userBookingTokens);
+		
+		Map<Integer, String> indexedTownMap = new java.util.LinkedHashMap<>();
+		for (String indexedTown : elasticTrip.getStationList()) {
+			String[] tokens = indexedTown.split("_");			
+			indexedTownMap.put(Integer.valueOf(tokens[0]), tokens[1]);
+		}
+		
+		for (Map.Entry<Integer, String> entry : indexedTownMap.entrySet()) {
+			if (entry.getValue().equals(endpoints[0])) {
+				endpoints[0] = entry.getKey() + "," + entry.getValue();
+			}
+			if (entry.getValue().equals(endpoints[1])) {
+				endpoints[1] = entry.getKey() + "," + entry.getValue();
+			}
+		}
+		
+		for (String token : allBookingTokensCopy) {
+			
+			String[] tokenEndpoints = token.split("\\|");
+			
+			for (Map.Entry<Integer, String> entry : indexedTownMap.entrySet()) {
+				if (entry.getValue().equals(tokenEndpoints[2])) {
+					tokenEndpoints[2] = entry.getKey() + "," + entry.getValue();
+				}
+				if (entry.getValue().equals(tokenEndpoints[3])) {
+					tokenEndpoints[3] = entry.getKey() + "," + entry.getValue();
+				}								
+			}
+			if (endpoints[0].charAt(0) >= tokenEndpoints[3].charAt(0) || endpoints[1].charAt(0) <= tokenEndpoints[2].charAt(0)) {
+				allReservedCoordinatesCopy.remove(tokenEndpoints[1]);				
+			}
+		}
+		
+		return allReservedCoordinatesCopy;
 	}
 	
 }

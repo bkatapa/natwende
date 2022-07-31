@@ -101,4 +101,13 @@ public enum Town implements Displayable {
 				+ ", " 
 				+ province.getCountry().getDisplay(); 
 	}
+	
+	public static Town getByDisplay(String display) {
+		for (Town t : values()) {
+			if (t.getDisplay().equals(display)) {
+				return t;
+			}
+		}
+		return null;
+ 	}
 }

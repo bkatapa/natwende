@@ -54,5 +54,10 @@ public class RouteStopLinkVO extends BaseVO {
 	public void setStop(StopVO stop) {
 		this.stop = stop;
 	}
+	
+	@Override
+	public String toString() {
+		return "[Route: " + route == null ? "" : route.getName() + ", Station: " + stop == null ? "" : stop.getTown() == null ? "" : stop.getTown().getDisplay() + "]";
+	}
 
 }

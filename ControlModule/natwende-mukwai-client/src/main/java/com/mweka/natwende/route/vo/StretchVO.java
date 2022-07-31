@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.base.vo.BaseVO;
 
 public class StretchVO extends BaseVO {
@@ -38,7 +37,6 @@ public class StretchVO extends BaseVO {
 		this.estimatedTravelTime = estimatedTravelTime;
 	}
 
-	@JsonIgnore	
 	public Date getEstimatedTravelTime() {
 		return estimatedTravelTime;
 	}
@@ -58,7 +56,6 @@ public class StretchVO extends BaseVO {
 		this.estimatedTravelTime = estimatedTravelTime;
 	}	
 
-	@JsonIgnore
 	public Date getObservedTravelTime() {
 		return observedTravelTime;
 	}

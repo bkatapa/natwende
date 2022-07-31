@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.route.vo.RouteStopLinkVO;
 import com.mweka.natwende.types.OperatorName;
 
@@ -25,7 +24,6 @@ public class TripSearchResultVO extends TripSearchVO {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd MMMM yyyy, HH:mm");
 
 	@XmlTransient
-	@JsonIgnore
 	private List<RouteStopLinkVO> routeStopLinks;
 	
 	private Date estimatedJourneyStartDate, estimatedJouneyEndDate;

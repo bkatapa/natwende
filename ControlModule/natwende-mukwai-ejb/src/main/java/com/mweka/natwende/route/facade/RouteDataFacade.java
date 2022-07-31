@@ -71,6 +71,10 @@ public class RouteDataFacade extends AbstractDataFacade<RouteVO, Route> {
         return getCachedVO(entity);
     }
     
+    public List<RouteVO> getAll() {    	
+		return transformList(findAll());
+	}
+    
     public RouteVO getByName(String routeName) {
     	List<Route> resultList = createNamedQuery(Route.QUERY_FIND_BY_NAME, getEntityClass())
 				.setParameter(Route.PARAM_ROUTE_NAME, routeName)

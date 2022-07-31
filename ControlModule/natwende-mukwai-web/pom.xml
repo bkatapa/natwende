@@ -21,36 +21,15 @@
 		<version.jboss.bom>10.1.0.Final</version.jboss.bom>
 		<httpclient.version>4.5.2</httpclient.version>
 		<commons-io.version>2.4</commons-io.version>
+		<primefaces.version>8.5</primefaces.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.wildfly.bom</groupId>
-			<artifactId>wildfly-javaee7-with-tools</artifactId>
-			<version>${version.jboss.bom}</version>
-			<type>pom</type>
-			<scope>provided</scope>
-		</dependency>		 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
-			<scope>provided</scope>			
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
-		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>6.1</version>
+			<version>${primefaces.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.omnifaces</groupId>
 			<artifactId>omnifaces</artifactId>
@@ -61,15 +40,13 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.3</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.1</version>
 			<scope>provided</scope>
-		</dependency>		
-
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -78,59 +55,22 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>natwende-mukwai-client</artifactId>
-			<version>${natwende.mukwai.version}</version>
+			<artifactId>natwende-client</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>natwende-mukwai-ejb</artifactId>
-			<version>${natwende.mukwai.version}</version>
+			<artifactId>natwende-ejb</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>natwende-mukwai-datamodel</artifactId>
-			<version>${natwende.mukwai.version}</version>
+			<artifactId>natwende-datamodel</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-    		<groupId>org.jboss.resteasy</groupId>
-    		<artifactId>resteasy-client</artifactId>
-    		<version>3.0.11.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxb-provider</artifactId>
-			<version>2.3.2.Final</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>servlet-api</artifactId>
-					<groupId>javax.servlet</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson2-provider</artifactId>
-			<version>3.0.11.Final</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-    		<groupId>com.fasterxml.jackson.core</groupId>
-    		<artifactId>jackson-annotations</artifactId>
-    		<version>2.9.9</version>
-    		<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- <dependency> <groupId>org.jboss.resteasy</groupId> <artifactId>jaxrs-api</artifactId> 
-			<version>3.0.8.Final</version> <scope>provided</scope> </dependency> -->
 		<dependency>
 			<groupId>org.primefaces.themes</groupId>
 			<artifactId>all-themes</artifactId>
@@ -147,12 +87,6 @@
 			<artifactId>javaee-web-api</artifactId>
 			<version>7.0</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>
@@ -190,19 +124,10 @@
 			<version>1.9.3</version>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<finalName>natwende-mukwai-web</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
+		<plugins>			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -226,7 +151,7 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<repositories>
 		<repository>
 			<id>prime-repo</id>
@@ -235,4 +160,5 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
+	
 </project>

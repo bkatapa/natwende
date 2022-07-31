@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+    <artifactId>natwende-datamodel</artifactId>         
+    <packaging>jar</packaging>
     <parent>
         <artifactId>natwende-mukwai</artifactId>
         <groupId>com.mweka.natwende</groupId>
         <version>1.0-SNAPSHOT</version>
-    </parent>
-    
-    <artifactId>natwende-mukwai-datamodel</artifactId>
-    
-    <packaging>jar</packaging>
+    </parent>   
     
     <name>natwende-mukwai-datamodel</name>
     
@@ -26,45 +25,20 @@
             <artifactId>hibernate-validator</artifactId>
             <version>4.2.0.Final</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>        
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>4.3.5.Final</version>
-            <scope>provided</scope>
-        </dependency>       
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-envers</artifactId>
-            <version>4.0.1.Final</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>natwende-mukwai-client</artifactId>
-            <version>${natwende.mukwai.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-    </properties>
+            <groupId>com.mweka.natwende</groupId>
+            <artifactId>natwende-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>        
+    </dependencies>    
     
     <build>
         <finalName>natwende-mukwai-datamodel</finalName>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                <artifactId>maven-compiler-plugin</artifactId>                           
+                <configuration>                    
                     <compilerArguments>
                         <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
                     </compilerArguments>
@@ -72,8 +46,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version>
+                <artifactId>maven-jar-plugin</artifactId>                
                 <configuration>
                     <archive>
                         <index>true</index>

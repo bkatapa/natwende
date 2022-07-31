@@ -68,4 +68,13 @@ public class ReservationVO extends BaseVO {
 		return resultSet;
 	}
 	
+	public static String[] getEndpoints(java.util.Collection<String> bookingList) {
+		if (bookingList != null) {
+			for (String booking : bookingList) {
+				return new String[]{booking.split("\\|")[2], booking.split("\\|")[3]};
+			}
+		}
+		return new String[0];
+	}
+	
 }

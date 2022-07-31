@@ -11,32 +11,46 @@ public class SeatUpdateVO extends BaseVO  {
 	 * 
 	 */
 	private static final long serialVersionUID = -3641546585342912482L;
-	private Set<String> coordinates;
-	private String action;
-	private String bookingToken;
+	private Set<String> selectableCoordinates, reservedCoordinates;
+	private String action;	
+	private String[] endpoints;
 	private FacesMessage message;
 	private int availSeats;
+	private Set<String> userBookingTokens, allBookingTokens;
 	
 	public SeatUpdateVO() {			
 	}
 	
 	public SeatUpdateVO(Set<String> coordinates, String action) {
-		this.coordinates = coordinates;
 		this.action = action;
+		switch (action) {
+		case "vacate" : // fall through
+		case "reserve" : reservedCoordinates = coordinates;
+		break;
+		case "select" : selectableCoordinates = coordinates;
+		break;
+		}		
 	}
 	
-	public SeatUpdateVO(Set<String> coordinates, String action, String bookingToken) {
-		this.coordinates = coordinates;
-		this.action = action;
-		this.bookingToken = bookingToken;
+	public SeatUpdateVO(Set<String> coordinates, String action, String[] endpoints) {
+		this(coordinates, action);
+		this.endpoints = endpoints;
 	}
 
-	public Set<String> getCoordinates() {
-		return coordinates;
+	public Set<String> getReservedCoordinates() {
+		return reservedCoordinates;
 	}
 
-	public void setCoordinates(Set<String> coordinates) {
-		this.coordinates = coordinates;
+	public void setReservedCoordinates(Set<String> reservedCoordinates) {
+		this.reservedCoordinates = reservedCoordinates;
+	}
+	
+	public Set<String> getSelectableCoordinates() {
+		return selectableCoordinates;
+	}
+
+	public void setSelectableCoordinates(Set<String> selectableCoordinates) {
+		this.selectableCoordinates = selectableCoordinates;
 	}
 
 	public String getAction() {
@@ -63,12 +77,28 @@ public class SeatUpdateVO extends BaseVO  {
 		this.availSeats = availSeats;
 	}
 
-	public String getBookingToken() {
-		return bookingToken;
+	public String[] getEndpoints() {
+		return endpoints;
 	}
 
-	public void setBookingToken(String bookingToken) {
-		this.bookingToken = bookingToken;
+	public void setEndpoints(String[] endpoints) {
+		this.endpoints = endpoints;
+	}
+
+	public Set<String> getUserBookingTokens() {
+		return userBookingTokens;
+	}
+
+	public void setUserBookingTokens(Set<String> userBookingTokens) {
+		this.userBookingTokens = userBookingTokens;
+	}
+
+	public Set<String> getAllBookingTokens() {
+		return allBookingTokens;
+	}
+
+	public void setAllBookingTokens(Set<String> allBookingTokens) {
+		this.allBookingTokens = allBookingTokens;
 	}
 	
 }

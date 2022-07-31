@@ -18,7 +18,7 @@ public class ElasticTripVO implements java.io.Serializable {
 	private Map<String, SeatVO> tripSessions;
 	private Map<String, Set<String>> userBookings;
 	private List<String> occupiedSeats;
-	private List<String> stationList;
+	private Set<String> stationList;
 	private Long id;
 	private Date insertDate;
 	private String status;
@@ -79,14 +79,14 @@ public class ElasticTripVO implements java.io.Serializable {
 		this.occupiedSeats = occupiedSeats;
 	}
 	
-	public List<String> getStationList() {
+	public Set<String> getStationList() {
 		if (stationList == null) {
-			stationList = new ArrayList<>();
+			stationList = new java.util.LinkedHashSet<>();
 		}
 		return stationList;
 	}
 	
-	public void setStationList(List<String> stationList) {
+	public void setStationList(Set<String> stationList) {
 		this.stationList = stationList;
 	}
 	
@@ -272,7 +272,43 @@ public class ElasticTripVO implements java.io.Serializable {
 	
 	public void setTripScheduleId(Long tripScheduleId) {
 		this.tripScheduleId = tripScheduleId;
-	}	
+	}
+	
+	public Set<String> getAllReservations() {
+		Set<String> reservations = new java.util.HashSet<>();
+		for (Set<String> set : this.getUserBookings().values()) {
+			reservations.addAll(set);
+		}
+		return reservations;
+	}
+	
+	public List<String> getStationListWithoutIndices() {
+		List<String> nonIndexedTownList = new ArrayList<>();
+		for (String indexedTown : this.getStationList()) {
+			String[] tokens = indexedTown.split("_");			
+			nonIndexedTownList.add(tokens[1]);
+		}
+		return nonIndexedTownList;
+	}
+	
+	public Map<Integer, String> getIndexedTownMap() {
+		Map<Integer, String> indexedTownMap = new java.util.LinkedHashMap<>();
+		for (String indexedTown : this.getStationList()) {
+			String[] tokens = indexedTown.split("_");			
+			indexedTownMap.put(Integer.valueOf(tokens[0]), tokens[1]);
+		}
+		return indexedTownMap;
+	}
+	
+	public String marryStationToIndex(String stationWithoutIndex) {
+		for (String indexedTown : this.getStationList()) {
+			if (indexedTown.endsWith(stationWithoutIndex)) {
+				stationWithoutIndex = indexedTown;
+				break;
+			}
+		}
+		return stationWithoutIndex;
+	}
 	
 	public static final String INDEX = "trips";
     public static final String TYPE = "trip";

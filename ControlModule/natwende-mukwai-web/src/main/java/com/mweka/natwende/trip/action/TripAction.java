@@ -13,6 +13,8 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mweka.natwende.exceptions.EntityNotFoundException;
 import com.mweka.natwende.helper.MessageHelper;
 import com.mweka.natwende.helper.VelocityGen;
@@ -88,6 +90,9 @@ public class TripAction extends MessageHelper<TripVO> {
 	}
 
 	public TripSearchResultVO getSelectedSearchResult() {
+		if (selectedSearchResult.getRouteStopLinks() == null || selectedSearchResult.getRouteStopLinks().isEmpty()) {
+			serviceLocator.getRouteStopLinkDataFacade().getAllByRoute(searchVO.getTrip().getTripSchedule().getRoute());
+		}
 		return selectedSearchResult;
 	}
 
@@ -236,6 +241,15 @@ public class TripAction extends MessageHelper<TripVO> {
 		return velocityGen.busTemplate(selectedBus.getSeatsAsString(), searchVO.getStretch().getFareAmount());
 	}
 	
+	public String getEndpointsAndAnyIntermediateNodesAsJson() {
+		try {
+			return new ObjectMapper().writeValueAsString(resolveEndpointsAndAnyIntermediateNodes());
+		} catch (JsonProcessingException e) {			
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	private void prepareSearchResults() {
 		searchResultList = new ArrayList<>();
 		TripSearchResultVO result;
@@ -283,4 +297,37 @@ public class TripAction extends MessageHelper<TripVO> {
 			searchResult.setEstimatedJouneyEndDate(DateUtil.addTimeToDate(searchVO.getStretch().getEstimatedTravelTime(), searchResult.getEstimatedJourneyStartDate()));
 		}
 	}
+	
+	private List<String> resolveEndpointsAndAnyIntermediateNodes() {
+		Long routeId = selectedSearchResult.getTrip().getTripSchedule().getRoute().getId();
+		RouteStopLinkVO startLink = serviceLocator.getRouteStopLinkDataFacade().getByRouteIdAndTown(routeId, selectedSearchResult.getFromTown());
+		RouteStopLinkVO stopLink = serviceLocator.getRouteStopLinkDataFacade().getByRouteIdAndTown(routeId, selectedSearchResult.getToTown());
+		List<String> townList = new ArrayList<>();	
+		
+		if (startLink == null) {
+			townList.add(selectedSearchResult.getFromTown().getDisplay());
+			startLink = selectedSearchResult.getRouteStopLinks().get(0);
+		}
+		else {
+			townList.add(startLink.getStop().getTown().getDisplay());
+		}
+		if (stopLink == null) {
+			for (int index = 0; index < selectedSearchResult.getRouteStopLinks().size(); index++) {
+				if (selectedSearchResult.getRouteStopLinks().get(index).getStationIndex() > startLink.getStationIndex()) {
+					townList.add(selectedSearchResult.getRouteStopLinks().get(index).getStop().getTown().getDisplay());
+				}
+			}
+			stopLink = selectedSearchResult.getRouteStopLinks().get(selectedSearchResult.getRouteStopLinks().size() - 1);
+			townList.add(selectedSearchResult.getToTown().getDisplay());
+			return townList;
+		}
+		
+		List<RouteStopLinkVO> routeStopLinks = serviceLocator.getRouteStopLinkDataFacade().getByRouteIdAndStationIndexRange(routeId, startLink.getStationIndex(), stopLink.getStationIndex());
+
+		for (int index = 0; index < routeStopLinks.size(); index++) {				
+			townList.add(routeStopLinks.get(index).getStop().getTown().getDisplay());				
+		}
+		return townList;
+	}	
+	
 }

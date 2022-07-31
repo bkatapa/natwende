@@ -16,8 +16,8 @@ public class TripSearchVO extends BaseSearchVO {
 	private TripVO trip;
 	private Date travelDate;
 	private Date returnDate;
-	private Town fromTown;
-	private Town toTown;
+	protected Town fromTown;
+	protected Town toTown;
 
 	public TripSearchVO() {
 	}

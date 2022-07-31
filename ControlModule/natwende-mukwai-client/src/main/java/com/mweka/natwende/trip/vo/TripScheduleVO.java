@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mweka.natwende.base.vo.BaseVO;
 import com.mweka.natwende.operator.vo.OperatorVO;
 import com.mweka.natwende.route.vo.RouteVO;
@@ -31,7 +30,6 @@ public class TripScheduleVO extends BaseVO {
 	private List<DaysOfWeek> frequency;
 	
 	@XmlTransient
-	@JsonIgnore
 	private List<BusTripScheduleLinkVO> busTripScheduleLinkList;
 	
 	public Date getStartDate() {

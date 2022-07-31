@@ -13,18 +13,7 @@ function openConnection() {
 		var jsonObj = event.data;
 		if (jsonObj.constructor !== {}.constructor) {
 			jsonObj = JSON.parse(jsonObj);
-		}
-		console.log(`Coordinates: ${jsonObj.coordinates}`);
-		console.log(`Action: ${jsonObj.action}`);
-		console.log(`Message: ${jsonObj.message}`);
-		console.log(`Avail seats: ${jsonObj.availSeats}`);
-		if (jsonObj.message !== undefined && jsonObj.message !== null) {
-			jsonObj.message.severity = jsonObj.action === 'reverse' ? 'warn' : 'info';
-			handleMessage(jsonObj.message);
-		}
-		if (jsonObj.availSeats !== undefined && jsonObj.availSeats !== null) {
-			updateAvailSeats(jsonObj.availSeats);
-		}
+		}			
 		updateSeats(jsonObj);
 	};
 	websocket.onopen = function() {

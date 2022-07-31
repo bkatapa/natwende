@@ -23,10 +23,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -59,18 +59,7 @@
                         </ejbModule>
                     </modules>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>  
-                    <!--<hostname>10.25.1.204</hostname>-->
-                    <hostname>localhost</hostname>
-                    <port>9999</port>
-                    <filename>natwende-mukwai-ear.ear</filename>
-                </configuration>
-            </plugin>
+            </plugin>            
         </plugins>
     </build>
     <dependencies>
@@ -85,19 +74,7 @@
             <artifactId>natwende-mukwai-web</artifactId>
             <version>${natwende.mukwai.version}</version>
             <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxb-provider</artifactId>
-            <version>3.0.2.Final</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <version>3.0.2.Final</version>
-            <scope>provided</scope>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>natwende-mukwai-client</artifactId>
