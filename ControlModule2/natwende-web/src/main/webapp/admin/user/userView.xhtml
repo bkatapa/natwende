@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				template="/layout/templatePage.xhtml"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+				
+	<ui:define name="content">
+	
+		<h:form>
+			<p:panel header="#{UserAction.selectedEntity.id lt 0 ? 'Create new user' : 'Editing '.concat(UserAction.selectedEntity.fullname)}">
+				<p:panelGrid columns="4" layout="grid">
+					<p:outputLabel value="First name: "/>
+					<h:outputText value="#{UserAction.selectedEntity.firstname}"/>
+					
+					<p:outputLabel value="Last name: "/>
+					<h:outputText value="#{UserAction.selectedEntity.lastname}"/>
+					
+					<p:outputLabel value="Email: "/>
+					<h:outputText value="#{UserAction.selectedEntity.email}"/>
+					
+					<p:outputLabel value="Phone number: "/>
+					<h:outputText value="#{UserAction.selectedEntity.contactNumber}"/>
+				</p:panelGrid>
+				
+				<p:panel style="border: none;">
+					<f:facet name="header">
+						<p:button outcome="/admin/adminPanel?i=2" value="Back" icon="ui-icon-arrowthick-1-w" />
+					</f:facet>
+				</p:panel>
+				
+				<p:accordionPanel activeIndex="null">
+					<p:tab>
+						<p:panelGrid columns="4" layout="grid">
+							<p:outputLabel value="Line 1:"/>
+							<h:outputText value="{UserAction.selectedEntity.address.line1}"/>
+							
+							<p:outputLabel value="Street:"/>
+							<h:outputText value="{UserAction.selectedEntity.address.street}"/>
+							
+							<p:outputLabel value="Surbab:"/>
+							<h:outputText value="{UserAction.selectedEntity.address.surbab}"/>
+							
+							<p:outputLabel value="City:"/>
+							<h:outputText value="{UserAction.selectedEntity.address.city}"/>
+							
+							<p:outputLabel value="Province:"/>
+							<h:outputText value="{UserAction.selectedEntity.address.province}"/>
+							
+							<p:outputLabel value="Country:"/>
+							<h:outputText value="{UserAction.selectedEntity.address.country}"/>
+						</p:panelGrid>
+						
+						<p:panel style="border: none;">
+							<f:facet name="header">
+								<p:button outcome="/admin/adminPanel" value="Edit" icon="ui-icon-pencil" />
+							</f:facet>
+						</p:panel>
+					</p:tab>
+					<p:tab title="Cards">
+						<p:panel style="border: none;">
+							<f:facet name="header">
+								<p:button outcome="/admin/adminPanel"
+										  value="Add New" 
+										  icon="ui-icon-plusthick"
+										  title="Add new card"/>
+							</f:facet>
+						</p:panel>
+					</p:tab>
+				</p:accordionPanel>				
+				
+			</p:panel>		
+		</h:form>
+	
+	</ui:define>
+	
+</ui:composition>

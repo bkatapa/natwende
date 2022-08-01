@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form>
+		<p:panelGrid columns="1" layout="grid">
+			<p:graphicImage name="images/default-user.png" width="60" height="60" style="margin: auto;"/>
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Name:"/>
+				<h:outputText value="#{request.userPrincipal.name}"/>
+							
+				<p:outputLabel value="Age:"/>
+				<h:outputText value="37"/>
+							
+				<p:outputLabel value="Sex:"/>
+				<h:outputText value="Male"/>
+							
+				<p:outputLabel value="Phone:"/>
+				<h:outputText value="+27731972464"/>
+				
+				<p:outputLabel value="Email:"/>
+				<h:outputText value="bkatapa@gmail.com"/>
+			</h:panelGrid>
+			<p:separator />
+			<h:panelGrid columns="2">
+				<p:button value="Update" icon="ui-icon-pencil" />
+				<p:commandButton value="Sign out" action="#{UserAction.logout}" icon="ui-icon-power" oncomplete="PF('var_ProfileDlg').hide();" />
+			</h:panelGrid>
+		</p:panelGrid>
+	</h:form>
+				
+</ui:composition>

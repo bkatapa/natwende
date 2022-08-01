@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"	
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:pe="http://primefaces.org/ui/extensions"
+				xmlns:o="http://omnifaces.org/ui">
+				
+	<p:dialog id="newBus-dlg" 
+			  header="New bus" 
+			  widgetVar="var_NewBus" 
+			  modal="true" 
+			  fitViewport="true" 
+			  resizable="false"
+			  closable="true">
+		<h:form id="newBus-form">					
+			<p:panelGrid id="newBus-grid" columns="3" columnClasses="columnHeader, columnNormal, columnNormal" styleClass="v-align-top">
+				<p:outputLabel for="bus-reg" value="Plate reg number:" />
+				<p:inputText id="bus-reg" value="#{BusAction.selectedEntity.reg}" />
+				<p:message for="bus-reg" style="color:red" />
+				
+				<p:outputLabel for="bus-capacity" value="Capacity:" />
+				<p:inputText id="bus-capacity" value="#{BusAction.selectedEntity.capacity}" />
+				<p:message for="bus-capacity" style="color:red" />
+			</p:panelGrid>
+			
+			<p:toolbar style="margin-top: 5px; border: none;">								
+				<p:toolbarGroup align="left">
+					<p:commandButton value="Cancel"
+						  		 	 process="@this"
+						  		 	 update="mainForm"
+						  		 	 oncomplete="PF('var_NewBus').hide()"
+						  		 	 icon="ui-icon-close">
+		  		 	 </p:commandButton>
+				</p:toolbarGroup>
+				
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Save"
+									 process="@this, newBus-form"
+									 update="mainForm"
+						  			 actionListener="#{BusAction.saveEntity}"
+				  		  			 icon="ui-icon-disk" />				  		  			 
+				</p:toolbarGroup>									
+			</p:toolbar>
+		</h:form>
+	</p:dialog>
+								
+</ui:composition>

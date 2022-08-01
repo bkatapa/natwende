@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/layout/templatePage.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="content">
+        
+		<p:panel header="View Expired">
+    	
+    		<p:panelGrid columns="2" layout="grid">
+    			<p:outputLabel value="Exception"/>
+    			<h:outputText value="#{pfExceptionHandler.message}"/>
+    			
+    			<p:outputLabel value="Detail Trace"/>
+    			<h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false"/>
+    		</p:panelGrid>
+    		
+    		<p:panel style="border: none; margin-top: 5px;">
+    			<f:facet name="header">
+        			<p:button outcome="/home" value="Go to home page" icon="ui-icon-home" />
+       			</f:facet>
+        	</p:panel>
+    	
+    	</p:panel>
+
+    </ui:define>
+
+</ui:composition>

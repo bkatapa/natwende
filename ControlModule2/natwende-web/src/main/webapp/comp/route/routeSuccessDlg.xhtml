@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+	<p:dialog id="routeCreateSuccess-dlg" widgetVar="var_RouteCreateSuccessDlg" showEffect="fade" closable="true" header="Success" modal="true" width="600">
+		<h:form>
+			<div align="center" style="text-align: center;">				
+				<p:graphicImage name="images/Thumbs-Up-Green.jpg" width="150" height="150" style="margin: auto;"/>
+				<br />
+				<h:outputText style="color: green; font-size: 20pt; margin: auto;" value="Route #{RouteAction.selectedEntity.name} created successfully."/>
+			</div>
+			<p:separator style=" margin-top: 20px;"/>
+			<p:toolbar style="border: none;">
+				<f:facet name="left">
+					<p:commandButton value="Ok"
+									 action="#{RouteAction.onDialogClose}"
+									 process="@this"
+									 icon="ui-icon-check"/>
+				</f:facet>
+			</p:toolbar>
+		</h:form>
+	</p:dialog>
+				
+</ui:composition>

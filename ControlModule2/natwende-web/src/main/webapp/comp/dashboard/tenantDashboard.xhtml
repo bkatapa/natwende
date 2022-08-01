@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form id="systemAdminHomeForm">
+	    Admin Dashboard data here.
+	</h:form>
+	<p:dataTable id="bookingsTable" value="#{BookingAction.entityList}" var="booking" paginator="true" rows="10" lazy="true"
+          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+          rowsPerPageTemplate="10,20,50" resizableColumns="true">
+		<f:facet name="header"  >
+		</f:facet>
+		<p:column headerText="Tenant Name">
+			<h:outputText value="#{booking.personVisiting}" />
+		</p:column>
+		<p:column headerText="Bay Booked">
+		</p:column>
+		<p:column headerText="Visitor Name">
+		</p:column>
+		<p:column headerText="Visitor Vehicle Reg">
+		</p:column>
+		<p:column headerText="Time of booking">
+		</p:column>
+		<p:column headerText="Booking Duration">
+		</p:column>
+	</p:dataTable>
+</ui:composition>

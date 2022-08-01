@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/layout/templatePage.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
+                
+	<ui:define name="content">
+	
+		<h:form id="tripSearch-form" styleClass="formBackground">
+		
+			<p:toolbar style="border: none; margin-bottom: 5px;">
+				<f:facet name="left">
+					<p:button value="Back"
+							  title="Back to home page"
+							  icon="fa fa-home"
+							  outcome="/home"/>
+				</f:facet>
+				<f:facet name="right">
+					<p:commandButton value="Search"
+							  		 process="@this"
+							  		 update="@widgetVar('var_TripSearchResultDlg')"
+							  		 styleClass="field_labels"
+							  		 title="Search for trip"
+							  		 icon="fa fa-search"
+							  		 oncomplete="PF('var_TripSearchResultDlg').show();"/>
+				</f:facet>
+			</p:toolbar>
+
+			<p:dataList id="tripSearchResult-list" 
+						value="#{TripAction.searchResults}" 
+						var="entity"
+						type="unordered"
+						itemType="none"
+	                    paginator="true"
+	                    paginatorPosition="bottom"
+	                    rows="10"
+	                    styleClass="paginated"
+	                    rowKey="#{entity.id}"
+	                    lazy="true"
+	                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+	                    rowsPerPageTemplate="10,20,50"
+	                    resizableColumns="true">
+	                     
+	   			<f:facet name="header">
+	   				<div style="text-align: center;">
+		   				<h:outputText value="#{TripAction.searchVO.fromTown.display} - #{TripAction.searchVO.toTown.display}"
+		   							  rendered="#{TripAction.searchVO.hasFilters()}" />
+			  		</div>
+	        	</f:facet>
+	        	
+	        	<p:outputPanel deferred="true"
+        					   deferredMode="visible"
+        					   layout="block"
+        					   style="margin-bottom: 10px; border: none; background: #eaeaea; margin-right: 35px;"
+        					   styleClass="ui-corner-all shadow columns">
+	        	
+	        		<table style="width: 100%;">
+	        			<tr>
+	        				<td align="center" style="width: 33.3%;">
+	        					<p:graphicImage name="images/bus/shalom-bus.png" style="width: 120px; height: 80px;" styleClass="column, ui-corner-all" />
+	        				</td>
+	        				<td align="center">
+	        					<h:panelGrid columns="2" styleClass="column">
+	        						<p:outputLabel value="Bus reg: " />
+	        						<h:outputText value="#{entity.trip.busReg}" />
+	        						<!--
+	        						<p:outputLabel value="From: " />
+	        						<h:outputText value="#{entity.fromTown.display}" />
+	        						
+	        						<p:outputLabel value="To: " />
+	        						<h:outputText value="#{entity.toTown.display}" />
+	        						-->
+	        						<p:outputLabel value="Start date: " />
+	        						<h:outputText value="#{entity.estimatedJourneyStartDate}">
+	        							<f:convertDateTime pattern="EEEE, dd MMMM yyyy, HH:mm"/>
+	        						</h:outputText>
+	        						
+	        						<p:outputLabel value="Arrival date: " />
+	        						<h:outputText value="#{entity.estimatedJouneyEndDate}">
+	        							<f:convertDateTime pattern="EEEE, dd MMMM yyyy, HH:mm"/>
+	        						</h:outputText>
+	        						
+	        						<p:outputLabel value="Ticket price: " />
+	        						<h:outputText value="#{entity.stretch.fareAmount}">
+	        							<f:convertNumber type="currency" currencySymbol="K"/>
+	        						</h:outputText>
+	        						
+	        						<p:outputLabel value="Occupied: " />
+	        						<h:outputText value="#{entity.trip.bookedNumOfSeats}" />
+	        						
+	        						<p:outputLabel value="Remaining: " />
+	        						<h:outputText value="#{entity.trip.availableNumOfSeats}" />
+	        					</h:panelGrid>
+	        				</td>
+	        				<td align="center" style="width: 33.3%;">
+	        					<p:commandLink action="/trip/seatSelection?faces-redirect=true"
+		 									   disabled="false"
+		 									   update="tripSearchResult-list"
+		 									   title="View trip details."
+		 									   styleClass="column">
+		 							<f:setPropertyActionListener value="#{entity}" target="#{TripAction.selectedSearchResult}" />
+		 							<f:setPropertyActionListener value="#{entity.trip}" target="#{TripAction.selectedEntity}" />
+		 							<p:graphicImage name="images/icons/book-now-button-blue.png" width="100" height="100" />			   
+						   		</p:commandLink>
+	        				</td>
+	        			</tr>
+	        		</table>
+	        	
+	        	</p:outputPanel>
+		        
+	        </p:dataList>
+	        
+        </h:form>
+        
+        <style>
+        	.shadow {
+        		-webkit-box-shadow: 0 10px 6px -6px #777;
+        		-moz-box-shadow: 0 10px 6px -6px #777;
+        		box-shadow: 0 10px 6px -6px #777;
+       		}
+        </style>
+        <!--
+        <script>
+			$(document).ready(function() {
+				PF('var_TripSearchResultDlg').show();
+			});
+        </script>
+        -->
+	</ui:define>
+	
+</ui:composition>

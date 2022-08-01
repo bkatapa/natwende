@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core">
+				
+	<h:panelGrid columns="2" cellpadding="5" rendered="#{UserAction.selectedEntity.id lt 0}">
+		<h:outputText value="Password: *" />
+		<p:password value="#{UserAction.selectedEntity.passwd}" required="true" label="Password"/>
+		
+		<h:outputText value="Confirm password: *" />
+		<p:password value="#{UserAction.selectedEntity.confirmPasswd}" required="true" label="Confirm password"/>
+	</h:panelGrid>
+
+	<fieldset style="border-color: lightgray;" class="ui-corner-all">
+		<legend style="font-style: italic; font-weight: bold;">Current permissions</legend>
+	
+		<p:selectOneRadio id="permissions"
+						  value="#{UserAction.userRole}"
+						  layout="responsive"
+						  columns="3"
+						  converter="#{RoleVOConverter}">
+			<f:selectItems value="#{UserAction.roleList}"
+						   var="role"
+						   itemLabel="#{role}"
+						   itemValue="#{role}" />
+		   <p:ajax />				  
+	  	</p:selectOneRadio>
+		  	
+  	</fieldset>
+  	
+  	<p:toolbar style="margin-top: 10px; border:none;" 
+  			   rendered="#{UserAction.selectedEntity.id gt 0}">
+  		<f:facet name="left">
+  			<p:commandButton value="Reset password"
+  							 actionListener="#{UserAction.resetPassword}"
+  							 process="@this"
+  							 update="#{p:component(parentComponentMsgs)}"
+  							 icon="fa fa-key"
+  							 title="Click to send password reset link." />
+  		</f:facet>
+  	</p:toolbar>
+	
+</ui:composition>

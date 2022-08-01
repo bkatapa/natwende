@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<f:view contentType="text/html">
+		<h:head>
+			<f:facet name="first">
+				<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+				<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<title>Bus ticket book</title>
+				<h:outputStylesheet library="seatCharts" name="css/jquery.seat-charts.css" />
+				<h:outputStylesheet library="seatCharts" name="css/bus.css" />
+				<h:outputScript library="js" name="jquery-3.4.1.min.js" />
+				<h:outputScript library="seatCharts" name="js/jquery.seat-charts.min.js" />
+				<h:outputStylesheet name="css/base-natwende.css" />
+				<h:outputStylesheet name="css/default.css" />
+			</f:facet>
+		</h:head>
+		<h:body onload="openConnection();" onunload="closeConnection();">
+			<p:outputPanel style="margin-left: 40px; margin-right: 40px;">
+				<ui:include src="/WEB-INF/include/header.xhtml" />
+				<p:growl widgetVar="growl" showDetail="true" severity="error,info" life="1500" sticky="true" />
+				<h:form id="selectSeat-form">
+					<p:panelGrid columns="2" layout="grid">
+						<f:facet name="header">
+							<div style="text-align: left;">
+								<p:commandButton action="/trip/tripList?faces-redirect=true&amp;i=2"
+												 process="@this"
+												 icon="ui-icon-circle-triangle-w" />
+							  	<h:outputText value="#{TripAction.selectedEntity.busReg} #{TripAction.selectedSearchResult.fromTown} - #{TripAction.selectedSearchResult.toTown} (#{TripAction.selectedSearchResult.estimatedJourneyStartDateAsString})" style="margin-left: 10px;" />
+							</div>
+						</f:facet>
+						<p:outputLabel value="From: " />
+						<h:outputText value="#{TripAction.selectedSearchResult.fromTown.display}" />
+						<p:outputLabel value="To: " />
+						<h:outputText value="#{TripAction.selectedSearchResult.toTown.display}" />
+						<p:outputLabel value="Seats remaining: " />
+						<p:outputPanel>
+							<div id="avail-seats"></div>
+						</p:outputPanel>
+					</p:panelGrid>
+					<div class="container">
+						<div id="seat-map">
+							<div class="front-indicator">Front</div>
+						</div>
+						<div class="booking-details">
+							<h2>Booking details</h2>
+							<h3>Selected seats (<span id="counter">0</span>):</h3>
+							<ul id="selected-seats" />
+							Total: <b>K<span id="total">#{TripAction.selectedSearchResult.trip.priceStr}</span></b>
+							<p:commandButton style="margin-left: 10px;"
+									  		 id="checkout"
+									  		 action="#{BookingAction.checkout}"
+									  		 styleClass="checkout-button"
+									  		 value="Checkout &raquo;">
+				  		 	</p:commandButton>
+					  		<div id="legend" />
+						</div>
+					</div>
+					<input type="hidden" value="#{TripAction.selectedEntity.uniqueId}" id="trip-id" />
+					<input type="hidden" value="#{TripAction.selectedSearchResult.fromTown.display}-#{TripAction.selectedSearchResult.toTown.display}" id="trip-endpoints-id" />			
+					<input type="hidden" value="#{TripAction.endpointsAndAnyIntermediateNodesAsJson}" id="traveller-endpoints" />
+					<p:remoteCommand name="updateGrowl" update="@widgetVar(growl)" />
+				</h:form>
+			</p:outputPanel>
+			
+			<h:outputScript>#{TripAction.busTemplateScript}</h:outputScript>
+			<h:outputScript library="js" name="seat-updater.js"/>
+			<h:outputScript library="js" name="post-booking-data.js"/>
+			<h:outputScript>
+				$(document).ready(function () {
+					if (document.getElementById('avail-seats').innerHTML === "") {
+						document.getElementById('avail-seats').innerHTML = #{TripAction.selectedSearchResult.trip.availableNumOfSeats};
+					}
+					/*
+					openConnection();
+					updateOccupiedSeats(#{TripAction.selectedEntity.occupiedSeats});
+					this.data().price = #{TripAction.selectedEntity.priceStr}
+					setTripPrice(#{TripAction.selectedSearchResult.trip.priceStr});
+					$("#checkout").click(function () {
+						postBookingData();
+					});
+					*/
+				});
+				function handleMessage(facesMessage) {
+					// updateGrowl();
+					PF('growl').show([facesMessage]);
+				}
+				function updateAvailSeats(availSeats) {
+					document.getElementById('avail-seats').innerHTML = availSeats;
+				}
+			</h:outputScript>
+						
+		</h:body>
+	</f:view>
+      
+</html>

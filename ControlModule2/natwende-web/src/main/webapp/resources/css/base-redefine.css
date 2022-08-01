@@ -1,0 +1,77 @@
+/*
+	Basic style shared between login and main app
+*/
+
+
+@font-face {
+    font-family: 'app';
+    
+    src: url(#{resource['fonts:HelveticaLTStdBoldCond.eot']});
+    src: url(#{resource['fonts:HelveticaLTStdBoldCond.eot']}) format('embedded-opentype'),
+         url(#{resource['fonts:HelveticaLTStdBoldCond.woff2']}) format('woff2'),
+         url(#{resource['fonts:HelveticaLTStdBoldCond.woff']}) format('woff'),
+         url(#{resource['fonts:HelveticaLTStdBoldCond.ttf']}) format('truetype'),
+         url(#{resource['fonts:HelveticaLTStdBoldCond.svg']}#HelveticaLTStdBoldCond) format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'app';
+    
+    src: url(#{resource['fonts:HelveticaLTStdCond.eot']});    
+    src: url(#{resource['fonts:HelveticaLTStdCond.eot']}) format('embedded-opentype'),
+         url(#{resource['fonts:HelveticaLTStdCond.woff2']}) format('woff2'),
+         url(#{resource['fonts:HelveticaLTStdCond.woff']}) format('woff'),
+         url(#{resource['fonts:HelveticaLTStdCond.ttf']}) format('truetype'),
+         url(#{resource['fonts:HelveticaLTStdCond.svg']}#HelveticaLTStdCond) format('svg');         
+         
+    font-weight: normal;
+    font-style: normal;
+}
+
+#banner {
+	background: fcfdff;
+	width: 100%; 
+	height: 50px;	
+}
+
+
+body, html {
+	font-family: 'app', Arial;
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+}
+
+.ui-widget, .ui-widget button, .ui-widget select, .ui-widget input {
+	font-family: 'app', Arial, sans-serif;   	
+}
+
+#page {
+ 	min-height:100%;
+ 	position:relative;
+ 	background: #ffffff;
+}
+
+#footer {
+	font-size: 11px;
+	position: absolute; 
+	width: 100%; 
+	height: 65px; 
+	bottom: 0; 
+	background:linear-gradient(to bottom, #fcfff4 0%,#e3e9be 15%,#d8deb3 100%);
+}
+
+#footer a {	 
+	color: white;
+	text-decoration: none;	
+}
+
+.footerDiv{
+	position: absolute; 
+	top: 50%; 
+	left: 21%; 
+	transform: translate(-50%, -50%); 
+	color: white;
+}

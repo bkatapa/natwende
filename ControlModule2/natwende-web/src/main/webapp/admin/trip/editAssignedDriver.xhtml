@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:c="http://java.sun.com/jsp/jstl/core">
+				
+	<p:outputPanel id="assignDriver-panel">
+				
+		<p:fieldset id="availableDrivers-fieldset"
+					legend="Available drivers"
+					style="border: none;">
+			<p:dataGrid id="availableDrivers-grid"
+						var="driver"
+						value="#{TripScheduleAction.operatorDriverList}"
+						columns="3"
+						emptyMessage="You have not entered any drivers yet.">
+				<p:panel id="availableDrivers-panel"
+						 header="#{driver.name}"
+						 style="text-align: center;"
+						 rendered="#{not empty driver.firstname}">
+					<div>
+						<p:graphicImage value="#{UserAction.previewImage}" height="30" width="30">
+							<f:param name="userId" value="#{driver.id}" />
+						</p:graphicImage>
+					</div>
+				</p:panel>
+				<p:draggable for="availableDrivers-panel" revert="true" handle=".ui-panel-titlebar" stack=".ui-panel" />
+			</p:dataGrid>	
+		</p:fieldset>				
+			
+		<p:fieldset id="availableBuses-fieldset"
+					legend="Bus (Assigned driver)"
+					style="border: none; margin-top: 10px;">
+					
+			<c:forEach items="#{tripSchedule.busTripScheduleLinkList}" var="link" varStatus="counter">
+				<p:panel style="border: none;" id="availableBuses-panel">
+					<f:facet name="header">
+						<h:panelGrid columns="3" cellspacing="5" id="bus_#{link.bus.id}">
+							<h:outputText value="#{link.bus.reg}" style="font-size: 15px; font-weight: normal;" />
+							<h:outputText value="(Drop driver here ...)" style="font-size: 15px; font-weight: normal;" rendered="#{empty link.driver}"/>
+							<h:outputText value="(#{link.driver.name})" style="font-size: 15px; font-weight: normal;" rendered="#{not empty link.driver}"/>
+							<p:commandButton icon="ui-icon-close"
+											 process="@this"
+											 update="#{idPrefix}"
+											 actionListener="#{TripScheduleAction.onDriverRemove(link)}"
+											 rendered="#{not empty link.driver}"
+											 title="Click to remove #{link.driver.name} from this bus" />
+						</h:panelGrid>
+					</f:facet>
+				</p:panel>
+			</c:forEach>
+			
+		</p:fieldset>
+		
+		<ui:repeat var="link" value="#{tripSchedule.busTripScheduleLinkList}" varStatus="counter">
+			<p:droppable for="#{idPrefix}:bus_#{link.bus.id}"
+						 tolerance="touch"
+						 activeStyleClass="ui-state-highlight"
+						 datasource="#{idPrefix}:availableDrivers-grid"
+						 onDrop="handleDrop">
+				<p:ajax listener="#{TripScheduleAction.onDriverDrop}" update="#{idPrefix}" />
+			</p:droppable>
+		</ui:repeat>
+		
+	</p:outputPanel>
+			
+</ui:composition>

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<p:panel header="#{header}" style="height: #{height};box-sizing:border-box">
+		<p:panelGrid columns="1" columnClasses="columnNormal" rendered="#{not empty address}">
+			<h:outputText value="#{address.name}" />
+			<h:outputText value="#{address.line1}" />
+			<h:outputText value="#{address.city}" />
+			<h:outputText value="#{address.province}" />
+			<h:outputText value="#{address.country}" />
+                        <h:outputText value="#{address.postalCode}" />
+		</p:panelGrid>
+
+		<p:panelGrid style="height: #{height};" columns="1" columnClasses="columnNormalTop" rendered="#{empty address}">
+			<h:outputText value="No address found" />
+		</p:panelGrid>
+	</p:panel>
+</ui:composition>
